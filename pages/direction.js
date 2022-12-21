@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Dimensions, View, Text, Alert, Pressable } from "react-native";
 import MapView, { Circle, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
-import styles from "../styles/style";
 import * as Location from "expo-location";
 import decodeGooglePlaces from "../shared/decodeGooglePolyline";
 import { Colors } from "../styles/color";

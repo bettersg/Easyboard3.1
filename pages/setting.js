@@ -17,13 +17,7 @@ import { useEffect, useState } from "react";
 import Constants from "expo-constants";
 
 export default function Setting({ navigation }) {
-  const {
-    control,
-    setValue,
-    watch,
-    handleSubmit,
-    trigger
-  } = useForm({
+  const { control, setValue, watch, handleSubmit, trigger } = useForm({
     reValidateMode: "onChange",
     defaultValues: {
       name: null,
