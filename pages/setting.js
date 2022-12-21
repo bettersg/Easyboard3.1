@@ -6,6 +6,7 @@ import {
   View,
   ScrollView,
   Alert,
+  Button,
 } from "react-native";
 import styles from "../styles/style";
 import PhotoSelect from "../shared/photoSelect";
@@ -16,7 +17,13 @@ import { useEffect, useState } from "react";
 import Constants from "expo-constants";
 
 export default function Setting({ navigation }) {
-  const { control, setValue, watch, handleSubmit } = useForm({
+  const {
+    control,
+    setValue,
+    watch,
+    handleSubmit,
+    trigger
+  } = useForm({
     reValidateMode: "onChange",
     defaultValues: {
       name: null,
@@ -206,14 +213,23 @@ export default function Setting({ navigation }) {
         <View style={styles.footer}>
           <Pressable
             style={styles.button}
-            onPress={() =>
-              handleSubmit(saveSettings(), () => {
+            onPress={async () => {
+              // Manually check the validation
+              if (await trigger()) {
+                // Use the build in validation
+                handleSubmit(saveSettings(), () => {
+                  Alert.alert(
+                    "Field Errors",
+                    "There are some fields that have some errors."
+                  );
+                });
+              } else {
                 Alert.alert(
                   "Field Errors",
                   "There are some fields that have some errors."
                 );
-              })
-            }
+              }
+            }}
           >
             <Text style={styles.buttonText}>Save</Text>
           </Pressable>

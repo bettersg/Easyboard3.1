@@ -16,6 +16,7 @@ export default function CalcTransit({ navigation, route }) {
   const { destination, destinationName } = route.params;
   const [transits, setTransits] = useState([]);
   const [displayRoutes, setDisplayRoutes] = useState([]);
+  const [interchanges, setInterchanges] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currLocation, setCurrLocation] = useState(null);
   const cardShadowStyle = function ({ pressed }) {
@@ -46,45 +47,52 @@ export default function CalcTransit({ navigation, route }) {
         return [styles.transitTag];
     }
   };
-  // Function to compute the route navigation tags
+  // Function to compute the route navigation tags and the associated interchanges
   const computeRoutings = function (lines) {
-    const routesTags = lines.map((route) => {
-      const transitTags = route.legs.reduce((acc, curr) => {
-        if (
-          curr["travel_mode"] == "transit" &&
-          curr["vehicle_types"] == "bus"
-        ) {
-          let busNumber = curr.services[0].name;
-          if (curr.services.length > 1) {
-            for (let i = 1; i < curr.services.length; i++) {
-              busNumber += ` / ${curr.services[i].name}`;
+    const routings = lines.map((route) => {
+      const computedTransit = route.legs.reduce(
+        (acc, curr) => {
+          if (
+            curr["travel_mode"] == "transit" &&
+            curr["vehicle_types"] == "bus"
+          ) {
+            let busNumber = curr.services[0].name;
+            if (curr.services.length > 1) {
+              for (let i = 1; i < curr.services.length; i++) {
+                busNumber += ` / ${curr.services[i].name}`;
+              }
             }
-          }
-          acc.push(
-            <View style={styles.transitTag} key={busNumber}>
-              <Text style={styles.transitTagText}>{`Bus ${busNumber}`}</Text>
-            </View>
-          );
-        } else if (
-          curr["travel_mode"] == "transit" &&
-          curr["vehicle_types"] == "metro"
-        ) {
-          let trainLine = curr.services[0].name;
-          if (curr.services.length > 1) {
-            for (let i = 1; i < curr.services.length; i++) {
-              trainLine += `${curr.services[i]}`;
+            acc.interchanges.push(`Bus ${busNumber}`);
+            acc.transitTags.push(
+              <View style={styles.transitTag} key={busNumber}>
+                <Text style={styles.transitTagText}>{`Bus ${busNumber}`}</Text>
+              </View>
+            );
+          } else if (
+            curr["travel_mode"] == "transit" &&
+            curr["vehicle_types"] == "metro"
+          ) {
+            let trainLine = curr.services[0].name;
+            if (curr.services.length > 1) {
+              for (let i = 1; i < curr.services.length; i++) {
+                trainLine += `${curr.services[i]}`;
+              }
             }
+            acc.interchanges.push(`Train ${trainLine}: ${curr.stops[0].name}`);
+            acc.transitTags.push(
+              <View style={mrtTagStyle(trainLine)} key={trainLine}>
+                <Text style={styles.transitTagText}>{trainLine}</Text>
+              </View>
+            );
+          } else {
+            acc.interchanges.push("walk");
           }
-          acc.push(
-            <View style={mrtTagStyle(trainLine)} key={trainLine}>
-              <Text style={styles.transitTagText}>{trainLine}</Text>
-            </View>
-          );
-        }
-        return acc;
-      }, []);
-      if (transitTags.length > 0) {
-        return transitTags.flatMap((value, index, array) =>
+          return acc;
+        },
+        { transitTags: [], interchanges: [] }
+      );
+      if (computedTransit.transitTags.length > 0) {
+        return computedTransit.transitTags.flatMap((value, index, array) =>
           array.length - 1 !== index // check for the last item
             ? [
                 value,
@@ -94,17 +102,16 @@ export default function CalcTransit({ navigation, route }) {
               ]
             : value
         );
-      }else{
+      } else {
         return [
-          (
-            <View style={styles.transitTag} key={route.signature}>
-              <Text style={styles.transitTagText}>Walk</Text>
-            </View>
-          )
-        ]
+          <View style={styles.transitTag} key={route.signature}>
+            <Text style={styles.transitTagText}>Walk</Text>
+          </View>,
+        ];
       }
     });
-    return routesTags;
+    setDisplayRoutes(routings.transitTags); // This is to show the tags
+    setInterchanges(routings.interchanges); // This is to pass to the directions map to show the next interchange to take
   };
 
   useEffect(() => {
@@ -162,6 +169,7 @@ export default function CalcTransit({ navigation, route }) {
                               line: transit,
                               currLocation,
                               destinationName,
+                              interchanges,
                             },
                           },
                         ],

@@ -8,6 +8,12 @@ export default StyleSheet.create({
     padding: 30,
     justifyContent: "space-between",
   },
+  containerCenter: {
+    flex: 1,
+    backgroundColor: Colors.white,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   footer: {
     marginTop: 20,
   },
@@ -23,7 +29,7 @@ export default StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 20,
   },
-  header:{ fontSize: 30, fontWeight: "bold", marginBottom: 10 },
+  header: { fontSize: 30, fontWeight: "bold", marginBottom: 10 },
   button: {
     borderRadius: 40,
     padding: 10,
@@ -46,10 +52,11 @@ export default StyleSheet.create({
     marginVertical: 5,
     color: Colors.black,
   },
+
+  /************ Main Page *****************/
   pressableCard: {
     padding: 10,
     borderRadius: 5,
-
     backgroundColor: Colors.white,
     shadowColor: Colors.black,
     shadowOffset: { width: -1, height: 2 },
@@ -69,7 +76,7 @@ export default StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     paddingHorizontal: 10,
-    color:Colors.white
+    color: Colors.white,
   },
   cardTitleOnlyText: {
     fontSize: 20,
@@ -77,8 +84,8 @@ export default StyleSheet.create({
     textAlign: "center",
   },
   cardBodyText: {
-    flex:2,
-    fontSize:16,
+    flex: 2,
+    fontSize: 16,
     fontWeight: "bold",
     textAlign: "center",
     paddingHorizontal: 10,
@@ -94,53 +101,95 @@ export default StyleSheet.create({
     fontWeight: "bold",
     color: Colors.white,
   },
-  transitOption:{
+
+  /*********** ClacTransit page **************/
+  transitOption: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 5
+    marginBottom: 5,
   },
-  transitEtaText:{
+  transitEtaText: {
     fontSize: 20,
     fontWeight: "bold",
   },
-  transitArrivalTime:{
+  transitArrivalTime: {
     fontWeight: "bold",
   },
-  transitTag:{
+  transitTag: {
     backgroundColor: Colors.grey,
     padding: 5,
     borderRadius: 2,
     borderWidth: 0.2,
     borderColor: Colors.black,
   },
-  transitTagNS:{
-    backgroundColor: Colors.NS
+  transitTagNS: {
+    backgroundColor: Colors.NS,
   },
-  transitTagNE:{
-    backgroundColor: Colors.NE
+  transitTagNE: {
+    backgroundColor: Colors.NE,
   },
-  transitTagEW:{
-    backgroundColor: Colors.EW
+  transitTagEW: {
+    backgroundColor: Colors.EW,
   },
-  transitTagCC:{
-    backgroundColor:Colors.CC
+  transitTagCC: {
+    backgroundColor: Colors.CC,
   },
-  transitTagDT:{
-    backgroundColor: Colors.DT
+  transitTagDT: {
+    backgroundColor: Colors.DT,
   },
-  transitTagTE:{
-    backgroundColor: Colors.TE
+  transitTagTE: {
+    backgroundColor: Colors.TE,
   },
-  transitTagTo:{
+  transitTagTo: {
     padding: 5,
-    alignContent:"center",
+    alignContent: "center",
     alignItems: "center",
-    textAlign: "center"
+    textAlign: "center",
   },
-  transitTagText:{
-    color: Colors.white
+  transitTagText: {
+    color: Colors.white,
   },
-  transitText:{
-    fontSize: 16
-  }
+  transitText: {
+    fontSize: 16,
+  },
+
+  /********** Direction Page Stylings *************/
+  directionWindow: {
+    borderRadius: 10,
+    borderWidth: 5,
+    borderColor: Colors.primary,
+    zIndex: 20,
+    position: "absolute",
+    bottom: 20,
+    width: "90%",
+    backgroundColor: Colors.white,
+  },
+  directionWindowHeader: {
+    width: "100%",
+    backgroundColor: Colors.primary,
+    padding: 8,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  directionWindowBtn: {
+    textAlign: "center",
+    color: Colors.white,
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  directionWindowHeaderText: {
+    textAlign: "right",
+    color: Colors.white,
+    fontSize: 17,
+    fontWeight: "bold",
+  },
+  directionContainer: {
+    paddingVertical: 5,
+    borderBottomWidth: 0.3,
+    borderColor: Colors.black,
+  },
+  directionText: {
+    fontSize: 16,
+    marginLeft: 20,
+  },
 });

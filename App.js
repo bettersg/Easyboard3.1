@@ -12,6 +12,15 @@ import "react-native-gesture-handler";
 import Direction from "./pages/direction";
 
 const Stack = createNativeStackNavigator();
+const settingsDefaultValues = {
+  name: null,
+  careGiverPhoneNumber: "",
+  houseAddrs: null,
+  housePhotoUri: null,
+  gotoFavAddrs: null,
+  gotoFavAddrsName: "",
+  gotoFavPhotoUri: [],
+}
 
 export default function App() {
   const [hasSetting, setHasSettings] = useState(false);
@@ -22,7 +31,15 @@ export default function App() {
         const storedData = await SecureStore.getItemAsync(
           Constants.manifest.extra.settingsStoredKey
         );
-        if (storedData) setHasSettings(true);
+        // clearing the settings if its all defult values
+        if(JSON.stringify(settingsDefaultValues) == storedData){
+          await SecureStore.setItemAsync(
+            Constants.manifest.extra.settingsStoredKey,
+            ""
+          );
+        }else if(storedData){
+          setHasSettings(true);
+        }
       } catch (e) {
         console.error(e);
       }
