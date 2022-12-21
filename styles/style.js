@@ -178,7 +178,7 @@ export default StyleSheet.create({
     fontWeight: "bold",
   },
   directionWindowHeaderText: {
-    textAlign: "right",
+    textAlign: "center",
     color: Colors.white,
     fontSize: 17,
     fontWeight: "bold",

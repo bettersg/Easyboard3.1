@@ -30,11 +30,11 @@ export default function LocationInputBtn({ onLocationSelect }) {
         animationType="slide"
         visible={isModalOpen}
         onRequestClose={() => {
-          if (location != null) onLocationSelect(locationMarker);
+          if (location != null) onLocationSelect(location);
           setModalOpenState(false);
         }}
         onDismiss={() => {
-          if (location != null) onLocationSelect(locationMarker);
+          if (location != null) onLocationSelect(location);
           setModalOpenState(false);
         }}
       >

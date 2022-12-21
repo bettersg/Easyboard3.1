@@ -94,8 +94,8 @@ export default function Direction({ navigation, route }) {
             }
 
             return (
-              <View style={style.directionContainer}>
-                <Text style={style.directionText} key={`${curr.path}${idx}`}>
+              <View style={style.directionContainer} key={`${curr.path}${idx}`}>
+                <Text style={style.directionText}>
                   {walkingDesc}
                 </Text>
               </View>
@@ -105,16 +105,16 @@ export default function Direction({ navigation, route }) {
           const idx = line.legs.indexOf(curr);
           if (idx < line.legs.length - 1 && idx >= 0) {
             steps = [
-              <View style={style.directionContainer}>
-                <Text style={style.directionText} key={curr.path}>
+              <View style={style.directionContainer} key={curr.path}>
+                <Text style={style.directionText}>
                   Walk to {line.legs[idx + 1].stops[0].name}
                 </Text>
               </View>,
             ];
           } else if (idx == line.legs.length - 1) {
             steps = [
-              <View style={style.directionContainer}>
-                <Text style={style.directionText} key={curr.path}>
+              <View style={style.directionContainer} key={curr.path}>
+                <Text style={style.directionText}>
                   Walk to {destinationName}
                 </Text>
               </View>,
@@ -124,8 +124,8 @@ export default function Direction({ navigation, route }) {
         acc.push(steps);
       } else if (curr["travel_mode"] == "transit") {
         const steps = curr.stops.map((stop, idx) => (
-          <View style={style.directionContainer}>
-            <Text style={style.directionText} key={`${curr.path}${idx}`}>
+          <View style={style.directionContainer}  key={`${curr.path}${idx}`}>
+            <Text style={style.directionText}>
               {stop.name}
             </Text>
           </View>
@@ -136,7 +136,7 @@ export default function Direction({ navigation, route }) {
     }, []);
   };
   const computeTriggerPoints = function (line) {
-    const test = line.legs.reduce((acc, curr) => {
+    return line.legs.reduce((acc, curr) => {
       if (curr["travel_mode"] != "walk") {
         const triggerPoints = curr.stops.slice(-2).map((stop, idx) => ({
           latitude: stop.coordinates.lat,
@@ -163,8 +163,6 @@ export default function Direction({ navigation, route }) {
       }
       return acc;
     }, []);
-    console.log(JSON.stringify(test));
-    return test;
   };
   const computeDistance = function (lat1, lon1, lat2, lon2) {
     const R = 6371; // Radius of the earth in km
@@ -303,8 +301,8 @@ export default function Direction({ navigation, route }) {
           </Pressable>
           <Text style={style.directionWindowHeaderText}>
             Directions{" "}
-            {interchanges[stepsIdx] != "walk" ??
-              `\n Take ${interchanges[stepsIdx]}`}
+            {interchanges[stepsIdx] != "walk" ?
+              `\nTake ${interchanges[stepsIdx]}` : ""}
           </Text>
           <Pressable
             onPress={() => {

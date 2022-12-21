@@ -9,7 +9,7 @@ export async function getDirectionsAsync(
   destLat,
   destLong
 ) {
-  let test = []
+  let directions = []
   try {
     const result = await axios.request({
       method: "get",
@@ -19,7 +19,7 @@ export async function getDirectionsAsync(
       },
     });
     if (result) {
-      if (result.data.routes.length > 0) test = result.data.routes;
+      if (result.data.routes.length > 0) directions = result.data.routes;
     }
   } catch (e) {
     console.error(e);
@@ -32,11 +32,11 @@ export async function getDirectionsAsync(
         "Citymapper-Partner-Key": apiKey,
       },
     });
-    test = [...test,...result.data.routes]
+    directions = [...directions,...result.data.routes]
   } catch (innerError) {
     console.error(innerError);
   }
-  test.sort((a,b) => a['duration_seconds'] - b['duration_seconds'])
-  test.splice(5)
-  return test;
+  directions.sort((a,b) => a['duration_seconds'] - b['duration_seconds'])
+  directions.splice(5)
+  return directions;
 }

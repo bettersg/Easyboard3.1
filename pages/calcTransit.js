@@ -92,26 +92,30 @@ export default function CalcTransit({ navigation, route }) {
         { transitTags: [], interchanges: [] }
       );
       if (computedTransit.transitTags.length > 0) {
-        return computedTransit.transitTags.flatMap((value, index, array) =>
-          array.length - 1 !== index // check for the last item
-            ? [
-                value,
-                <View style={styles.transitTagTo} key={index}>
-                  <Text style={{ fontWeight: "bold", fontSize: 18 }}>&gt;</Text>
-                </View>,
-              ]
-            : value
+        computedTransit.transitTags = computedTransit.transitTags.flatMap(
+          (value, index, array) =>
+            array.length - 1 !== index // check for the last item
+              ? [
+                  value,
+                  <View style={styles.transitTagTo} key={index}>
+                    <Text style={{ fontWeight: "bold", fontSize: 18 }}>
+                      &gt;
+                    </Text>
+                  </View>,
+                ]
+              : value
         );
       } else {
-        return [
+        computedTransit.transitTags = [
           <View style={styles.transitTag} key={route.signature}>
             <Text style={styles.transitTagText}>Walk</Text>
           </View>,
         ];
       }
+      return computedTransit;
     });
-    setDisplayRoutes(routings.transitTags); // This is to show the tags
-    setInterchanges(routings.interchanges); // This is to pass to the directions map to show the next interchange to take
+    setDisplayRoutes(routings.map(x => x.transitTags)); // This is to show the tags
+    setInterchanges(routings.map(x => x.interchanges)); // This is to pass to the directions map to show the next interchange to take
   };
 
   useEffect(() => {
@@ -135,7 +139,7 @@ export default function CalcTransit({ navigation, route }) {
           longitude
         );
         setTransits(lines);
-        setDisplayRoutes(computeRoutings(lines));
+        computeRoutings(lines);
       } catch (e) {
         console.error(e);
       }
@@ -169,7 +173,7 @@ export default function CalcTransit({ navigation, route }) {
                               line: transit,
                               currLocation,
                               destinationName,
-                              interchanges,
+                              interchanges: interchanges[idx],
                             },
                           },
                         ],

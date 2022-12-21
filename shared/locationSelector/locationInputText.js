@@ -22,11 +22,11 @@ export default function LocationTextInput({ onLocationSelect, value }) {
         animationType="slide"
         visible={isModalOpen}
         onRequestClose={() => {
-          if (location != null) onLocationSelect(locationMarker);
+          if (location != null) onLocationSelect(location);
           setModalOpenState(false);
         }}
         onDismiss={() => {
-          if (location != null) onLocationSelect(locationMarker);
+          if (location != null) onLocationSelect(location);
           setModalOpenState(false);
         }}
       >
