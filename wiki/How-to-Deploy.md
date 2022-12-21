@@ -25,6 +25,6 @@
 
 5) For now select no for notifications since we don't have it as of writing this.
 6) Wait until the app has been deploy in apple, you will either receive an email or check here https://appstoreconnect.apple.com/apps
-7) Select the app ![Screenshot 2022-10-13 at 3.08.30 PM.png](/.attachments/Screenshot%202022-10-13%20at%203.08.30%20PM-b8b16870-a51b-44bd-905e-2221082dd34a.png)
-8) Open the TestFlight Tab on the top and under build. !![image.png](/.attachments/image-d48ed32a-c323-482a-aa54-e8e5acc4b2ff.png)
+7) Select the app ![Screenshot 2022-10-13 at 3.08.30 PM.png](./.attachments/Screenshot%202022-10-13%20at%203.08.30%20PM-b8b16870-a51b-44bd-905e-2221082dd34a.png)
+8) Open the TestFlight Tab on the top and under build. !![image.png](./.attachments/image-d48ed32a-c323-482a-aa54-e8e5acc4b2ff.png)
 9) In the correct version find the build you've just deployed. Under status it should ask you to complete a compliance quiz. Once it is done, it will be fully deployed.
