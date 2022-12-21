@@ -9,7 +9,6 @@ export default function LocationInputBtn({ onLocationSelect }) {
 
   const onLocationMarkerDrop = function (locationMarker) {
     setSelectedLocation(locationMarker);
-    onLocationSelect(locationMarker); // Propagate back to parent
   };
 
   const cardShadowStyle = function ({ pressed }, backgroundColor = "#fff") {
@@ -30,8 +29,14 @@ export default function LocationInputBtn({ onLocationSelect }) {
         statusBarTranslucent={true}
         animationType="slide"
         visible={isModalOpen}
-        onRequestClose={() => setModalOpenState(false)}
-        onDismiss={() => setModalOpenState(false)}
+        onRequestClose={() => {
+          if (location != null) onLocationSelect(location);
+          setModalOpenState(false);
+        }}
+        onDismiss={() => {
+          if (location != null) onLocationSelect(location);
+          setModalOpenState(false);
+        }}
       >
         <View style={localStyles.container}>
           <View style={localStyles.doneBtnContainer}>

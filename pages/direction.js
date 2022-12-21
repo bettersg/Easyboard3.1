@@ -1,15 +1,15 @@
 import { useEffect, useRef, useState } from "react";
-import { Dimensions, View, Text, Alert } from "react-native";
+import { Dimensions, View, Text, Alert, Pressable } from "react-native";
 import MapView, { Circle, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
-import styles from "../styles/style";
 import * as Location from "expo-location";
 import decodeGooglePlaces from "../shared/decodeGooglePolyline";
 import { Colors } from "../styles/color";
 import { ScrollView } from "react-native-gesture-handler";
 import { CommonActions } from "@react-navigation/native";
+import style from "../styles/style";
 
 export default function Direction({ navigation, route }) {
-  const { line, currLocation, destinationName } = route.params;
+  const { line, currLocation, destinationName, interchanges } = route.params;
   // Map View reference
   const mapViewRef = useRef(null);
   const [directionViewHeight, setDirectionViewHeight] = useState(80);
@@ -42,7 +42,7 @@ export default function Direction({ navigation, route }) {
     }, []);
   };
   const computeCircles = function (line) {
-    const test = line.legs.reduce((acc, curr) => {
+    return line.legs.reduce((acc, curr) => {
       if (curr["travel_mode"] != "walk") {
         const lineColor =
           curr["travel_mode"] == "transit"
@@ -66,7 +66,6 @@ export default function Direction({ navigation, route }) {
       }
       return acc;
     }, []);
-    return test;
   };
   const computeSteps = function (line) {
     return line.legs.reduce((acc, curr) => {
@@ -95,17 +94,8 @@ export default function Direction({ navigation, route }) {
             }
 
             return (
-              <View
-                style={{
-                  paddingVertical: 5,
-                  borderBottomWidth: 0.3,
-                  borderColor: Colors.black,
-                }}
-              >
-                <Text
-                  style={{ fontSize: 16, marginLeft: 20 }}
-                  key={`${curr.path}${idx}`}
-                >
+              <View style={style.directionContainer} key={`${curr.path}${idx}`}>
+                <Text style={style.directionText}>
                   {walkingDesc}
                 </Text>
               </View>
@@ -115,28 +105,16 @@ export default function Direction({ navigation, route }) {
           const idx = line.legs.indexOf(curr);
           if (idx < line.legs.length - 1 && idx >= 0) {
             steps = [
-              <View
-                style={{
-                  paddingVertical: 5,
-                  borderBottomWidth: 0.3,
-                  borderColor: Colors.black,
-                }}
-              >
-                <Text style={{ fontSize: 16, marginLeft: 20 }} key={curr.path}>
+              <View style={style.directionContainer} key={curr.path}>
+                <Text style={style.directionText}>
                   Walk to {line.legs[idx + 1].stops[0].name}
                 </Text>
               </View>,
             ];
           } else if (idx == line.legs.length - 1) {
             steps = [
-              <View
-                style={{
-                  paddingVertical: 5,
-                  borderBottomWidth: 0.3,
-                  borderColor: Colors.black,
-                }}
-              >
-                <Text style={{ fontSize: 16, marginLeft: 20 }} key={curr.path}>
+              <View style={style.directionContainer} key={curr.path}>
+                <Text style={style.directionText}>
                   Walk to {destinationName}
                 </Text>
               </View>,
@@ -146,17 +124,8 @@ export default function Direction({ navigation, route }) {
         acc.push(steps);
       } else if (curr["travel_mode"] == "transit") {
         const steps = curr.stops.map((stop, idx) => (
-          <View
-            style={{
-              paddingVertical: 5,
-              borderBottomWidth: 0.3,
-              borderColor: Colors.black,
-            }}
-          >
-            <Text
-              style={{ fontSize: 16, marginLeft: 20 }}
-              key={`${curr.path}${idx}`}
-            >
+          <View style={style.directionContainer}  key={`${curr.path}${idx}`}>
+            <Text style={style.directionText}>
               {stop.name}
             </Text>
           </View>
@@ -168,9 +137,30 @@ export default function Direction({ navigation, route }) {
   };
   const computeTriggerPoints = function (line) {
     return line.legs.reduce((acc, curr) => {
-      const polyLinePath = decodeGooglePlaces(curr.path);
-      const lastPoint = polyLinePath.pop();
-      acc.push({ lonLat: lastPoint, isWalk: curr["travel_mode"] == "walk" });
+      if (curr["travel_mode"] != "walk") {
+        const triggerPoints = curr.stops.slice(-2).map((stop, idx) => ({
+          latitude: stop.coordinates.lat,
+          longitude: stop.coordinates.lon,
+          isTriggered: false,
+        }));
+        acc.push({
+          triggers: triggerPoints,
+          isWalk: false,
+          stop: curr.stops[curr.stops.length - 1].name,
+        });
+      } else {
+        const polyLinePath = decodeGooglePlaces(curr.path);
+        const idx = line.legs.indexOf(curr);
+        const stopName =
+          idx < line.legs.length - 1 && idx >= 0
+            ? line.legs[idx + 1].stops[0].name
+            : "";
+        acc.push({
+          triggers: [polyLinePath.pop()],
+          stop: stopName,
+          isWalk: true,
+        });
+      }
       return acc;
     }, []);
   };
@@ -247,20 +237,28 @@ export default function Direction({ navigation, route }) {
       const distance = computeDistance(
         location.latitude,
         location.longitude,
-        triggerPoints[stepsIdx].lonLat.latitude,
-        triggerPoints[stepsIdx].lonLat.longitude
+        triggerPoints[stepsIdx].triggers[0].latitude,
+        triggerPoints[stepsIdx].triggers[0].longitude
       );
-      if (distance <= 1000 && !triggerPoints[stepsIdx].isWalk) {
-        Alert.alert(
-          "Notification",
-          "Get ready!\nYou're closing in to your stop, 1km more to go."
-        );
-      }
-      if (distance <= 20) {
+      if (
+        distance <= 100 &&
+        !triggerPoints[stepsIdx].isWalk &&
+        !triggerPoints[stepsIdx].isTriggered
+      ) {
+        const msg =
+          triggerPoints[stepsIdx].triggers.length > 1
+            ? "Get ready, you have 1 more stop to go."
+            : "Get ready, you're approaching your stop.";
+        Alert.alert("Notification", msg);
+        triggerPoints[stepsIdx].triggers.isTriggered = true;
+      } else if (
+        distance <= 20 &&
+        triggerPoints[stepsIdx].triggers.length == 1
+      ) {
         if (triggerPoints.length - 1 != stepsIdx) {
           Alert.alert(
             "Notification",
-            `You've reached ${steps[stepsIdx + 1][0]}.`
+            `You've reached ${triggerPoints[stepsIdx].stop}.`
           );
           setSetpsIdx(stepsIdx + 1);
         } else {
@@ -277,49 +275,44 @@ export default function Direction({ navigation, route }) {
   }, [location]);
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: Colors.white,
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
+    <View style={style.containerCenter}>
       <View
         onLayout={(event) => {
           var { height } = event.nativeEvent.layout;
           setDirectionViewHeight(height);
         }}
-        style={{
-          borderRadius: 10,
-          borderWidth: 5,
-          borderColor: Colors.primary,
-          zIndex: 20,
-          position: "absolute",
-          bottom: 20,
-          width: "90%",
-          maxHeight: Dimensions.get("window").height * 0.4,
-          minHeight: Dimensions.get("window").height * 0.1,
-          backgroundColor: Colors.white,
-        }}
+        style={[
+          style.directionWindow,
+          {
+            maxHeight: Dimensions.get("window").height * 0.4,
+            minHeight: Dimensions.get("window").height * 0.1,
+          },
+        ]}
       >
-        <View
-          style={{
-            width: "100%",
-            backgroundColor: Colors.primary,
-            paddingVertical: 8,
-          }}
-        >
-          <Text
-            style={{
-              textAlign: "center",
-              color: Colors.white,
-              fontSize: 17,
-              fontWeight: "bold",
+        <View style={style.directionWindowHeader}>
+          <Pressable
+            onPress={() => {
+              if (stepsIdx >= 1) {
+                setSetpsIdx(stepsIdx - 1);
+              }
             }}
           >
-            Directions
+            <Text style={style.directionWindowBtn}>&lt;</Text>
+          </Pressable>
+          <Text style={style.directionWindowHeaderText}>
+            Directions{" "}
+            {interchanges[stepsIdx] != "walk" ?
+              `\nTake ${interchanges[stepsIdx]}` : ""}
           </Text>
+          <Pressable
+            onPress={() => {
+              if (stepsIdx < triggerPoints.length - 1) {
+                setSetpsIdx(stepsIdx + 1);
+              }
+            }}
+          >
+            <Text style={style.directionWindowBtn}>&gt;</Text>
+          </Pressable>
         </View>
         <ScrollView style={{ maxHeight: "100%" }}>{steps[stepsIdx]}</ScrollView>
       </View>
@@ -339,8 +332,8 @@ export default function Direction({ navigation, route }) {
         initialRegion={{
           latitude: currLocation.latitude,
           longitude: currLocation.longitude,
-          latitudeDelta: 0.0009,
-          longitudeDelta: 0.0009,
+          latitudeDelta: 0.00009,
+          longitudeDelta: 0.00009,
         }}
         showsUserLocation
         showsMyLocationButton
