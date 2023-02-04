@@ -52,7 +52,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "org.engineeringgood.EasyBoard.RN",
-      "buildNumber": "2.17",
+      "buildNumber": "2.21",
       "config": {
         "googleMapsApiKey": "AIzaSyDmMnmiEOJmo-iH5--shOV-T7vm-Cl2aT0"
       }
