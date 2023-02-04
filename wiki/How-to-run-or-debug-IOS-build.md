@@ -1,10 +1,11 @@
 # Pre-requisite
 
-Requires a Mac or IOS
+Requires a Mac or IOS and downloand and install NodeJS
 
 # Steps 
-1) run `npm run start` or `expo start`
-2) To run it there 2 methods, through simulator or IOS device.
+1) run `npm install`
+2) run `npm run start` or `expo start`
+3) To run it there 2 methods, through simulator or IOS device.
 
 ## Simulator
 1) In the terminal press `i` and the simulator will run.
