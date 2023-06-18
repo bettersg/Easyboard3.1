@@ -10,8 +10,6 @@ import { useEffect, useState } from 'react';
 import { Button } from 'react-native';
 import 'react-native-gesture-handler';
 import Direction from './pages/direction';
-import splashScreen from './pages/splashScreen';
-
 const Stack = createNativeStackNavigator();
 const settingsDefaultValues = {
   name: null,
@@ -25,14 +23,6 @@ const settingsDefaultValues = {
 
 export default function App() {
   const [hasSetting, setHasSettings] = useState(false);
-  const [showSplash, setShowSplash] = useState(true);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setShowSplash(false);
-    }, 3000);
-  }, []);
-
   useEffect(() => {
     (async () => {
       try {
@@ -52,18 +42,11 @@ export default function App() {
         console.error(e);
       }
     })();
-  }, [showSplash]);
+  }, []);
 
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {showSplash && (
-          <Stack.Screen
-            name='SplashScreen'
-            component={splashScreen}
-            options={{ title: 'Splash Screen' }}
-          />
-        )}
         {!hasSetting ? (
           <>
             <Stack.Screen
