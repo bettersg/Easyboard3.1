@@ -1,30 +1,28 @@
-import Intro from "./pages/introduction";
-import Setting from "./pages/setting";
-import Main from "./pages/main";
-import CalcTransit from "./pages/calcTransit";
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import * as SecureStore from "expo-secure-store";
-import Constants from "expo-constants";
-import { useEffect, useState } from "react";
-import { Button } from "react-native";
-import "react-native-gesture-handler";
-import Direction from "./pages/direction";
-
+import Intro from './pages/introduction';
+import Setting from './pages/setting';
+import Main from './pages/main';
+import CalcTransit from './pages/calcTransit';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import * as SecureStore from 'expo-secure-store';
+import Constants from 'expo-constants';
+import { useEffect, useState } from 'react';
+import { Button } from 'react-native';
+import 'react-native-gesture-handler';
+import Direction from './pages/direction';
 const Stack = createNativeStackNavigator();
 const settingsDefaultValues = {
   name: null,
-  careGiverPhoneNumber: "",
+  careGiverPhoneNumber: '',
   houseAddrs: null,
   housePhotoUri: null,
   gotoFavAddrs: null,
-  gotoFavAddrsName: "",
+  gotoFavAddrsName: '',
   gotoFavPhotoUri: [],
-}
+};
 
 export default function App() {
   const [hasSetting, setHasSettings] = useState(false);
-
   useEffect(() => {
     (async () => {
       try {
@@ -32,12 +30,12 @@ export default function App() {
           Constants.manifest.extra.settingsStoredKey
         );
         // clearing the settings if its all defult values
-        if(JSON.stringify(settingsDefaultValues) == storedData){
+        if (JSON.stringify(settingsDefaultValues) == storedData) {
           await SecureStore.setItemAsync(
             Constants.manifest.extra.settingsStoredKey,
-            ""
+            ''
           );
-        }else if(storedData){
+        } else if (storedData) {
           setHasSettings(true);
         }
       } catch (e) {
@@ -52,19 +50,19 @@ export default function App() {
         {!hasSetting ? (
           <>
             <Stack.Screen
-              name="Introduction"
+              name='Introduction'
               component={Intro}
-              options={{ title: "Welcome to EasyBoard" }}
+              options={{ title: 'Welcome to EasyBoard' }}
             />
             <Stack.Screen
-              name="Main"
+              name='Main'
               component={Main}
               options={({ navigation }) => ({
-                title: "EasyBoard",
+                title: 'EasyBoard',
                 headerRight: () => (
                   <Button
-                    title="Setting"
-                    onPress={() => navigation.navigate("Setting")}
+                    title='Setting'
+                    onPress={() => navigation.navigate('Setting')}
                   />
                 ),
               })}
@@ -72,33 +70,33 @@ export default function App() {
           </>
         ) : (
           <Stack.Screen
-            name="Main"
+            name='Main'
             component={Main}
             options={({ navigation }) => ({
-              title: "EasyBoard",
+              title: 'EasyBoard',
               headerRight: () => (
                 <Button
-                  title="Setting"
-                  onPress={() => navigation.navigate("Setting")}
+                  title='Setting'
+                  onPress={() => navigation.navigate('Setting')}
                 />
               ),
             })}
           />
         )}
         <Stack.Screen
-          name="Setting"
+          name='Setting'
           component={Setting}
-          options={{ title: "Settings", headerBackVisible: hasSetting }} // set this to a variable to check if the user already has settings or not
+          options={{ title: 'Settings', headerBackVisible: hasSetting }} // set this to a variable to check if the user already has settings or not
         />
         <Stack.Screen
-          name="CalcTransit"
+          name='CalcTransit'
           component={CalcTransit}
-          options={{ title: "Pick a route" }} 
+          options={{ title: 'Pick a route' }}
         />
         <Stack.Screen
-          name="Direction"
+          name='Direction'
           component={Direction}
-          options={{ title: "Live Directions" }}
+          options={{ title: 'Live Directions' }}
         ></Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
