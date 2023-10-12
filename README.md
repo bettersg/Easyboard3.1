@@ -86,6 +86,7 @@
 [![React][React-native]][React-native-url]
 [![Expo][Expo]][Expo-url]
 [![Typescript][Typescript]][Typescript-url]
+[![Tailwind]][Tailwind-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -211,3 +212,6 @@ Github Project Link: [https://github.com/Engineering-Good/Easyboard3](https://gi
 [Expo-url]: https://expo.dev/
 [Typescript]: https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white
 [Typescript-url]: https://www.typescriptlang.org/
+[Typescript-url]: https://www.typescriptlang.org/
+[Tailwind]: https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white
+[Tailwind-url]: https://www.nativewind.dev/overview/
