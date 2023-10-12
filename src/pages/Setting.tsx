@@ -9,9 +9,9 @@ import {
   Button,
 } from "react-native";
 import styles from "../styles/style";
-import PhotoSelect from "../shared/PhotoSelect";
+import PhotoSelect from "../common/PhotoSelect";
 import { useForm, Controller } from "react-hook-form";
-import LocationTextInput from "../shared/locationSelector/LocationInputText";
+import LocationTextInput from "../common/locationSelector/LocationInputText";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";

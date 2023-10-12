@@ -4,7 +4,7 @@ import styles from "../styles/style";
 import * as SecureStore from "expo-secure-store";
 import Constants from "expo-constants";
 import { Colors } from "../styles/color";
-import LocationInputButton from "../shared/locationSelector/LocationInputButton";
+import LocationInputButton from "../common/locationSelector/LocationInputButton";
 import call from "react-native-phone-call";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import RootStackParamList from "../types/RootStackParamList.type";
@@ -82,6 +82,7 @@ export default function Main({ navigation }: Props) {
         <>
           <View>
             <Text style={styles.header}>Go to where?</Text>
+            <View className="h-5 w-full bg-mrtNE"></View>
             <Pressable
               style={(prop) => cardShadowStyle(prop, Colors.success)}
               onPress={() => {

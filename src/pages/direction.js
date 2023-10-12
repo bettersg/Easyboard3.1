@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Dimensions, View, Text, Alert, Pressable } from "react-native";
 import MapView, { Circle, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
 import * as Location from "expo-location";
-import decodeGooglePlaces from "../shared/decodeGooglePolyline";
+import decodeGooglePlaces from "../common/decodeGooglePolyline";
 import { Colors } from "../styles/color";
 import { ScrollView } from "react-native-gesture-handler";
 import { CommonActions } from "@react-navigation/native";
