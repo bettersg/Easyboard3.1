@@ -1,4 +1,4 @@
-export default function decodeGooglePlaces(encodedPolyline) {
+export default function decodeGooglePlaces(encodedPolyline: string) {
   const poly = [];
   let index = 0,
     len = encodedPolyline.length;
@@ -33,7 +33,9 @@ export default function decodeGooglePlaces(encodedPolyline) {
 }
 
 class LatLong {
-  constructor(lat, long) {
+  latitude: number
+  longitude: number
+  constructor(lat: number, long: number) {
     this.latitude = lat;
     this.longitude = long;
   }

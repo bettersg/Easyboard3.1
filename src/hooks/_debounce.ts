@@ -5,7 +5,7 @@ import { useCallback, useEffect } from "react";
  * @param { any[] } deps - A dependency list.
  *
  */
-export const useDebounce = (fn, delay, deps) => {
+export const useDebounce = (fn: Function, delay: number, deps: any[]) => {
   /**
    * Store the memoized version of the callback.
    * It changes only when one of the dependencies has has changed.

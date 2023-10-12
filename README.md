@@ -60,11 +60,15 @@
 
 ## About The Project
 
-![image](https://github.com/Engineering-Good/Easyboard3/assets/3391733/b29520ad-6fc4-4000-866f-43ca7eb88951)
+<div align="center">
+  <img src="https://github.com/Engineering-Good/Easyboard3/assets/3391733/b29520ad-6fc4-4000-866f-43ca7eb88951" />
+</div>
 
 ### No solution comes with product first in mind. Here, we present our findings and thought processes that lead us to our solution.
 
-![EasyBoard App Usage](https://github.com/Engineering-Good/Easyboard3/assets/3391733/4d7044eb-e1c1-4006-ba3a-e042628d89b4)
+<div align="center">
+  <img width="100%" src="https://github.com/Engineering-Good/Easyboard3/assets/3391733/4d7044eb-e1c1-4006-ba3a-e042628d89b4" />
+</div>
 
 - Current products (e.g. Google Maps, Apple Maps):
   - Too complicated, typically cluttered with too many features
@@ -79,8 +83,9 @@
 
 ### Built With
 
-- [![React][React-native]][React-native-url]
-- [![Expo][Expo]][Expo-url]
+[![React][React-native]][React-native-url]
+[![Expo][Expo]][Expo-url]
+[![Typescript][Typescript]][Typescript-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -155,16 +160,18 @@ Feel free to reach out to [Richard](https://github.com/kooijmanrc) or [JR](https
 
 Github Project Link: [https://github.com/Engineering-Good/Easyboard3](https://github.com/Engineering-Good/Easyboard3)
 
-#### Notion
+#### Documentation & Tutorials
 
-| Source                                       | Link                                                                                                                    |
-| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| from engineering good1                       | [Notion Link](https://engineeringgood.notion.site/Easyboard-React-Tutorials-b8c16faa2b4d481db50e6342503e23ef)           |
-| from engineering good2                       | [Notion Link](https://www.notion.so/engineeringgood/Review-of-EasyBoard-2-0-497f8a96cb794f20b1516f663a4fa8c0)           |
-| from better sg                               | [Notion Link](https://www.notion.so/better/Team-Members-Dashboard-40b604433fda413a895d5514e907aafc)                     |
-| Knowledge Transfer, Feb 2023                 | [Video](https://drive.google.com/file/d/1BaVut7JaEv9o9DL-SgqqNA5_UwMtmYVC/view)                                         |
-| (Tutorial) Online react course               | [Udemy Course](https://nlbsg.udemy.com/course/react-native-the-practical-guide/learn/lecture/31197688?start=0#overview) |
-| (Tutorial) React Native getting started page | [React-Native Docs](https://reactnative.dev/docs/environment-setup)                                                     |
+| Source                                             | Link                                                                                                                    |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| From engineering good1                             | [Notion Link](https://engineeringgood.notion.site/Easyboard-React-Tutorials-b8c16faa2b4d481db50e6342503e23ef)           |
+| From engineering good2                             | [Notion Link](https://www.notion.so/engineeringgood/Review-of-EasyBoard-2-0-497f8a96cb794f20b1516f663a4fa8c0)           |
+| From better sg                                     | [Notion Link](https://www.notion.so/better/Team-Members-Dashboard-40b604433fda413a895d5514e907aafc)                     |
+| Knowledge Transfer, Feb 2023                       | [Video](https://drive.google.com/file/d/1BaVut7JaEv9o9DL-SgqqNA5_UwMtmYVC/view)                                         |
+| (Tutorial) Online react course                     | [Udemy Course](https://nlbsg.udemy.com/course/react-native-the-practical-guide/learn/lecture/31197688?start=0#overview) |
+| (Tutorial) React Native getting started page       | [React-Native Docs](https://reactnative.dev/docs/environment-setup)                                                     |
+| (Tutorial) Official TypeScript Handbook            | [Typescript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)                                          |
+| (Tutorial) Overview on using React with Typescript | [React + TypeScript Cheatsheet](https://github.com/typescript-cheatsheets/react#reacttypescript-cheatsheets)            |
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -202,3 +209,5 @@ Github Project Link: [https://github.com/Engineering-Good/Easyboard3](https://gi
 [React-native-url]: https://reactnative.dev/
 [Expo]: https://img.shields.io/badge/expo-1C1E24?style=for-the-badge&logo=expo&logoColor=#D04A37
 [Expo-url]: https://expo.dev/
+[Typescript]: https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white
+[Typescript-url]: https://www.typescriptlang.org/

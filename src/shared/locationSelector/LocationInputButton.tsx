@@ -1,17 +1,24 @@
 import { useEffect, useState } from "react";
 import { Pressable, Modal, Text, View, StyleSheet, Button } from "react-native";
 import styles from "../../styles/style";
-import GoogleMapView from "./googleMapView";
+import GoogleMapView from "./GoogleMapView";
 
-export default function LocationInputBtn({ onLocationSelect }) {
+export default function LocationInputButton({
+  onLocationSelect,
+}: {
+  onLocationSelect: any;
+}) {
   const [isModalOpen, setModalOpenState] = useState(false);
   const [location, setSelectedLocation] = useState(null);
 
-  const onLocationMarkerDrop = function (locationMarker) {
+  const onLocationMarkerDrop = function (locationMarker: any) {
     setSelectedLocation(locationMarker);
   };
 
-  const cardShadowStyle = function ({ pressed }, backgroundColor = "#fff") {
+  const cardShadowStyle = function (
+    { pressed }: { pressed: Boolean },
+    backgroundColor = "#fff"
+  ) {
     return [
       styles.pressableCard,
       {

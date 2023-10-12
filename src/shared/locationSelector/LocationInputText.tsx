@@ -1,16 +1,22 @@
 import { useEffect, useState } from "react";
 import { Pressable, Modal, Text, View, StyleSheet, Button } from "react-native";
-import GoogleMapView from "./googleMapView";
+import GoogleMapView from "./GoogleMapView";
 
-export default function LocationTextInput({ onLocationSelect, value }) {
+export default function LocationTextInput({
+  onLocationSelect,
+  value,
+}: {
+  onLocationSelect: any;
+  value: any;
+}) {
   const [isModalOpen, setModalOpenState] = useState(false);
-  const [location, setSelectedLocation] = useState(null);
+  const [location, setSelectedLocation] = useState<any | null>(null);
 
   useEffect(() => {
     setSelectedLocation(value);
   }, [value]);
 
-  const onLocationMarkerDrop = function (locationMarker) {
+  const onLocationMarkerDrop = function (locationMarker: any) {
     setSelectedLocation(locationMarker);
     onLocationSelect(locationMarker); // Propagate back to parent
   };

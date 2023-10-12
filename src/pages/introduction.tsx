@@ -1,8 +1,12 @@
 import { StatusBar } from "expo-status-bar";
 import { Pressable, Text, View } from "react-native";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styles from "../styles/style";
+import RootStackParamList from "../types/RootStackParamList.type";
 
-export default function Intro({ navigation }) {
+type Props = NativeStackScreenProps<RootStackParamList, "Introduction">;
+
+const Introduction = ({ navigation }: Props) => {
   return (
     <View style={styles.container}>
       <View>
@@ -21,7 +25,7 @@ export default function Intro({ navigation }) {
       <View style={styles.footer}>
         <Pressable
           style={styles.button}
-          onPress={() => navigation.navigate('Setting')}
+          onPress={() => navigation.navigate("Setting")}
         >
           <Text style={styles.buttonText}>Begin Setup</Text>
         </Pressable>
@@ -29,4 +33,6 @@ export default function Intro({ navigation }) {
       <StatusBar style="auto" />
     </View>
   );
-}
+};
+
+export default Introduction;

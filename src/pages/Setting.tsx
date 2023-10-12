@@ -9,14 +9,19 @@ import {
   Button,
 } from "react-native";
 import styles from "../styles/style";
-import PhotoSelect from "../shared/photoSelect";
+import PhotoSelect from "../shared/PhotoSelect";
 import { useForm, Controller } from "react-hook-form";
-import LocationTextInput from "../shared/locationSelector/locationInputText";
+import LocationTextInput from "../shared/locationSelector/LocationInputText";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import RootStackParamList from "../types/RootStackParamList.type";
 import Constants from "expo-constants";
+import { SettingKey, SettingValues } from "../types/SettingKey.type";
 
-export default function Setting({ navigation }) {
+type Props = NativeStackScreenProps<RootStackParamList, "Setting">;
+
+export default function Setting({ navigation }: Props) {
   const { control, setValue, watch, handleSubmit, trigger } = useForm({
     reValidateMode: "onChange",
     defaultValues: {
@@ -27,19 +32,19 @@ export default function Setting({ navigation }) {
       gotoFavAddrs: null,
       gotoFavAddrsName: "",
       gotoFavPhotoUri: [],
-    },
+    } as SettingValues,
   });
 
   const [isNewUser, setIsNewUser] = useState(true);
 
-  const setHouseImgUri = (imgUri) => {
+  const setHouseImgUri = (imgUri: string | string[]) => {
     setValue("housePhotoUri", imgUri, {
       shouldValidate: true,
       shouldDirty: true,
     });
   };
 
-  const setGotoFavPhotoUri = (imgUri) => {
+  const setGotoFavPhotoUri = (imgUri: string | string[]) => {
     setValue("gotoFavPhotoUri", imgUri, {
       shouldValidate: true,
       shouldDirty: true,
@@ -50,7 +55,7 @@ export default function Setting({ navigation }) {
     try {
       const data = JSON.stringify(watch());
       await SecureStore.setItemAsync(
-        Constants.expoConfig.extra.settingsStoredKey,
+        Constants?.expoConfig?.extra?.settingsStoredKey,
         data
       );
       Alert.alert("Data Saved");
@@ -69,13 +74,13 @@ export default function Setting({ navigation }) {
     (async () => {
       try {
         const storedData = await SecureStore.getItemAsync(
-          Constants.expoConfig.extra.settingsStoredKey
+          Constants?.expoConfig?.extra?.settingsStoredKey
         );
         if (storedData) {
           setIsNewUser(false);
           const settingsData = JSON.parse(storedData);
           Object.keys(settingsData).forEach((key) => {
-            setValue(key, settingsData[key]);
+            setValue(key as SettingKey, settingsData[key]);
           });
         }
       } catch (e) {
@@ -121,7 +126,6 @@ export default function Setting({ navigation }) {
                 keyboardType="numeric"
                 returnKeyType="done"
                 maxLength={8}
-                minLength={8}
               />
             )}
             name="careGiverPhoneNumber"
@@ -134,7 +138,7 @@ export default function Setting({ navigation }) {
             render={() => (
               <LocationTextInput
                 value={watch("houseAddrs")}
-                onLocationSelect={(markerLocation) =>
+                onLocationSelect={(markerLocation: any) =>
                   setValue("houseAddrs", markerLocation, {
                     shouldValidate: true,
                     shouldDirty: true,
@@ -180,7 +184,7 @@ export default function Setting({ navigation }) {
             render={() => (
               <LocationTextInput
                 value={watch("gotoFavAddrs")}
-                onLocationSelect={(markerLocation) =>
+                onLocationSelect={(markerLocation: any) =>
                   setValue("gotoFavAddrs", markerLocation, {
                     shouldValidate: true,
                     shouldDirty: true,
@@ -211,12 +215,15 @@ export default function Setting({ navigation }) {
               // Manually check the validation
               if (await trigger()) {
                 // Use the build in validation
-                handleSubmit(saveSettings(), () => {
-                  Alert.alert(
-                    "Field Errors",
-                    "There are some fields that have some errors."
-                  );
-                });
+                handleSubmit(
+                  async () => await saveSettings(),
+                  () => {
+                    Alert.alert(
+                      "Field Errors",
+                      "There are some fields that have some errors."
+                    );
+                  }
+                );
               } else {
                 Alert.alert(
                   "Field Errors",

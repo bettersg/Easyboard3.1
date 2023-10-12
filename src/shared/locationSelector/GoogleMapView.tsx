@@ -15,15 +15,20 @@ import {
 } from "../../apis/GooglePlacesAPI";
 import { useDebounce } from "../../hooks/_debounce";
 import Autocomplete from "react-native-autocomplete-input";
-import * as Location from 'expo-location'
+import * as Location from "expo-location";
+import LatLong from "../../interfaces/LatLong.interface";
 
-export default function GoogleMapView({ onLocationMarkerDrop, value }) {
+interface Props {
+  onLocationMarkerDrop: any;
+  value: any;
+}
+const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
   // Map View reference
-  const mapViewRef = useRef(null);
+  const mapViewRef = useRef<MapView>(null);
 
   // Search location states
   const [search, setSearch] = useState("");
-  const [predictions, setPredictions] = useState([]);
+  const [predictions, setPredictions] = useState<any>([]);
   const [hidePrediction, setHidePrediction] = useState(true);
   const [showUserLocation, setShowUserLocation] = useState(false);
 
@@ -42,14 +47,17 @@ export default function GoogleMapView({ onLocationMarkerDrop, value }) {
   };
   useDebounce(queryLocation, 600, [hidePrediction, search]);
 
-  const tapPrediction = async function (placeId, description) {
+  const tapPrediction = async function (
+    placeId: string | number,
+    description: string
+  ) {
     try {
       setSearch(description);
       setHidePrediction(true);
       Keyboard.dismiss();
       const { lng, lat } = await getGooglePlacesLocationAsync(placeId);
       setMarker({ description, latlng: { latitude: lat, longitude: lng } });
-      mapViewRef.current.animateToRegion(
+      mapViewRef.current?.animateToRegion(
         {
           longitude: lng,
           latitude: lat,
@@ -63,45 +71,51 @@ export default function GoogleMapView({ onLocationMarkerDrop, value }) {
     }
   };
 
-  const selectPosition = async function (coordinate){
-    try{
-      const description = await getGoogleReverseGeoCodingAsync(coordinate.latitude, coordinate.longitude);
+  const selectPosition = async function (coordinate: LatLong) {
+    try {
+      const description = await getGoogleReverseGeoCodingAsync(
+        coordinate.latitude,
+        coordinate.longitude
+      );
       setSearch(description);
       setMarker({ description, latlng: coordinate });
-    }catch(e){
+    } catch (e) {
       console.error(e);
     }
-  }
+  };
 
   // watch marker value change and update the parent component
   useEffect(() => {
-    if(marker) onLocationMarkerDrop(marker)
-  },[marker])
+    if (marker) onLocationMarkerDrop(marker);
+  }, [marker]);
 
   // This will emulate the didMount lifecycle in functional components.
   useEffect(() => {
     (async () => {
-      try{
+      try {
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
-          setErrorMsg("Permission to access location was denied");
+          // setErrorMsg("Permission to access location was denied");
+          console.error("Permission to access location was denied");
           return;
         }
         // if value prop is not null by checking if its truthy
-        const coords = value == true ? value.latlng : (await Location.getCurrentPositionAsync({})).coords
-        setShowUserLocation(true)
-        if(mapViewRef.current && !value)
-          mapViewRef.current.animateToRegion(
-            {
-              longitude: coords.longitude,
-              latitude: coords.latitude,
-              latitudeDelta: 0.09,
-              longitudeDelta: 0.09,
-            },
-            400
-          );
-      }catch(e){
-        console.error(e)
+        const coords =
+          value == true
+            ? value.latlng
+            : (await Location.getCurrentPositionAsync({})).coords;
+        setShowUserLocation(true);
+        mapViewRef.current?.animateToRegion(
+          {
+            longitude: coords.longitude,
+            latitude: coords.latitude,
+            latitudeDelta: 0.09,
+            longitudeDelta: 0.09,
+          },
+          400
+        );
+      } catch (e) {
+        console.error(e);
       }
     })();
   }, []);
@@ -117,12 +131,12 @@ export default function GoogleMapView({ onLocationMarkerDrop, value }) {
           data={predictions}
           value={search}
           onChangeText={(searchTerm) => {
-            setSearch(searchTerm)
-            setHidePrediction(false)
+            setSearch(searchTerm);
+            setHidePrediction(false);
           }}
           returnKeyType="done"
           flatListProps={{
-            keyExtractor: (item) => item.place_id,
+            keyExtractor: (item: any) => item.place_id,
             style: styles.autocompleteList,
             renderItem: ({ item }) => (
               <TouchableOpacity
@@ -151,7 +165,9 @@ export default function GoogleMapView({ onLocationMarkerDrop, value }) {
         }}
         showsUserLocation={showUserLocation}
         showsMyLocationButton
-        onPress={({nativeEvent: {coordinate}}) => selectPosition(coordinate) }
+        onPress={({ nativeEvent: { coordinate } }) =>
+          selectPosition(coordinate)
+        }
       >
         {marker != null && (
           <Marker
@@ -163,7 +179,7 @@ export default function GoogleMapView({ onLocationMarkerDrop, value }) {
       </MapView>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -176,6 +192,7 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
   },
+  autocompleteList: {},
   autocompleteContainer: {
     paddingHorizontal: 10,
     paddingTop: 20,
@@ -210,3 +227,4 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
 });
+export default GoogleMapView;

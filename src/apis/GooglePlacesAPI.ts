@@ -5,8 +5,8 @@ const GOOGLE_MAPS_API_BASE_URL = "https://maps.googleapis.com/maps/api";
 
 // no good way to store this without a backend. Since regardless it is expose.
 // PS: both ios and android will be using the same key for now (21/09/2022)
-const apiKey = Constants.expoConfig.extra.googleMapsAPI;
-export async function queryGooglePlacesAsync(searchTerm) {
+const apiKey = Constants?.expoConfig?.extra?.googleMapsAPI;
+export async function queryGooglePlacesAsync(searchTerm: string) {
   if (searchTerm.trim())
     try {
       const result = await axios.request({
@@ -24,7 +24,7 @@ export async function queryGooglePlacesAsync(searchTerm) {
     }
 }
 
-export async function getGooglePlacesLocationAsync(placeId) {
+export async function getGooglePlacesLocationAsync(placeId: string | number) {
   try {
     const result = await axios.request({
       method: "post",
@@ -45,7 +45,7 @@ export async function getGooglePlacesLocationAsync(placeId) {
   }
 }
 
-export async function getGoogleReverseGeoCodingAsync(latitude, longitude) {
+export async function getGoogleReverseGeoCodingAsync(latitude: number, longitude: number) {
   try {
     const result = await axios.request({
       method: "get",

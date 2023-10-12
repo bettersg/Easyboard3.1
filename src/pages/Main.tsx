@@ -4,17 +4,21 @@ import styles from "../styles/style";
 import * as SecureStore from "expo-secure-store";
 import Constants from "expo-constants";
 import { Colors } from "../styles/color";
-import LocationInputBtn from "../shared/locationSelector/locationInputBtn";
+import LocationInputButton from "../shared/locationSelector/LocationInputButton";
 import call from "react-native-phone-call";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
+import RootStackParamList from "../types/RootStackParamList.type";
 
-export default function Main({ navigation }) {
-  const [userSetting, setUserSetting] = useState(null);
-  const [location, setMarkerLocation] = useState(null);
+type Props = NativeStackScreenProps<RootStackParamList, "Main">;
+
+export default function Main({ navigation }: Props) {
+  const [userSetting, setUserSetting] = useState<any>(null);
+  const [location, setMarkerLocation] = useState<any>(null);
   useEffect(() => {
     (async () => {
       try {
         const storedData = await SecureStore.getItemAsync(
-          Constants.expoConfig.extra.settingsStoredKey
+          Constants?.expoConfig?.extra?.settingsStoredKey
         );
         if (storedData) setUserSetting(JSON.parse(storedData));
       } catch (e) {
@@ -27,7 +31,7 @@ export default function Main({ navigation }) {
     const unsubscribe = navigation.addListener("focus", async () => {
       try {
         const storedData = await SecureStore.getItemAsync(
-          Constants.expoConfig.extra.settingsStoredKey
+          Constants?.expoConfig?.extra?.settingsStoredKey
         );
         if (storedData) setUserSetting(JSON.parse(storedData));
       } catch (e) {
@@ -39,15 +43,18 @@ export default function Main({ navigation }) {
   }, [navigation]);
 
   useEffect(() => {
-    if(location != null){
+    if (location != null) {
       navigation.navigate("CalcTransit", {
         destinationName: location.description,
         destination: location,
       });
     }
-  }, [location])
+  }, [location]);
 
-  const cardShadowStyle = function ({ pressed }, backgroundColor = Colors.white) {
+  const cardShadowStyle = function (
+    { pressed }: { pressed: Boolean },
+    backgroundColor = Colors.white
+  ) {
     return [
       styles.pressableCard,
       {
@@ -74,11 +81,7 @@ export default function Main({ navigation }) {
       {userSetting && (
         <>
           <View>
-            <Text
-              style={styles.header}
-            >
-              Go to where?
-            </Text>
+            <Text style={styles.header}>Go to where?</Text>
             <Pressable
               style={(prop) => cardShadowStyle(prop, Colors.success)}
               onPress={() => {
@@ -117,7 +120,9 @@ export default function Main({ navigation }) {
                   style={styles.cardImg}
                 />
                 <View style={styles.cardBody}>
-                  <Text style={styles.cardTitleText}>{userSetting.gotoFavAddrsName}</Text>
+                  <Text style={styles.cardTitleText}>
+                    {userSetting.gotoFavAddrsName}
+                  </Text>
                   <Text style={styles.cardBodyText}>
                     {userSetting.gotoFavAddrs.description}
                   </Text>
@@ -125,8 +130,8 @@ export default function Main({ navigation }) {
               </View>
             </Pressable>
 
-            <LocationInputBtn
-              onLocationSelect={(markerLocation) =>
+            <LocationInputButton
+              onLocationSelect={(markerLocation: any) =>
                 setMarkerLocation(markerLocation)
               }
             />

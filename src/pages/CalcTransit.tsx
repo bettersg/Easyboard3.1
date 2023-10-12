@@ -1,3 +1,5 @@
+// Note: It looks like CityMapper has stopped?
+// https://citymapper.com/news/2596/sdks-and-apis-come-to-an-end
 import { useEffect, useState } from "react";
 import {
   Pressable,
@@ -6,20 +8,26 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
+import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { getDirectionsAsync } from "../apis/CityMapperAPI";
 import styles from "../styles/style";
 import * as Location from "expo-location";
 import { Colors } from "../styles/color";
 import { CommonActions } from "@react-navigation/native";
+import RootStackParamList from "../types/RootStackParamList.type";
+import { CityMapperRoute } from "../apis/CityMapperAPI.interface";
 
-export default function CalcTransit({ navigation, route }) {
+type Props = NativeStackScreenProps<RootStackParamList, "CalcTransit">;
+
+export default function CalcTransit({ navigation, route }: Props) {
   const { destination, destinationName } = route.params;
-  const [transits, setTransits] = useState([]);
-  const [displayRoutes, setDisplayRoutes] = useState([]);
-  const [interchanges, setInterchanges] = useState([]);
+  const [transits, setTransits] = useState<CityMapperRoute[]>([]);
+  const [displayRoutes, setDisplayRoutes] = useState<any>([]);
+  const [interchanges, setInterchanges] = useState<string[][]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currLocation, setCurrLocation] = useState(null);
-  const cardShadowStyle = function ({ pressed }) {
+  const [currLocation, setCurrLocation] =
+    useState<Location.LocationObjectCoords | null>(null);
+  const cardShadowStyle = ({ pressed }: { pressed: Boolean }) => {
     return [
       styles.pressableCard,
       {
@@ -29,7 +37,7 @@ export default function CalcTransit({ navigation, route }) {
       },
     ];
   };
-  const mrtTagStyle = function (mrtLine) {
+  const mrtTagStyle = function (mrtLine: string) {
     switch (mrtLine) {
       case "NE":
         return [styles.transitTag, styles.transitTagNE];
@@ -48,13 +56,17 @@ export default function CalcTransit({ navigation, route }) {
     }
   };
   // Function to compute the route navigation tags and the associated interchanges
-  const computeRoutings = function (lines) {
+  const computeRoutings = function (lines: CityMapperRoute[]) {
     const routings = lines.map((route) => {
-      const computedTransit = route.legs.reduce(
+      interface ComputedTransit {
+        interchanges: string[];
+        transitTags: React.ReactElement[];
+      }
+      const computedTransit: ComputedTransit = route.legs.reduce(
         (acc, curr) => {
           if (
             curr["travel_mode"] == "transit" &&
-            curr["vehicle_types"] == "bus"
+            curr["vehicle_types"].includes("bus")
           ) {
             let busNumber = curr.services[0].name;
             if (curr.services.length > 1) {
@@ -70,7 +82,7 @@ export default function CalcTransit({ navigation, route }) {
             );
           } else if (
             curr["travel_mode"] == "transit" &&
-            curr["vehicle_types"] == "metro"
+            curr["vehicle_types"].includes("metro")
           ) {
             let trainLine = curr.services[0].name;
             if (curr.services.length > 1) {
@@ -78,7 +90,7 @@ export default function CalcTransit({ navigation, route }) {
                 trainLine += `${curr.services[i]}`;
               }
             }
-            acc.interchanges.push(`Train ${trainLine}: ${curr.stops[0].name}`);
+            acc.interchanges.push(`Train ${trainLine}: ${curr.stops[0]?.name}`);
             acc.transitTags.push(
               <View style={mrtTagStyle(trainLine)} key={trainLine}>
                 <Text style={styles.transitTagText}>{trainLine}</Text>
@@ -89,7 +101,10 @@ export default function CalcTransit({ navigation, route }) {
           }
           return acc;
         },
-        { transitTags: [], interchanges: [] }
+        {
+          transitTags: [] as React.ReactElement[],
+          interchanges: [] as string[],
+        }
       );
       if (computedTransit.transitTags.length > 0) {
         computedTransit.transitTags = computedTransit.transitTags.flatMap(
@@ -114,8 +129,8 @@ export default function CalcTransit({ navigation, route }) {
       }
       return computedTransit;
     });
-    setDisplayRoutes(routings.map(x => x.transitTags)); // This is to show the tags
-    setInterchanges(routings.map(x => x.interchanges)); // This is to pass to the directions map to show the next interchange to take
+    setDisplayRoutes(routings.map((x) => x.transitTags)); // This is to show the tags
+    setInterchanges(routings.map((x) => x.interchanges)); // This is to pass to the directions map to show the next interchange to take
   };
 
   useEffect(() => {
@@ -126,7 +141,8 @@ export default function CalcTransit({ navigation, route }) {
         } = destination;
         let { status } = await Location.requestForegroundPermissionsAsync();
         if (status !== "granted") {
-          setErrorMsg("Permission to access location was denied");
+          // setErrorMsg("Permission to access location was denied");
+          console.error("Permission to access location was denied");
           return;
         }
         // if value prop is not null by checking if its truthy
