@@ -216,15 +216,12 @@ export default function Setting({ navigation }: Props) {
               // Manually check the validation
               if (await trigger()) {
                 // Use the build in validation
-                handleSubmit(
-                  async () => await saveSettings(),
-                  () => {
-                    Alert.alert(
-                      "Field Errors",
-                      "There are some fields that have some errors."
-                    );
-                  }
-                );
+                handleSubmit(saveSettings(), () => {
+                  Alert.alert(
+                    "Field Errors",
+                    "There are some fields that have some errors."
+                  );
+                });
               } else {
                 Alert.alert(
                   "Field Errors",
