@@ -2,7 +2,7 @@ import axios from "axios";
 import Constants from "expo-constants";
 
 const CITY_MAPPER_API_URL = "https://api.external.citymapper.com/api/1";
-const apiKey = Constants.manifest.extra.cityMapperAPI;
+const apiKey = Constants.expoConfig.extra.cityMapperAPI;
 export async function getDirectionsAsync(
   originLat,
   originLong,

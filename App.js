@@ -27,12 +27,12 @@ export default function App() {
     (async () => {
       try {
         const storedData = await SecureStore.getItemAsync(
-          Constants.manifest.extra.settingsStoredKey
+          Constants.expoConfig.extra.settingsStoredKey
         );
         // clearing the settings if its all defult values
         if (JSON.stringify(settingsDefaultValues) == storedData) {
           await SecureStore.setItemAsync(
-            Constants.manifest.extra.settingsStoredKey,
+            Constants.expoConfig.extra.settingsStoredKey,
             ''
           );
         } else if (storedData) {

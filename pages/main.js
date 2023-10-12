@@ -14,7 +14,7 @@ export default function Main({ navigation }) {
     (async () => {
       try {
         const storedData = await SecureStore.getItemAsync(
-          Constants.manifest.extra.settingsStoredKey
+          Constants.expoConfig.extra.settingsStoredKey
         );
         if (storedData) setUserSetting(JSON.parse(storedData));
       } catch (e) {
@@ -27,7 +27,7 @@ export default function Main({ navigation }) {
     const unsubscribe = navigation.addListener("focus", async () => {
       try {
         const storedData = await SecureStore.getItemAsync(
-          Constants.manifest.extra.settingsStoredKey
+          Constants.expoConfig.extra.settingsStoredKey
         );
         if (storedData) setUserSetting(JSON.parse(storedData));
       } catch (e) {

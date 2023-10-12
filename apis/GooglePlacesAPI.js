@@ -5,7 +5,7 @@ const GOOGLE_MAPS_API_BASE_URL = "https://maps.googleapis.com/maps/api";
 
 // no good way to store this without a backend. Since regardless it is expose.
 // PS: both ios and android will be using the same key for now (21/09/2022)
-const apiKey = Constants.manifest.extra.googleMapsAPI;
+const apiKey = Constants.expoConfig.extra.googleMapsAPI;
 export async function queryGooglePlacesAsync(searchTerm) {
   if (searchTerm.trim())
     try {

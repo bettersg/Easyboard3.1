@@ -50,7 +50,7 @@ export default function Setting({ navigation }) {
     try {
       const data = JSON.stringify(watch());
       await SecureStore.setItemAsync(
-        Constants.manifest.extra.settingsStoredKey,
+        Constants.expoConfig.extra.settingsStoredKey,
         data
       );
       Alert.alert("Data Saved");
@@ -69,7 +69,7 @@ export default function Setting({ navigation }) {
     (async () => {
       try {
         const storedData = await SecureStore.getItemAsync(
-          Constants.manifest.extra.settingsStoredKey
+          Constants.expoConfig.extra.settingsStoredKey
         );
         if (storedData) {
           setIsNewUser(false);
