@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { Pressable, Text, Image, View } from "react-native";
+import {
+  ScrollView,
+  Text,
+  Image,
+  View,
+  SafeAreaView,
+  Alert,
+} from "react-native";
 import styles from "../styles/style";
 import * as SecureStore from "expo-secure-store";
 import Constants from "expo-constants";
@@ -8,6 +15,9 @@ import LocationInputButton from "../common/locationSelector/LocationInputButton"
 import call from "react-native-phone-call";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import RootStackParamList from "../types/RootStackParamList.type";
+import EasyboardButton from "../common/components/EasyboardButton";
+import SavedLocationCard from "../common/components/SavedLocationCard";
+import Page from "../common/components/Page";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Main">;
 
@@ -51,20 +61,6 @@ export default function Main({ navigation }: Props) {
     }
   }, [location]);
 
-  const cardShadowStyle = function (
-    { pressed }: { pressed: Boolean },
-    backgroundColor = Colors.white
-  ) {
-    return [
-      styles.pressableCard,
-      {
-        shadowColor: pressed ? Colors.white : Colors.black,
-        backgroundColor: backgroundColor,
-        borderWidth: pressed ? 0.8 : 1,
-      },
-    ];
-  };
-
   const callCareTaker = async function () {
     try {
       await call({
@@ -76,60 +72,44 @@ export default function Main({ navigation }: Props) {
       console.error(e);
     }
   };
+  const onShareLocation = () => {
+    Alert.alert("Feature coming soon");
+  };
   return (
-    <View style={styles.container}>
+    <Page>
       {userSetting && (
         <>
           <View>
-            <Text style={styles.header}>Go to where?</Text>
-            <View className="h-5 w-full bg-mrtNE"></View>
-            <Pressable
-              style={(prop) => cardShadowStyle(prop, Colors.success)}
+            <Text className="font-bold text-xl mb-3">
+              Where do you want to go?
+            </Text>
+            <SavedLocationCard
+              borderColor="border-cyan-800"
               onPress={() => {
                 navigation.navigate("CalcTransit", {
                   destinationName: "Home",
                   destination: userSetting.houseAddrs,
                 });
               }}
-            >
-              <View style={styles.horizontalCardContainer}>
-                <Image
-                  source={{ uri: userSetting.housePhotoUri }}
-                  style={styles.cardImg}
-                />
-                <View style={styles.cardBody}>
-                  <Text style={styles.cardTitleText}>Home</Text>
-                  <Text style={styles.cardBodyText}>
-                    {userSetting.houseAddrs.description}
-                  </Text>
-                </View>
-              </View>
-            </Pressable>
-
-            <Pressable
-              style={(prop) => cardShadowStyle(prop, Colors.primary)}
+              title="Home"
+              subtitle={userSetting.houseAddrs.description}
+              imageUri={userSetting.housePhotoUri}
+              iconName="home"
+            />
+            <View className="h-2" />
+            <SavedLocationCard
+              borderColor="border-secondary"
               onPress={() => {
                 navigation.navigate("CalcTransit", {
                   destination: userSetting.gotoFavAddrs,
                   destinationName: userSetting.gotoFavAddrsName,
                 });
               }}
-            >
-              <View style={styles.horizontalCardContainer}>
-                <Image
-                  source={{ uri: userSetting.gotoFavPhotoUri[0] }}
-                  style={styles.cardImg}
-                />
-                <View style={styles.cardBody}>
-                  <Text style={styles.cardTitleText}>
-                    {userSetting.gotoFavAddrsName}
-                  </Text>
-                  <Text style={styles.cardBodyText}>
-                    {userSetting.gotoFavAddrs.description}
-                  </Text>
-                </View>
-              </View>
-            </Pressable>
+              title={userSetting.gotoFavAddrsName}
+              subtitle={userSetting.gotoFavAddrs.description}
+              imageUri={userSetting.gotoFavPhotoUri[0]}
+              iconName="map"
+            />
 
             <LocationInputButton
               onLocationSelect={(markerLocation: any) =>
@@ -138,39 +118,23 @@ export default function Main({ navigation }: Props) {
             />
           </View>
 
-          <View
-            style={[
-              styles.flexHorizontal,
-              styles.footer,
-              { justifyContent: "space-between" },
-            ]}
-          >
-            <Pressable
-              style={({ pressed }) => [
-                styles.mainFooterBtn,
-                {
-                  backgroundColor: pressed ? Colors.errorDarker : Colors.error,
-                },
-              ]}
+          <View className="flex flex-col">
+            <EasyboardButton
+              type="bg-primary"
               onPress={callCareTaker}
-            >
-              <Text style={styles.mainFooterBtnText}>Call my caregiver</Text>
-            </Pressable>
-            <Pressable
-              style={({ pressed }) => [
-                styles.mainFooterBtn,
-                {
-                  backgroundColor: pressed
-                    ? Colors.warningDarker
-                    : Colors.warning,
-                },
-              ]}
-            >
-              <Text style={styles.mainFooterBtnText}>Share Location</Text>
-            </Pressable>
+              title="CALL CAREGIVER"
+              iconName="phone-call"
+            />
+            <View className="h-2" />
+            <EasyboardButton
+              type="bg-secondary"
+              onPress={onShareLocation}
+              title="SHARE LOCATION"
+              iconName="map-pin"
+            />
           </View>
         </>
       )}
-    </View>
+    </Page>
   );
 }

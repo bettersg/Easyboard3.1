@@ -3,12 +3,13 @@ import { Pressable, Text, View } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import styles from "../styles/style";
 import RootStackParamList from "../types/RootStackParamList.type";
+import Page from "../common/components/Page";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Introduction">;
 
 const Introduction = ({ navigation }: Props) => {
   return (
-    <View style={styles.container}>
+    <Page>
       <View>
         <Text style={styles.boldText}>
           This app is designed to empower Persons with Intellectual Disabilities
@@ -31,7 +32,7 @@ const Introduction = ({ navigation }: Props) => {
         </Pressable>
       </View>
       <StatusBar style="auto" />
-    </View>
+    </Page>
   );
 };
 

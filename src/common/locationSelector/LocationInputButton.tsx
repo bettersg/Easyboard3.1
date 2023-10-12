@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Pressable, Modal, Text, View, StyleSheet, Button } from "react-native";
 import styles from "../../styles/style";
 import GoogleMapView from "./GoogleMapView";
+import EasyboardButton from "../components/EasyboardButton";
 
 export default function LocationInputButton({
   onLocationSelect,
@@ -30,7 +31,7 @@ export default function LocationInputButton({
   };
 
   return (
-    <View>
+    <View className="py-2">
       <Modal
         presentationStyle="pageSheet"
         statusBarTranslucent={true}
@@ -62,13 +63,12 @@ export default function LocationInputButton({
           />
         </View>
       </Modal>
-
-      <Pressable
-        style={(prop) => cardShadowStyle(prop)}
+      <EasyboardButton
+        type="bg-white"
         onPress={() => setModalOpenState(true)}
-      >
-        <Text style={styles.cardTitleOnlyText}>Other Location</Text>
-      </Pressable>
+        title="Other Location"
+        iconName="chevron-right"
+      />
     </View>
   );
 }

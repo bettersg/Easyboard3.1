@@ -18,6 +18,7 @@ import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import RootStackParamList from "../types/RootStackParamList.type";
 import Constants from "expo-constants";
 import { SettingKey, SettingValues } from "../types/SettingKey.type";
+import Page from "../common/components/Page";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Setting">;
 
@@ -90,7 +91,7 @@ export default function Setting({ navigation }: Props) {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <Page>
       <ScrollView>
         <View>
           <Text style={styles.label}>What is your name?</Text>
@@ -237,6 +238,6 @@ export default function Setting({ navigation }: Props) {
         </View>
       </ScrollView>
       <StatusBar style="auto" />
-    </View>
+    </Page>
   );
 }
