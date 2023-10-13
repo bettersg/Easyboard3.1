@@ -1,16 +1,7 @@
 import { useEffect, useState } from "react";
-import {
-  ScrollView,
-  Text,
-  Image,
-  View,
-  SafeAreaView,
-  Alert,
-} from "react-native";
-import styles from "../styles/style";
+import { Text, View, Alert } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import Constants from "expo-constants";
-import { Colors } from "../styles/color";
 import LocationInputButton from "../common/locationSelector/LocationInputButton";
 import call from "react-native-phone-call";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -107,10 +98,9 @@ export default function Main({ navigation }: Props) {
               }}
               title={userSetting.gotoFavAddrsName}
               subtitle={userSetting.gotoFavAddrs.description}
-              imageUri={userSetting.gotoFavPhotoUri[0]}
+              imageUri={userSetting.gotoFavPhotoUri}
               iconName="map"
             />
-
             <LocationInputButton
               onLocationSelect={(markerLocation: any) =>
                 setMarkerLocation(markerLocation)

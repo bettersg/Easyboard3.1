@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Pressable, Modal, Text, View, StyleSheet, Button } from "react-native";
 import GoogleMapView from "./GoogleMapView";
+import Location from "../../interfaces/Location.interface";
+import LocationSelectButton from "../components/LocationSelectButton";
 
 export default function LocationTextInput({
   onLocationSelect,
@@ -10,7 +12,7 @@ export default function LocationTextInput({
   value: any;
 }) {
   const [isModalOpen, setModalOpenState] = useState(false);
-  const [location, setSelectedLocation] = useState<any | null>(null);
+  const [location, setSelectedLocation] = useState<Location | null>(null);
 
   useEffect(() => {
     setSelectedLocation(value);
@@ -54,11 +56,10 @@ export default function LocationTextInput({
         </View>
       </Modal>
 
-      <Pressable onPress={() => setModalOpenState(true)}>
-        <Text style={styles.inputBtn}>
-          {location == null ? "Select location ..." : location.description}
-        </Text>
-      </Pressable>
+      <LocationSelectButton
+        onPress={() => setModalOpenState(true)}
+        value={location?.description}
+      />
     </View>
   );
 }
@@ -74,7 +75,6 @@ const styles = StyleSheet.create({
     borderColor: "#000",
     borderWidth: 1,
     padding: 10,
-    marginVertical: 5,
     color: "#000",
   },
   doneBtnContainer: {

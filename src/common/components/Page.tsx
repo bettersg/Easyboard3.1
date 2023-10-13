@@ -15,7 +15,10 @@ const Page = ({ children, disableScroll }: Props) => (
     {disableScroll ? (
       <View style={styles.container}>{children}</View>
     ) : (
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
         {children}
       </ScrollView>
     )}

@@ -12,7 +12,9 @@ import "react-native-gesture-handler";
 import Direction from "./src/pages/direction";
 
 import RootStackParamList from "./src/types/RootStackParamList.type";
-import { SettingKey, SettingValues } from "./src/types/SettingKey.type";
+import { SettingValues } from "./src/types/SettingKey.type";
+import Page from "./src/common/components/Page";
+import LoadingIndicator from "./src/common/components/LoadingIndicator";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const settingsDefaultValues: SettingValues = {
@@ -26,6 +28,7 @@ const settingsDefaultValues: SettingValues = {
 };
 
 export default function App() {
+  const [isLoading, setIsLoading] = useState(true);
   const [hasSetting, setHasSettings] = useState(false);
   useEffect(() => {
     (async () => {
@@ -44,9 +47,19 @@ export default function App() {
         }
       } catch (e) {
         console.error(e);
+      } finally {
+        setIsLoading(false);
       }
     })();
   }, []);
+
+  if (isLoading) {
+    return (
+      <Page>
+        <LoadingIndicator />
+      </Page>
+    );
+  }
 
   return (
     <NavigationContainer>
@@ -56,7 +69,7 @@ export default function App() {
             <Stack.Screen
               name="Introduction"
               component={Introduction}
-              options={{ title: "Welcome to EasyBoard" }}
+              options={{ title: "Welcome" }}
             />
             <Stack.Screen
               name="Main"

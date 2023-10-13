@@ -1,13 +1,14 @@
 import { Image, Pressable, Text, View } from "react-native";
 import { styled } from "nativewind";
 import { Feather } from "@expo/vector-icons";
+import { useMemo } from "react";
 
 const StyledPressable = styled(Pressable);
 
 interface Props {
   borderColor: string;
   onPress: () => void;
-  title: string;
+  title: "Home" | string;
   subtitle: string;
   imageUri: string;
   iconName?: "home" | "globe" | "help-circle" | "map" | "star";
@@ -24,6 +25,22 @@ const SavedLocationCard = ({
   iconName = "help-circle",
   imageUri,
 }: Props) => {
+  const renderBackupImage = useMemo(() => {
+    if (title === "Home") {
+      return (
+        <Image
+          source={require("../../../assets/default-home-image.jpg")}
+          className="w-full h-full overflow-hidden"
+        />
+      );
+    }
+    return (
+      <Image
+        source={require("../../../assets/default-other-image.jpg")}
+        className="w-full h-full overflow-hidden"
+      />
+    );
+  }, [title]);
   return (
     <StyledPressable
       className={[
@@ -32,18 +49,26 @@ const SavedLocationCard = ({
       ].join(" ")}
       onPress={onPress}
     >
-      <Image
-        source={{ uri: imageUri }}
-        className="w-full h-full overflow-hidden"
-      />
+      {imageUri ? (
+        <Image
+          source={{ uri: imageUri }}
+          className="w-full h-full overflow-hidden"
+        />
+      ) : (
+        renderBackupImage
+      )}
       <View
         style={{ backgroundColor: "rgba(0,0, 0, 0.7)" }}
         className="bg-slate-600 bg-opacity-10 absolute bottom-0 left-0 right-0 flex flex-row items-center px-3 py-1 rounded-b-sm"
       >
         {iconName && <Feather name={iconName} size={36} color="white" />}
-        <View className="px-3">
-          <Text className={`text-white font-bold text-lg `}>{title}</Text>
-          <Text className={`text-white pb-1`}>{subtitle}</Text>
+        <View className="pl-3">
+          <Text numberOfLines={2} className={`text-white font-bold text-lg `}>
+            {title}
+          </Text>
+          <Text numberOfLines={2} className={`text-white pb-1 pr-5`}>
+            {subtitle}
+          </Text>
         </View>
       </View>
     </StyledPressable>

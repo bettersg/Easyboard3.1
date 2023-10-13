@@ -1,16 +1,13 @@
 import { StatusBar } from "expo-status-bar";
-import {
-  Pressable,
-  Text,
-  TextInput,
-  View,
-  ScrollView,
-  Alert,
-  Button,
-} from "react-native";
-import styles from "../styles/style";
+import { Text, View, ScrollView, Alert } from "react-native";
 import PhotoSelect from "../common/PhotoSelect";
-import { useForm, Controller } from "react-hook-form";
+import {
+  useForm,
+  Controller,
+  FieldError,
+  FieldErrorsImpl,
+  Merge,
+} from "react-hook-form";
 import LocationTextInput from "../common/locationSelector/LocationInputText";
 import * as SecureStore from "expo-secure-store";
 import { useEffect, useState } from "react";
@@ -19,11 +16,23 @@ import RootStackParamList from "../types/RootStackParamList.type";
 import Constants from "expo-constants";
 import { SettingKey, SettingValues } from "../types/SettingKey.type";
 import Page from "../common/components/Page";
+import EasyboardTextInput from "../common/components/EasyboardTextInput";
+import EasyboardButton from "../common/components/EasyboardButton";
+import LoadingIndicator from "../common/components/LoadingIndicator";
 
 type Props = NativeStackScreenProps<RootStackParamList, "Setting">;
 
+const PHONE_NUMBER_LENGTH = 8;
+
 export default function Setting({ navigation }: Props) {
-  const { control, setValue, watch, handleSubmit, trigger } = useForm({
+  const {
+    control,
+    setValue,
+    watch,
+    handleSubmit,
+    trigger,
+    formState: { errors },
+  } = useForm({
     reValidateMode: "onChange",
     defaultValues: {
       name: null,
@@ -32,10 +41,11 @@ export default function Setting({ navigation }: Props) {
       housePhotoUri: null,
       gotoFavAddrs: null,
       gotoFavAddrsName: "",
-      gotoFavPhotoUri: [],
+      gotoFavPhotoUri: null,
     } as SettingValues,
   });
 
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isNewUser, setIsNewUser] = useState(true);
 
   const setHouseImgUri = (imgUri: string | string[]) => {
@@ -50,6 +60,24 @@ export default function Setting({ navigation }: Props) {
       shouldValidate: true,
       shouldDirty: true,
     });
+  };
+
+  const onSavePressed = async () => {
+    // Manually check the validation
+    if (await trigger()) {
+      // Use the build in validation
+      handleSubmit(saveSettings(), () => {
+        Alert.alert(
+          "Field Errors",
+          "There are some fields that have some errors."
+        );
+      });
+    } else {
+      Alert.alert(
+        "Field Errors",
+        "There are some fields that have some errors."
+      );
+    }
   };
 
   const saveSettings = async function () {
@@ -71,6 +99,31 @@ export default function Setting({ navigation }: Props) {
     }
   };
 
+  /**
+   * Render error if field is invalid for submission
+   * @param err FieldError native from React Hook Forms
+   * @param display User-facing field name
+   * @returns React Component
+   */
+  const renderError = (
+    err: FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined,
+    display: string
+  ) => {
+    if (err) {
+      let errorString = "";
+      if (err.type === "required") {
+        errorString = `${display} is required.`;
+      } else if (err.type === "minLength") {
+        errorString = `${display} has to be at least ${PHONE_NUMBER_LENGTH} digits.`;
+      }
+      return (
+        <View className="mt-1">
+          <Text className="text-error font-light">{errorString}</Text>
+        </View>
+      );
+    }
+  };
+
   useEffect(() => {
     (async () => {
       try {
@@ -86,152 +139,188 @@ export default function Setting({ navigation }: Props) {
         }
       } catch (e) {
         console.error(e);
+      } finally {
+        setIsLoading(false);
       }
     })();
   }, []);
+
+  if (isLoading) {
+    return (
+      <Page>
+        <LoadingIndicator />
+      </Page>
+    );
+  }
 
   return (
     <Page>
       <ScrollView>
         <View>
-          <Text style={styles.label}>What is your name?</Text>
-          <Controller
-            control={control}
-            rules={{ required: true }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={styles.input}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                placeholder="Name"
-                returnKeyType="done"
-              />
+          {/* Name Input */}
+          <View className="py-2">
+            <Text className="text-lg text-black mb-2">What is your name?</Text>
+            <Controller
+              control={control}
+              rules={{ required: true }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <EasyboardTextInput
+                  autoComplete="off"
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  placeholder="Name"
+                  returnKeyType="done"
+                />
+              )}
+              name="name"
+            />
+            {renderError(errors.name, "Name")}
+          </View>
+          {/* Caregiver Phone Number */}
+          <View className="py-2">
+            <Text className="text-lg text-black mb-2">
+              What is your caregiver's phone number?
+            </Text>
+            <Controller
+              control={control}
+              rules={{
+                required: true,
+                minLength: PHONE_NUMBER_LENGTH,
+                maxLength: PHONE_NUMBER_LENGTH,
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <EasyboardTextInput
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  placeholder="Phone number"
+                  keyboardType="numeric"
+                  returnKeyType="done"
+                  maxLength={8}
+                />
+              )}
+              name="careGiverPhoneNumber"
+            />
+            {renderError(
+              errors.careGiverPhoneNumber,
+              "Caregiver's Phone Number"
             )}
-            name="name"
-          />
+          </View>
+          {/* Home Address */}
+          <View className="py-2">
+            <Text className="text-lg text-black mb-2">Where is your home?</Text>
+            <Controller
+              control={control}
+              rules={{ required: true }}
+              render={() => (
+                <LocationTextInput
+                  value={watch("houseAddrs")}
+                  onLocationSelect={(markerLocation: any) =>
+                    setValue("houseAddrs", markerLocation, {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    })
+                  }
+                />
+              )}
+              name="houseAddrs"
+            />
+            {renderError(errors.houseAddrs, "Home Address")}
+          </View>
+          {/* Home Address - Photo */}
+          <View className="py-2">
+            <Text className="text-lg text-black mb-2">
+              Upload reference image of home
+            </Text>
+            <Controller
+              control={control}
+              render={() => (
+                <PhotoSelect
+                  imgChange={setHouseImgUri}
+                  value={watch("housePhotoUri")}
+                />
+              )}
+              name="housePhotoUri"
+            />
+          </View>
 
-          <Text style={styles.label}>
-            What is your caregiver's phone number?
-          </Text>
-          <Controller
-            control={control}
-            rules={{ required: true, minLength: 8, maxLength: 8 }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={styles.input}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                placeholder="Phone number"
-                keyboardType="numeric"
-                returnKeyType="done"
-                maxLength={8}
-              />
-            )}
-            name="careGiverPhoneNumber"
-          />
-
-          <Text style={styles.label}>Where is your home?</Text>
-          <Controller
-            control={control}
-            rules={{ required: true }}
-            render={() => (
-              <LocationTextInput
-                value={watch("houseAddrs")}
-                onLocationSelect={(markerLocation: any) =>
-                  setValue("houseAddrs", markerLocation, {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                  })
-                }
-              />
-            )}
-            name="houseAddrs"
-          />
-
-          <Controller
-            control={control}
-            render={() => (
-              <PhotoSelect
-                imgChange={setHouseImgUri}
-                value={watch("housePhotoUri")}
-              />
-            )}
-            name="housePhotoUri"
-          />
-
-          <Text style={styles.label}>What is your favourite go to name?</Text>
-          <Controller
-            control={control}
-            rules={{ required: true }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
-                style={styles.input}
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                placeholder="Favourite go to name"
-                returnKeyType="done"
-              />
-            )}
-            name="gotoFavAddrsName"
-          />
-
-          <Text style={styles.label}>Where do you usually go to?</Text>
-          <Controller
-            control={control}
-            rules={{ required: true }}
-            render={() => (
-              <LocationTextInput
-                value={watch("gotoFavAddrs")}
-                onLocationSelect={(markerLocation: any) =>
-                  setValue("gotoFavAddrs", markerLocation, {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                  })
-                }
-              />
-            )}
-            name="gotoFavAddrs"
-          />
-
-          <Controller
-            control={control}
-            render={() => (
-              <PhotoSelect
-                imgChange={setGotoFavPhotoUri}
-                allowMultiple={true}
-                selectionLimit={3}
-                value={watch("gotoFavPhotoUri")}
-              />
-            )}
-            name="gotoFavPhotoUri"
-          />
+          {/* Favorite Address - Name*/}
+          <View className="py-2">
+            <Text className="text-lg text-black mb-2">
+              What is the name of the location you visit frequently?
+            </Text>
+            <Controller
+              control={control}
+              rules={{ required: true }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <EasyboardTextInput
+                  onBlur={onBlur}
+                  onChangeText={onChange}
+                  value={value}
+                  placeholder="Location"
+                  returnKeyType="done"
+                />
+              )}
+              name="gotoFavAddrsName"
+            />
+            {renderError(errors.gotoFavAddrsName, "Location name")}
+          </View>
+          {/* Favorite Address - Location */}
+          <View className="py-2">
+            <Text className="text-lg text-black mb-2">
+              Frequent visit location address
+            </Text>
+            <Controller
+              control={control}
+              rules={{ required: true }}
+              render={() => (
+                <LocationTextInput
+                  value={watch("gotoFavAddrs")}
+                  onLocationSelect={(markerLocation: any) =>
+                    setValue("gotoFavAddrs", markerLocation, {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    })
+                  }
+                />
+              )}
+              name="gotoFavAddrs"
+            />
+            {renderError(errors.gotoFavAddrs, "Location")}
+          </View>
+          {/* Favorite Address - Image */}
+          <View className="py-2">
+            <Text className="text-lg text-black mb-2">
+              Upload reference image of{" "}
+              {watch("gotoFavAddrsName").length > 0 ? (
+                <Text className="font-semibold text-primary">
+                  {watch("gotoFavAddrsName")}
+                </Text>
+              ) : (
+                "frequently visited location"
+              )}
+            </Text>
+            <Controller
+              control={control}
+              render={() => (
+                <PhotoSelect
+                  imgChange={setGotoFavPhotoUri}
+                  value={watch("gotoFavPhotoUri")}
+                />
+              )}
+              name="gotoFavPhotoUri"
+            />
+          </View>
         </View>
-        <View style={styles.footer}>
-          <Pressable
-            style={styles.button}
-            onPress={async () => {
-              // Manually check the validation
-              if (await trigger()) {
-                // Use the build in validation
-                handleSubmit(saveSettings(), () => {
-                  Alert.alert(
-                    "Field Errors",
-                    "There are some fields that have some errors."
-                  );
-                });
-              } else {
-                Alert.alert(
-                  "Field Errors",
-                  "There are some fields that have some errors."
-                );
-              }
-            }}
-          >
-            <Text style={styles.buttonText}>Save</Text>
-          </Pressable>
+        <View className="mt-5">
+          <EasyboardButton
+            type="bg-primary"
+            onPress={onSavePressed}
+            title="Save"
+            titleSize="text-lg"
+            iconName="save"
+          />
         </View>
       </ScrollView>
       <StatusBar style="auto" />
