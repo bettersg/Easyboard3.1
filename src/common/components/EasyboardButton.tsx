@@ -22,7 +22,13 @@ interface Props {
     | "chevron-right"
     | "chevron-left";
   iconSize?: number;
-  titleSize?: string;
+  titleSize?:
+    | "text-base"
+    | "text-xs"
+    | "text-sm"
+    | "text-md"
+    | "text-lg"
+    | "text-xl";
 }
 /**
  * This is written as generic as possible, but also as extendible as possible
@@ -40,7 +46,7 @@ const EasyboardButton = ({
   return (
     <StyledPressable
       className={[
-        "h-12 flex flex-row items-center justify-center rounded-3xl px-4 active:opacity-75 bg-primary",
+        "h-12 flex flex-row items-center justify-center rounded-3xl px-4 active:opacity-75 bg-primary text-xl",
         type,
         type === "bg-white" ? "border-slate-800 border-2" : "",
         fullWidth ? "w-full" : "",
