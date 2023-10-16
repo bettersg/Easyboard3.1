@@ -4,7 +4,6 @@ import { Colors } from "./color";
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.white,
     paddingHorizontal: 24,
     paddingVertical: 16,
     justifyContent: "space-between",

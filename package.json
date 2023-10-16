@@ -12,6 +12,7 @@
   "dependencies": {
     "@expo/ngrok": "^4.1.0",
     "@expo/react-native-action-sheet": "^3.13.0",
+    "@googlemaps/polyline-codec": "^1.0.28",
     "@react-native-masked-view/masked-view": "0.2.9",
     "@react-navigation/native": "^6.0.12",
     "@react-navigation/native-stack": "^6.8.0",

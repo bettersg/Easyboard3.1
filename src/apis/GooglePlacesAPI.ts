@@ -7,7 +7,7 @@ const GOOGLE_MAPS_API_BASE_URL = "https://maps.googleapis.com/maps/api";
 // PS: both ios and android will be using the same key for now (21/09/2022)
 const apiKey = Constants?.expoConfig?.extra?.googleMapsAPI;
 export async function queryGooglePlacesAsync(searchTerm: string) {
-  if (searchTerm.trim())
+  if (searchTerm && searchTerm.trim())
     try {
       const result = await axios.request({
         method: "post",

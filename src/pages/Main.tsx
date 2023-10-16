@@ -45,7 +45,7 @@ export default function Main({ navigation }: Props) {
 
   useEffect(() => {
     if (location != null) {
-      navigation.navigate("CalcTransit", {
+      navigation.navigate("TransitOptions", {
         destinationName: location.description,
         destination: location,
       });
@@ -77,7 +77,7 @@ export default function Main({ navigation }: Props) {
             <SavedLocationCard
               borderColor="border-cyan-800"
               onPress={() => {
-                navigation.navigate("CalcTransit", {
+                navigation.navigate("TransitOptions", {
                   destinationName: "Home",
                   destination: userSetting.houseAddrs,
                 });
@@ -91,7 +91,7 @@ export default function Main({ navigation }: Props) {
             <SavedLocationCard
               borderColor="border-secondary"
               onPress={() => {
-                navigation.navigate("CalcTransit", {
+                navigation.navigate("TransitOptions", {
                   destination: userSetting.gotoFavAddrs,
                   destinationName: userSetting.gotoFavAddrsName,
                 });

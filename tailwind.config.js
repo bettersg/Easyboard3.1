@@ -17,6 +17,7 @@ module.exports = {
         defaultIOSBlue: "#2a62ff",
 
         textInputBorder: "#706D6D",
+        defaultBackground: "#ECF0F1",
 
         // MRT Line Colors
         "mrt-NS": "#ff0000",

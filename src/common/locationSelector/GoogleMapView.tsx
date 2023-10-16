@@ -121,11 +121,14 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.autocompleteContainer}>
+    <View className="flex flex-1 bg-white items-center justify-center">
+      <View className="px-3 flex flex-1 left-0 right-0 top-12 z-10 absolute">
         <Autocomplete
           inputContainerStyle={{ borderWidth: 0 }}
-          style={styles.autocompleteInput}
+          className={[
+            "h-10 px-3 border-textInputBorder border-[1px] text-[14px]",
+            hidePrediction ? "rounded-md" : "rounded-t-md",
+          ].join(" ")}
           hideResults={hidePrediction}
           placeholder="Search for location"
           data={predictions}
@@ -142,8 +145,8 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
               <TouchableOpacity
                 onPress={() => tapPrediction(item.place_id, item.description)}
               >
-                <View style={styles.autocompleteItem}>
-                  <Text style={styles.autocompleteItemText} numberOfLines={1}>
+                <View className="bg-white border-gray-300 border-b-[0.5px] p-2">
+                  <Text className="text-lg" numberOfLines={1}>
                     {item.description}
                   </Text>
                 </View>
@@ -158,7 +161,7 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={{
-          latitude: 1.364917,
+          latitude: 1.3521,
           longitude: 103.822872,
           latitudeDelta: 0.3,
           longitudeDelta: 0.3,
@@ -182,49 +185,16 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
   map: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
   },
-  autocompleteList: {},
-  autocompleteContainer: {
-    paddingHorizontal: 10,
-    paddingTop: 20,
-    flex: 1,
-    left: 0,
-    position: "absolute",
-    right: 0,
-    top: 30,
-    zIndex: 1,
-  },
-  autocompleteInput: {
-    height: 40,
-    paddingHorizontal: 10,
-    // This is for IOS
-    backgroundColor: "#fff",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.8,
-    shadowRadius: 1,
-    //  this is for android
-    elevation: 5,
+  autocompleteList: {
+    borderBottomRightRadius: 6,
+    borderBottomLeftRadius: 6,
   },
   autocompleteItemText: {
     fontSize: 18,
-  },
-  autocompleteItem: {
-    padding: 10,
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderBottomWidth: 1.6,
-    borderColor: "#ebe8e8",
-    backgroundColor: "#fff",
   },
 });
 export default GoogleMapView;

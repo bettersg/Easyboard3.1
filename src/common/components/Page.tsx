@@ -10,18 +10,21 @@ interface Props {
   children: ReactNode;
   disableScroll?: boolean;
 }
-const Page = ({ children, disableScroll }: Props) => (
-  <SafeAreaView className="flex-1 bg-white">
-    {disableScroll ? (
-      <View style={styles.container}>{children}</View>
-    ) : (
+const Page = ({ children, disableScroll }: Props) =>
+  disableScroll ? (
+    <View className="bg-defaultBackground" style={styles.container}>
+      <SafeAreaView className="flex-1 bg-defaultBackground">
+        {children}
+      </SafeAreaView>
+    </View>
+  ) : (
+    <SafeAreaView className="flex-1 bg-defaultBackground">
       <ScrollView
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
       >
         {children}
       </ScrollView>
-    )}
-  </SafeAreaView>
-);
+    </SafeAreaView>
+  );
 export default Page;

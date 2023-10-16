@@ -15,6 +15,8 @@ import RootStackParamList from "./src/types/RootStackParamList.type";
 import { SettingValues } from "./src/types/SettingKey.type";
 import Page from "./src/common/components/Page";
 import LoadingIndicator from "./src/common/components/LoadingIndicator";
+import GoogleMapsDirections from "./src/pages/GoogleMapsDirections";
+import TransitOptions from "./src/pages/TransitOptions";
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const settingsDefaultValues: SettingValues = {
@@ -108,6 +110,16 @@ export default function App() {
         <Stack.Screen
           name="CalcTransit"
           component={CalcTransit}
+          options={{ title: "Pick a route" }}
+        />
+        <Stack.Screen
+          name="GoogleMapsDirections"
+          component={GoogleMapsDirections}
+          options={{ title: "Pick a route" }}
+        />
+        <Stack.Screen
+          name="TransitOptions"
+          component={TransitOptions}
           options={{ title: "Pick a route" }}
         />
         <Stack.Screen
