@@ -1,56 +1,57 @@
-import { useEffect, useState } from "react";
-import { Text, View, Alert } from "react-native";
-import * as SecureStore from "expo-secure-store";
-import Constants from "expo-constants";
-import LocationInputButton from "../common/locationSelector/LocationInputButton";
-import call from "react-native-phone-call";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import RootStackParamList from "../types/RootStackParamList.type";
-import EasyboardButton from "../common/components/EasyboardButton";
-import SavedLocationCard from "../common/components/SavedLocationCard";
-import Page from "../common/components/Page";
+import type { NativeStackScreenProps } from '@react-navigation/native-stack'
+import Constants from 'expo-constants'
+import * as SecureStore from 'expo-secure-store'
+import { useEffect, useState } from 'react'
+import { Text, View, Alert } from 'react-native'
+import call from 'react-native-phone-call'
 
-type Props = NativeStackScreenProps<RootStackParamList, "Main">;
+import EasyboardButton from '../common/components/EasyboardButton'
+import Page from '../common/components/Page'
+import SavedLocationCard from '../common/components/SavedLocationCard'
+import LocationInputButton from '../common/locationSelector/LocationInputButton'
+import RootStackParamList from '../types/RootStackParamList.type'
+
+type Props = NativeStackScreenProps<RootStackParamList, 'Main'>
 
 export default function Main({ navigation }: Props) {
-  const [userSetting, setUserSetting] = useState<any>(null);
-  const [location, setMarkerLocation] = useState<any>(null);
+  const [userSetting, setUserSetting] = useState<any>(null)
+  const [location, setMarkerLocation] = useState<any>(null)
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       try {
         const storedData = await SecureStore.getItemAsync(
           Constants?.expoConfig?.extra?.settingsStoredKey
-        );
-        if (storedData) setUserSetting(JSON.parse(storedData));
+        )
+        if (storedData) setUserSetting(JSON.parse(storedData))
       } catch (e) {
-        console.error(e);
+        console.error(e)
       }
-    })();
-  }, []);
+    })()
+  }, [])
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", async () => {
+    const unsubscribe = navigation.addListener('focus', async () => {
       try {
         const storedData = await SecureStore.getItemAsync(
           Constants?.expoConfig?.extra?.settingsStoredKey
-        );
-        if (storedData) setUserSetting(JSON.parse(storedData));
+        )
+        if (storedData) setUserSetting(JSON.parse(storedData))
       } catch (e) {
-        console.error(e);
+        console.error(e)
       }
-    });
+    })
 
-    return unsubscribe;
-  }, [navigation]);
+    return unsubscribe
+  }, [navigation])
 
   useEffect(() => {
     if (location != null) {
-      navigation.navigate("TransitOptions", {
+      navigation.navigate('TransitOptions', {
         destinationName: location.description,
         destination: location,
-      });
+      })
     }
-  }, [location]);
+  }, [location])
 
   const callCareTaker = async function () {
     try {
@@ -58,29 +59,27 @@ export default function Main({ navigation }: Props) {
         number: userSetting.careGiverPhoneNumber, // String value with the number to call
         prompt: false, // Optional boolean property. Determines if the user should be prompted prior to the call
         skipCanOpen: true, // Skip the canOpenURL check
-      });
+      })
     } catch (e) {
-      console.error(e);
+      console.error(e)
     }
-  };
+  }
   const onShareLocation = () => {
-    Alert.alert("Feature coming soon");
-  };
+    Alert.alert('Feature coming soon')
+  }
   return (
     <Page>
       {userSetting && (
         <>
           <View>
-            <Text className="font-bold text-xl mb-3">
-              Where do you want to go?
-            </Text>
+            <Text className="mb-3 text-xl font-bold">Where do you want to go?</Text>
             <SavedLocationCard
               borderColor="border-cyan-800"
               onPress={() => {
-                navigation.navigate("TransitOptions", {
-                  destinationName: "Home",
+                navigation.navigate('TransitOptions', {
+                  destinationName: 'Home',
                   destination: userSetting.houseAddrs,
-                });
+                })
               }}
               title="Home"
               subtitle={userSetting.houseAddrs.description}
@@ -91,10 +90,10 @@ export default function Main({ navigation }: Props) {
             <SavedLocationCard
               borderColor="border-secondary"
               onPress={() => {
-                navigation.navigate("TransitOptions", {
+                navigation.navigate('TransitOptions', {
                   destination: userSetting.gotoFavAddrs,
                   destinationName: userSetting.gotoFavAddrsName,
-                });
+                })
               }}
               title={userSetting.gotoFavAddrsName}
               subtitle={userSetting.gotoFavAddrs.description}
@@ -102,9 +101,7 @@ export default function Main({ navigation }: Props) {
               iconName="map"
             />
             <LocationInputButton
-              onLocationSelect={(markerLocation: any) =>
-                setMarkerLocation(markerLocation)
-              }
+              onLocationSelect={(markerLocation: any) => setMarkerLocation(markerLocation)}
             />
           </View>
 
@@ -126,5 +123,5 @@ export default function Main({ navigation }: Props) {
         </>
       )}
     </Page>
-  );
+  )
 }

@@ -1,24 +1,25 @@
-import { StyleSheet } from "react-native";
-import { Colors } from "./color";
+import { StyleSheet } from 'react-native'
+
+import { Colors } from './color'
 
 export default StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 24,
     paddingVertical: 16,
-    justifyContent: "space-between",
+    justifyContent: 'space-between',
   },
   containerCenter: {
     flex: 1,
     backgroundColor: Colors.white,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   footer: {
     marginTop: 20,
   },
   flexHorizontal: {
-    flexDirection: "row",
+    flexDirection: 'row',
   },
   text: {
     fontSize: 20,
@@ -26,20 +27,20 @@ export default StyleSheet.create({
   },
   boldText: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     marginBottom: 20,
   },
-  header: { fontSize: 30, fontWeight: "bold", marginBottom: 10 },
+  header: { fontSize: 30, fontWeight: 'bold', marginBottom: 10 },
   button: {
     borderRadius: 40,
     padding: 10,
     backgroundColor: Colors.defaultIOSBlue,
-    justifyContent: "center",
+    justifyContent: 'center',
   },
   buttonText: {
     color: Colors.white,
     fontSize: 20,
-    textAlign: "center",
+    textAlign: 'center',
   },
   label: {
     fontSize: 17,
@@ -66,54 +67,54 @@ export default StyleSheet.create({
     marginVertical: 5,
   },
   horizontalCardContainer: {
-    flexDirection: "row",
-    alignContent: "center",
+    flexDirection: 'row',
+    alignContent: 'center',
   },
   cardImg: { width: 150, height: 150 },
-  cardBody: { flex: 1, flexDirection: "column" },
+  cardBody: { flex: 1, flexDirection: 'column' },
   cardTitleText: {
     flex: 1,
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     paddingHorizontal: 10,
     color: Colors.white,
   },
   cardTitleOnlyText: {
     fontSize: 20,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   cardBodyText: {
     flex: 2,
     fontSize: 16,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
+    textAlign: 'center',
     paddingHorizontal: 10,
     color: Colors.white,
   },
   mainFooterBtn: {
-    alignItems: "center",
+    alignItems: 'center',
     padding: 10,
     borderRadius: 5,
   },
   mainFooterBtnText: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
     color: Colors.white,
   },
 
   /*********** ClacTransit page **************/
   transitOption: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: 5,
   },
   transitEtaText: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   transitArrivalTime: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   transitTag: {
     backgroundColor: Colors.grey,
@@ -142,9 +143,9 @@ export default StyleSheet.create({
   },
   transitTagTo: {
     padding: 5,
-    alignContent: "center",
-    alignItems: "center",
-    textAlign: "center",
+    alignContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center',
   },
   transitTagText: {
     color: Colors.white,
@@ -159,29 +160,29 @@ export default StyleSheet.create({
     borderWidth: 5,
     borderColor: Colors.primary,
     zIndex: 20,
-    position: "absolute",
+    position: 'absolute',
     bottom: 20,
-    width: "90%",
+    width: '90%',
     backgroundColor: Colors.white,
   },
   directionWindowHeader: {
-    width: "100%",
+    width: '100%',
     backgroundColor: Colors.primary,
     padding: 8,
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   directionWindowBtn: {
-    textAlign: "center",
+    textAlign: 'center',
     color: Colors.white,
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   directionWindowHeaderText: {
-    textAlign: "center",
+    textAlign: 'center',
     color: Colors.white,
     fontSize: 17,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   directionContainer: {
     paddingVertical: 5,
@@ -192,4 +193,4 @@ export default StyleSheet.create({
     fontSize: 16,
     marginLeft: 20,
   },
-});
+})

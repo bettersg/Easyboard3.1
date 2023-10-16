@@ -1,7 +1,7 @@
-import LatLong from "./LatLong.interface"
+import LatLong from './LatLong.interface'
 
 interface Location {
-    description: string
-    latlng: LatLong
+  description: string
+  latlng: LatLong
 }
 export default Location

@@ -1,62 +1,53 @@
-import { useState, useEffect, useRef } from "react";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Dimensions,
-  TouchableOpacity,
-  Keyboard,
-} from "react-native";
+import * as Location from 'expo-location'
+import { useState, useEffect, useRef } from 'react'
+import { StyleSheet, Text, View, Dimensions, TouchableOpacity, Keyboard } from 'react-native'
+import Autocomplete from 'react-native-autocomplete-input'
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
+
 import {
   getGooglePlacesLocationAsync,
   getGoogleReverseGeoCodingAsync,
   queryGooglePlacesAsync,
-} from "../../apis/GooglePlacesAPI";
-import { useDebounce } from "../../hooks/_debounce";
-import Autocomplete from "react-native-autocomplete-input";
-import * as Location from "expo-location";
-import LatLong from "../../interfaces/LatLong.interface";
+} from '../../apis/GooglePlacesAPI'
+import { useDebounce } from '../../hooks/_debounce'
+import LatLong from '../../interfaces/LatLong.interface'
 
 interface Props {
-  onLocationMarkerDrop: any;
-  value: any;
+  onLocationMarkerDrop: any
+  value: any
 }
 const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
   // Map View reference
-  const mapViewRef = useRef<MapView>(null);
+  const mapViewRef = useRef<MapView>(null)
 
   // Search location states
-  const [search, setSearch] = useState("");
-  const [predictions, setPredictions] = useState<any>([]);
-  const [hidePrediction, setHidePrediction] = useState(true);
-  const [showUserLocation, setShowUserLocation] = useState(false);
+  const [search, setSearch] = useState('')
+  const [predictions, setPredictions] = useState<any>([])
+  const [hidePrediction, setHidePrediction] = useState(true)
+  const [showUserLocation, setShowUserLocation] = useState(false)
 
   // Marker States
-  const [marker, setMarker] = useState(value);
+  const [marker, setMarker] = useState(value)
 
   const queryLocation = async function () {
     try {
       if (!hidePrediction) {
-        const predictions = await queryGooglePlacesAsync(search);
-        setPredictions(predictions);
+        const predictions = await queryGooglePlacesAsync(search)
+        setPredictions(predictions)
       }
     } catch (e) {
-      console.error(e);
+      console.error(e)
     }
-  };
-  useDebounce(queryLocation, 600, [hidePrediction, search]);
+  }
+  useDebounce(queryLocation, 600, [hidePrediction, search])
 
-  const tapPrediction = async function (
-    placeId: string | number,
-    description: string
-  ) {
+  const tapPrediction = async function (placeId: string | number, description: string) {
     try {
-      setSearch(description);
-      setHidePrediction(true);
-      Keyboard.dismiss();
-      const { lng, lat } = await getGooglePlacesLocationAsync(placeId);
-      setMarker({ description, latlng: { latitude: lat, longitude: lng } });
+      setSearch(description)
+      setHidePrediction(true)
+      Keyboard.dismiss()
+      const { lng, lat } = await getGooglePlacesLocationAsync(placeId)
+      setMarker({ description, latlng: { latitude: lat, longitude: lng } })
       mapViewRef.current?.animateToRegion(
         {
           longitude: lng,
@@ -65,46 +56,44 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
           longitudeDelta: 0.09,
         },
         400
-      );
+      )
     } catch (e) {
-      console.error(e);
+      console.error(e)
     }
-  };
+  }
 
   const selectPosition = async function (coordinate: LatLong) {
     try {
       const description = await getGoogleReverseGeoCodingAsync(
         coordinate.latitude,
         coordinate.longitude
-      );
-      setSearch(description);
-      setMarker({ description, latlng: coordinate });
+      )
+      setSearch(description)
+      setMarker({ description, latlng: coordinate })
     } catch (e) {
-      console.error(e);
+      console.error(e)
     }
-  };
+  }
 
   // watch marker value change and update the parent component
   useEffect(() => {
-    if (marker) onLocationMarkerDrop(marker);
-  }, [marker]);
+    if (marker) onLocationMarkerDrop(marker)
+  }, [marker])
 
   // This will emulate the didMount lifecycle in functional components.
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       try {
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
+        const { status } = await Location.requestForegroundPermissionsAsync()
+        if (status !== 'granted') {
           // setErrorMsg("Permission to access location was denied");
-          console.error("Permission to access location was denied");
-          return;
+          console.error('Permission to access location was denied')
+          return
         }
         // if value prop is not null by checking if its truthy
         const coords =
-          value == true
-            ? value.latlng
-            : (await Location.getCurrentPositionAsync({})).coords;
-        setShowUserLocation(true);
+          value == true ? value.latlng : (await Location.getCurrentPositionAsync({})).coords
+        setShowUserLocation(true)
         mapViewRef.current?.animateToRegion(
           {
             longitude: coords.longitude,
@@ -113,39 +102,37 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
             longitudeDelta: 0.09,
           },
           400
-        );
+        )
       } catch (e) {
-        console.error(e);
+        console.error(e)
       }
-    })();
-  }, []);
+    })()
+  }, [])
 
   return (
-    <View className="flex flex-1 bg-white items-center justify-center">
-      <View className="px-3 flex flex-1 left-0 right-0 top-12 z-10 absolute">
+    <View className="flex flex-1 items-center justify-center bg-white">
+      <View className="absolute left-0 right-0 top-12 z-10 flex flex-1 px-3">
         <Autocomplete
           inputContainerStyle={{ borderWidth: 0 }}
           className={[
-            "h-10 px-3 border-textInputBorder border-[1px] text-[14px]",
-            hidePrediction ? "rounded-md" : "rounded-t-md",
-          ].join(" ")}
+            'h-10 border-[1px] border-textInputBorder px-3 text-[14px]',
+            hidePrediction ? 'rounded-md' : 'rounded-t-md',
+          ].join(' ')}
           hideResults={hidePrediction}
           placeholder="Search for location"
           data={predictions}
           value={search}
           onChangeText={(searchTerm) => {
-            setSearch(searchTerm);
-            setHidePrediction(false);
+            setSearch(searchTerm)
+            setHidePrediction(false)
           }}
           returnKeyType="done"
           flatListProps={{
             keyExtractor: (item: any) => item.place_id,
             style: styles.autocompleteList,
             renderItem: ({ item }) => (
-              <TouchableOpacity
-                onPress={() => tapPrediction(item.place_id, item.description)}
-              >
-                <View className="bg-white border-gray-300 border-b-[0.5px] p-2">
+              <TouchableOpacity onPress={() => tapPrediction(item.place_id, item.description)}>
+                <View className="border-b-[0.5px] border-gray-300 bg-white p-2">
                   <Text className="text-lg" numberOfLines={1}>
                     {item.description}
                   </Text>
@@ -168,9 +155,7 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
         }}
         showsUserLocation={showUserLocation}
         showsMyLocationButton
-        onPress={({ nativeEvent: { coordinate } }) =>
-          selectPosition(coordinate)
-        }
+        onPress={({ nativeEvent: { coordinate } }) => selectPosition(coordinate)}
       >
         {marker != null && (
           <Marker
@@ -181,13 +166,13 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
         )}
       </MapView>
     </View>
-  );
-};
+  )
+}
 
 const styles = StyleSheet.create({
   map: {
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
   },
   autocompleteList: {
     borderBottomRightRadius: 6,
@@ -196,5 +181,5 @@ const styles = StyleSheet.create({
   autocompleteItemText: {
     fontSize: 18,
   },
-});
-export default GoogleMapView;
+})
+export default GoogleMapView

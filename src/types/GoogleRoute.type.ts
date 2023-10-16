@@ -1,151 +1,155 @@
-import LatLong from "../interfaces/LatLong.interface";
+import LatLong from '../interfaces/LatLong.interface'
 
 export interface GoogleRoute {
-    routes: Route[];
+  routes: Route[]
 }
 export interface Route {
-    legs:            Leg[];
-    distanceMeters:  number;
-    duration:        string;
-    staticDuration:  string;
-    polyline:        Polyline;
-    viewport:        Viewport;
-    travelAdvisory:  TravelAdvisory;
-    localizedValues: LegLocalizedValues;
-    routeLabels:     string[];
+  legs: Leg[]
+  distanceMeters: number
+  duration: string
+  staticDuration: string
+  polyline: Polyline
+  viewport: Viewport
+  travelAdvisory: TravelAdvisory
+  localizedValues: LegLocalizedValues
+  routeLabels: string[]
 }
 
 export interface Leg {
-    distanceMeters:  number;
-    duration:        string;
-    staticDuration:  string;
-    polyline:        Polyline;
-    startLocation:   Location;
-    endLocation:     Location;
-    steps:           Step[];
-    localizedValues: LegLocalizedValues;
-    stepsOverview:   StepsOverview;
+  distanceMeters: number
+  duration: string
+  staticDuration: string
+  polyline: Polyline
+  startLocation: Location
+  endLocation: Location
+  steps: Step[]
+  localizedValues: LegLocalizedValues
+  stepsOverview: StepsOverview
 }
 
 export interface Location {
-    latLng: LatLong;
+  latLng: LatLong
 }
 
 export interface LegLocalizedValues {
-    distance:       Distance;
-    duration:       Distance;
-    staticDuration: Distance;
-    transitFare?:   TransitFare;
+  distance: Distance
+  duration: Distance
+  staticDuration: Distance
+  transitFare?: TransitFare
 }
 
 export interface Distance {
-    text: string;
+  text: string
 }
 
-export interface TransitFare {
-}
+export interface TransitFare {}
 
 export interface Polyline {
-    encodedPolyline: string;
+  encodedPolyline: string
 }
 
 export interface Step {
-    distanceMeters:         number;
-    staticDuration:         string;
-    polyline:               Polyline;
-    startLocation:          Location;
-    endLocation:            Location;
-    navigationInstruction?: StepNavigationInstruction;
-    localizedValues:        StepLocalizedValues;
-    travelMode:             TravelMode;
-    transitDetails?:        TransitDetails;
+  distanceMeters: number
+  staticDuration: string
+  polyline: Polyline
+  startLocation: Location
+  endLocation: Location
+  navigationInstruction?: StepNavigationInstruction
+  localizedValues: StepLocalizedValues
+  travelMode: TravelMode
+  transitDetails?: TransitDetails
 }
 
 export interface StepLocalizedValues {
-    distance:       Distance;
-    staticDuration: Distance;
+  distance: Distance
+  staticDuration: Distance
 }
 
 export interface StepNavigationInstruction {
-    maneuver?:    Maneuver;
-    instructions: string;
+  maneuver?: Maneuver
+  instructions: string
 }
 
-export type Maneuver  = "DEPART" | "TURN_LEFT" | "TURN_RIGHT" | "TURN_SLIGHT_RIGHT" | "TURN_SLIGHT_LEFT"
+export type Maneuver =
+  | 'DEPART'
+  | 'TURN_LEFT'
+  | 'TURN_RIGHT'
+  | 'TURN_SLIGHT_RIGHT'
+  | 'TURN_SLIGHT_LEFT'
 
 export interface TransitDetails {
-    stopDetails:     StopDetails;
-    localizedValues: TransitDetailsLocalizedValues;
-    headsign:        string;
-    headway:         string;
-    transitLine:     TransitLine;
-    stopCount:       number;
+  stopDetails: StopDetails
+  localizedValues: TransitDetailsLocalizedValues
+  headsign: string
+  headway: string
+  transitLine: TransitLine
+  stopCount: number
 }
 
 export interface TransitDetailsLocalizedValues {
-    arrivalTime:   Time;
-    departureTime: Time;
+  arrivalTime: Time
+  departureTime: Time
 }
 
 export interface Time {
-    time:     Distance;
-    timeZone: string;
+  time: Distance
+  timeZone: string
 }
 
 export interface StopDetails {
-    arrivalStop:   Stop;
-    arrivalTime:   Date;
-    departureStop: Stop;
-    departureTime: Date;
+  arrivalStop: Stop
+  arrivalTime: Date
+  departureStop: Stop
+  departureTime: Date
 }
 
 export interface Stop {
-    name:     string;
-    location: Location;
+  name: string
+  location: Location
 }
 
 export interface TransitLine {
-    agencies:  Agency[];
-    name:      string;
-    color:     string;
-    textColor: string;
-    vehicle:   Vehicle;
+  agencies: Agency[]
+  name: string
+  color: string
+  textColor: string
+  vehicle: Vehicle
 }
 
 export interface Agency {
-    name:        string;
-    phoneNumber: string;
-    uri:         string;
+  name: string
+  phoneNumber: string
+  uri: string
 }
 
 export interface Vehicle {
-    name:    Distance;
-    type:    string;
-    iconUri: string;
+  name: Distance
+  type: string
+  iconUri: string
 }
 
-export type TravelMode = "TRANSIT" |"WALK"
+export type TravelMode = 'TRANSIT' | 'WALK'
 
 export interface StepsOverview {
-    multiModalSegments: MultiModalSegment[];
+  multiModalSegments: MultiModalSegment[]
 }
 
 export interface MultiModalSegment {
-    stepStartIndex:         number;
-    stepEndIndex:           number;
-    navigationInstruction?: MultiModalSegmentNavigationInstruction;
-    travelMode:             TravelMode;
+  stepStartIndex: number
+  stepEndIndex: number
+  navigationInstruction?: MultiModalSegmentNavigationInstruction
+  travelMode: TravelMode
 }
 
 export interface MultiModalSegmentNavigationInstruction {
-    instructions: string;
+  instructions: string
 }
 
 export interface TravelAdvisory {
-    transitFare: TransitFare;
+  transitFare: TransitFare
 }
 
 export interface Viewport {
-    low:  LatLong;
-    high: LatLong;
+  low: LatLong
+  high: LatLong
 }

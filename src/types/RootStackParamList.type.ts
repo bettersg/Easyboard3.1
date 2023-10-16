@@ -1,7 +1,7 @@
-import { Route } from "./GoogleRoute.type";
+import { Route } from './GoogleRoute.type'
 
 type RootStackParamList = {
-  Main: undefined;
+  Main: undefined
   Introduction: undefined
   CalcTransit: {
     destination: any
@@ -18,5 +18,5 @@ type RootStackParamList = {
   }
   Direction: undefined
   Setting: undefined
-};
+}
 export default RootStackParamList

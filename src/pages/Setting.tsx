@@ -1,28 +1,23 @@
-import { StatusBar } from "expo-status-bar";
-import { Text, View, ScrollView, Alert } from "react-native";
-import PhotoSelect from "../common/PhotoSelect";
-import {
-  useForm,
-  Controller,
-  FieldError,
-  FieldErrorsImpl,
-  Merge,
-} from "react-hook-form";
-import LocationTextInput from "../common/locationSelector/LocationInputText";
-import * as SecureStore from "expo-secure-store";
-import { useEffect, useState } from "react";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import RootStackParamList from "../types/RootStackParamList.type";
-import Constants from "expo-constants";
-import { SettingKey, SettingValues } from "../types/SettingKey.type";
-import Page from "../common/components/Page";
-import EasyboardTextInput from "../common/components/EasyboardTextInput";
-import EasyboardButton from "../common/components/EasyboardButton";
-import LoadingIndicator from "../common/components/LoadingIndicator";
+import type { NativeStackScreenProps } from '@react-navigation/native-stack'
+import Constants from 'expo-constants'
+import * as SecureStore from 'expo-secure-store'
+import { StatusBar } from 'expo-status-bar'
+import { useEffect, useState } from 'react'
+import { useForm, Controller, FieldError, FieldErrorsImpl, Merge } from 'react-hook-form'
+import { Text, View, ScrollView, Alert } from 'react-native'
 
-type Props = NativeStackScreenProps<RootStackParamList, "Setting">;
+import PhotoSelect from '../common/PhotoSelect'
+import EasyboardButton from '../common/components/EasyboardButton'
+import EasyboardTextInput from '../common/components/EasyboardTextInput'
+import LoadingIndicator from '../common/components/LoadingIndicator'
+import Page from '../common/components/Page'
+import LocationTextInput from '../common/locationSelector/LocationInputText'
+import RootStackParamList from '../types/RootStackParamList.type'
+import { SettingKey, SettingValues } from '../types/SettingKey.type'
 
-const PHONE_NUMBER_LENGTH = 8;
+type Props = NativeStackScreenProps<RootStackParamList, 'Setting'>
+
+const PHONE_NUMBER_LENGTH = 8
 
 export default function Setting({ navigation }: Props) {
   const {
@@ -33,71 +28,62 @@ export default function Setting({ navigation }: Props) {
     trigger,
     formState: { errors },
   } = useForm({
-    reValidateMode: "onChange",
+    reValidateMode: 'onChange',
     defaultValues: {
       name: null,
-      careGiverPhoneNumber: "",
+      careGiverPhoneNumber: '',
       houseAddrs: null,
       housePhotoUri: null,
       gotoFavAddrs: null,
-      gotoFavAddrsName: "",
+      gotoFavAddrsName: '',
       gotoFavPhotoUri: null,
     } as SettingValues,
-  });
+  })
 
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isNewUser, setIsNewUser] = useState(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [isNewUser, setIsNewUser] = useState(true)
 
   const setHouseImgUri = (imgUri: string | string[]) => {
-    setValue("housePhotoUri", imgUri, {
+    setValue('housePhotoUri', imgUri, {
       shouldValidate: true,
       shouldDirty: true,
-    });
-  };
+    })
+  }
 
   const setGotoFavPhotoUri = (imgUri: string | string[]) => {
-    setValue("gotoFavPhotoUri", imgUri, {
+    setValue('gotoFavPhotoUri', imgUri, {
       shouldValidate: true,
       shouldDirty: true,
-    });
-  };
+    })
+  }
 
   const onSavePressed = async () => {
     // Manually check the validation
     if (await trigger()) {
       // Use the build in validation
       handleSubmit(saveSettings(), () => {
-        Alert.alert(
-          "Field Errors",
-          "There are some fields that have some errors."
-        );
-      });
+        Alert.alert('Field Errors', 'There are some fields that have some errors.')
+      })
     } else {
-      Alert.alert(
-        "Field Errors",
-        "There are some fields that have some errors."
-      );
+      Alert.alert('Field Errors', 'There are some fields that have some errors.')
     }
-  };
+  }
 
   const saveSettings = async function () {
     try {
-      const data = JSON.stringify(watch());
-      await SecureStore.setItemAsync(
-        Constants?.expoConfig?.extra?.settingsStoredKey,
-        data
-      );
-      Alert.alert("Data Saved");
-      if (!isNewUser) navigation.goBack();
+      const data = JSON.stringify(watch())
+      await SecureStore.setItemAsync(Constants?.expoConfig?.extra?.settingsStoredKey, data)
+      Alert.alert('Data Saved')
+      if (!isNewUser) navigation.goBack()
       else
         navigation.reset({
           index: 0,
-          routes: [{ name: "Main" }],
-        });
+          routes: [{ name: 'Main' }],
+        })
     } catch (e) {
-      console.error(e);
+      console.error(e)
     }
-  };
+  }
 
   /**
    * Render error if field is invalid for submission
@@ -110,47 +96,47 @@ export default function Setting({ navigation }: Props) {
     display: string
   ) => {
     if (err) {
-      let errorString = "";
-      if (err.type === "required") {
-        errorString = `${display} is required.`;
-      } else if (err.type === "minLength") {
-        errorString = `${display} has to be at least ${PHONE_NUMBER_LENGTH} digits.`;
+      let errorString = ''
+      if (err.type === 'required') {
+        errorString = `${display} is required.`
+      } else if (err.type === 'minLength') {
+        errorString = `${display} has to be at least ${PHONE_NUMBER_LENGTH} digits.`
       }
       return (
         <View className="mt-1">
-          <Text className="text-error font-light">{errorString}</Text>
+          <Text className="font-light text-error">{errorString}</Text>
         </View>
-      );
+      )
     }
-  };
+  }
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       try {
         const storedData = await SecureStore.getItemAsync(
           Constants?.expoConfig?.extra?.settingsStoredKey
-        );
+        )
         if (storedData) {
-          setIsNewUser(false);
-          const settingsData = JSON.parse(storedData);
+          setIsNewUser(false)
+          const settingsData = JSON.parse(storedData)
           Object.keys(settingsData).forEach((key) => {
-            setValue(key as SettingKey, settingsData[key]);
-          });
+            setValue(key as SettingKey, settingsData[key])
+          })
         }
       } catch (e) {
-        console.error(e);
+        console.error(e)
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    })();
-  }, []);
+    })()
+  }, [])
 
   if (isLoading) {
     return (
       <Page>
         <LoadingIndicator />
       </Page>
-    );
+    )
   }
 
   return (
@@ -159,7 +145,7 @@ export default function Setting({ navigation }: Props) {
         <View>
           {/* Name Input */}
           <View className="py-2">
-            <Text className="text-lg text-black mb-2">What is your name?</Text>
+            <Text className="mb-2 text-lg text-black">What is your name?</Text>
             <Controller
               control={control}
               rules={{ required: true }}
@@ -175,13 +161,11 @@ export default function Setting({ navigation }: Props) {
               )}
               name="name"
             />
-            {renderError(errors.name, "Name")}
+            {renderError(errors.name, 'Name')}
           </View>
           {/* Caregiver Phone Number */}
           <View className="py-2">
-            <Text className="text-lg text-black mb-2">
-              What is your caregiver's phone number?
-            </Text>
+            <Text className="mb-2 text-lg text-black">What is your caregiver's phone number?</Text>
             <Controller
               control={control}
               rules={{
@@ -202,22 +186,19 @@ export default function Setting({ navigation }: Props) {
               )}
               name="careGiverPhoneNumber"
             />
-            {renderError(
-              errors.careGiverPhoneNumber,
-              "Caregiver's Phone Number"
-            )}
+            {renderError(errors.careGiverPhoneNumber, "Caregiver's Phone Number")}
           </View>
           {/* Home Address */}
           <View className="py-2">
-            <Text className="text-lg text-black mb-2">Where is your home?</Text>
+            <Text className="mb-2 text-lg text-black">Where is your home?</Text>
             <Controller
               control={control}
               rules={{ required: true }}
               render={() => (
                 <LocationTextInput
-                  value={watch("houseAddrs")}
+                  value={watch('houseAddrs')}
                   onLocationSelect={(markerLocation: any) =>
-                    setValue("houseAddrs", markerLocation, {
+                    setValue('houseAddrs', markerLocation, {
                       shouldValidate: true,
                       shouldDirty: true,
                     })
@@ -226,20 +207,15 @@ export default function Setting({ navigation }: Props) {
               )}
               name="houseAddrs"
             />
-            {renderError(errors.houseAddrs, "Home Address")}
+            {renderError(errors.houseAddrs, 'Home Address')}
           </View>
           {/* Home Address - Photo */}
           <View className="py-2">
-            <Text className="text-lg text-black mb-2">
-              Upload reference image of home
-            </Text>
+            <Text className="mb-2 text-lg text-black">Upload reference image of home</Text>
             <Controller
               control={control}
               render={() => (
-                <PhotoSelect
-                  imgChange={setHouseImgUri}
-                  value={watch("housePhotoUri")}
-                />
+                <PhotoSelect imgChange={setHouseImgUri} value={watch('housePhotoUri')} />
               )}
               name="housePhotoUri"
             />
@@ -247,7 +223,7 @@ export default function Setting({ navigation }: Props) {
 
           {/* Favorite Address - Name*/}
           <View className="py-2">
-            <Text className="text-lg text-black mb-2">
+            <Text className="mb-2 text-lg text-black">
               What is the name of the location you visit frequently?
             </Text>
             <Controller
@@ -264,21 +240,19 @@ export default function Setting({ navigation }: Props) {
               )}
               name="gotoFavAddrsName"
             />
-            {renderError(errors.gotoFavAddrsName, "Location name")}
+            {renderError(errors.gotoFavAddrsName, 'Location name')}
           </View>
           {/* Favorite Address - Location */}
           <View className="py-2">
-            <Text className="text-lg text-black mb-2">
-              Frequent visit location address
-            </Text>
+            <Text className="mb-2 text-lg text-black">Frequent visit location address</Text>
             <Controller
               control={control}
               rules={{ required: true }}
               render={() => (
                 <LocationTextInput
-                  value={watch("gotoFavAddrs")}
+                  value={watch('gotoFavAddrs')}
                   onLocationSelect={(markerLocation: any) =>
-                    setValue("gotoFavAddrs", markerLocation, {
+                    setValue('gotoFavAddrs', markerLocation, {
                       shouldValidate: true,
                       shouldDirty: true,
                     })
@@ -287,27 +261,22 @@ export default function Setting({ navigation }: Props) {
               )}
               name="gotoFavAddrs"
             />
-            {renderError(errors.gotoFavAddrs, "Location")}
+            {renderError(errors.gotoFavAddrs, 'Location')}
           </View>
           {/* Favorite Address - Image */}
           <View className="py-2">
-            <Text className="text-lg text-black mb-2">
-              Upload reference image of{" "}
-              {watch("gotoFavAddrsName").length > 0 ? (
-                <Text className="font-semibold text-primary">
-                  {watch("gotoFavAddrsName")}
-                </Text>
+            <Text className="mb-2 text-lg text-black">
+              Upload reference image of{' '}
+              {watch('gotoFavAddrsName').length > 0 ? (
+                <Text className="font-semibold text-primary">{watch('gotoFavAddrsName')}</Text>
               ) : (
-                "frequently visited location"
+                'frequently visited location'
               )}
             </Text>
             <Controller
               control={control}
               render={() => (
-                <PhotoSelect
-                  imgChange={setGotoFavPhotoUri}
-                  value={watch("gotoFavPhotoUri")}
-                />
+                <PhotoSelect imgChange={setGotoFavPhotoUri} value={watch('gotoFavPhotoUri')} />
               )}
               name="gotoFavPhotoUri"
             />
@@ -325,5 +294,5 @@ export default function Setting({ navigation }: Props) {
       </ScrollView>
       <StatusBar style="auto" />
     </Page>
-  );
+  )
 }
