@@ -1,4 +1,5 @@
 import { Route } from './GoogleRoute.type'
+import LatLong from '../interfaces/LatLong.interface'
 
 type RootStackParamList = {
   Main: undefined
@@ -9,7 +10,10 @@ type RootStackParamList = {
   }
   GoogleMapsDirections: {
     googleRoute: Route
-    destination: any
+    destination: {
+      description: string
+      latlng: LatLong
+    }
     destinationName: string
   }
   TransitOptions: {

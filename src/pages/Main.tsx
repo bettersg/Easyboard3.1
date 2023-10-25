@@ -3,17 +3,18 @@ import Constants from 'expo-constants'
 import * as SecureStore from 'expo-secure-store'
 import { useEffect, useState } from 'react'
 import { Text, View, Alert } from 'react-native'
-import call from 'react-native-phone-call'
 
 import EasyboardButton from '../common/components/EasyboardButton'
 import Page from '../common/components/Page'
 import SavedLocationCard from '../common/components/SavedLocationCard'
 import LocationInputButton from '../common/locationSelector/LocationInputButton'
+import useCallCaregiver from '../hooks/useCallCaregiver'
 import RootStackParamList from '../types/RootStackParamList.type'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Main'>
 
 export default function Main({ navigation }: Props) {
+  const callCareGiver = useCallCaregiver()
   const [userSetting, setUserSetting] = useState<any>(null)
   const [location, setMarkerLocation] = useState<any>(null)
   useEffect(() => {
@@ -53,17 +54,6 @@ export default function Main({ navigation }: Props) {
     }
   }, [location])
 
-  const callCareTaker = async function () {
-    try {
-      await call({
-        number: userSetting.careGiverPhoneNumber, // String value with the number to call
-        prompt: false, // Optional boolean property. Determines if the user should be prompted prior to the call
-        skipCanOpen: true, // Skip the canOpenURL check
-      })
-    } catch (e) {
-      console.error(e)
-    }
-  }
   const onShareLocation = () => {
     Alert.alert('Feature coming soon')
   }
@@ -108,17 +98,17 @@ export default function Main({ navigation }: Props) {
           <View className="flex flex-col">
             <EasyboardButton
               type="bg-primary"
-              onPress={callCareTaker}
+              onPress={callCareGiver}
               title="CALL CAREGIVER"
               iconName="phone-call"
             />
-            <View className="h-2" />
+            {/* <View className="h-2" />
             <EasyboardButton
               type="bg-secondary"
               onPress={onShareLocation}
               title="SHARE LOCATION"
               iconName="map-pin"
-            />
+            /> */}
           </View>
         </>
       )}

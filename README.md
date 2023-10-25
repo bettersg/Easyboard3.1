@@ -169,6 +169,8 @@ Github Project Link: [https://github.com/Engineering-Good/Easyboard3](https://gi
 | From engineering good2                             | [Notion Link](https://www.notion.so/engineeringgood/Review-of-EasyBoard-2-0-497f8a96cb794f20b1516f663a4fa8c0)           |
 | From better sg                                     | [Notion Link](https://www.notion.so/better/Team-Members-Dashboard-40b604433fda413a895d5514e907aafc)                     |
 | Knowledge Transfer, Feb 2023                       | [Video](https://drive.google.com/file/d/1BaVut7JaEv9o9DL-SgqqNA5_UwMtmYVC/view)                                         |
+| Google-Routes API Reference                        | [Documentation (General)](https://developers.google.com/maps/documentation/routes)                                      |
+| Google-Routes API Reference                        | [Documentation - Compute Routes](https://developers.google.com/maps/documentation/routes/compute_route_directions)      |
 | (Tutorial) Online react course                     | [Udemy Course](https://nlbsg.udemy.com/course/react-native-the-practical-guide/learn/lecture/31197688?start=0#overview) |
 | (Tutorial) React Native getting started page       | [React-Native Docs](https://reactnative.dev/docs/environment-setup)                                                     |
 | (Tutorial) Official TypeScript Handbook            | [Typescript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)                                          |

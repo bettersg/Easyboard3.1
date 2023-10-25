@@ -3,7 +3,7 @@ import Constants from 'expo-constants'
 import * as SecureStore from 'expo-secure-store'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect, useState } from 'react'
-import { useForm, Controller, FieldError, FieldErrorsImpl, Merge } from 'react-hook-form'
+import { useForm, Controller, FieldError, FieldErrorsImpl, Merge, Form } from 'react-hook-form'
 import { Text, View, ScrollView, Alert } from 'react-native'
 
 import PhotoSelect from '../common/PhotoSelect'
@@ -131,6 +131,10 @@ export default function Setting({ navigation }: Props) {
     })()
   }, [])
 
+  const FormLabel = ({ text }: { text: string }) => (
+    <Text className="mb-2 mt-1 text-black">{text}</Text>
+  )
+
   if (isLoading) {
     return (
       <Page>
@@ -145,7 +149,7 @@ export default function Setting({ navigation }: Props) {
         <View>
           {/* Name Input */}
           <View className="py-2">
-            <Text className="mb-2 text-lg text-black">What is your name?</Text>
+            <FormLabel text="What is your name?" />
             <Controller
               control={control}
               rules={{ required: true }}
@@ -165,7 +169,7 @@ export default function Setting({ navigation }: Props) {
           </View>
           {/* Caregiver Phone Number */}
           <View className="py-2">
-            <Text className="mb-2 text-lg text-black">What is your caregiver's phone number?</Text>
+            <FormLabel text="What is your caregiver's phone number?" />
             <Controller
               control={control}
               rules={{
@@ -190,7 +194,7 @@ export default function Setting({ navigation }: Props) {
           </View>
           {/* Home Address */}
           <View className="py-2">
-            <Text className="mb-2 text-lg text-black">Where is your home?</Text>
+            <FormLabel text="Where is your home?" />
             <Controller
               control={control}
               rules={{ required: true }}
@@ -211,7 +215,7 @@ export default function Setting({ navigation }: Props) {
           </View>
           {/* Home Address - Photo */}
           <View className="py-2">
-            <Text className="mb-2 text-lg text-black">Upload reference image of home</Text>
+            <FormLabel text="Upload reference image of home" />
             <Controller
               control={control}
               render={() => (
@@ -223,9 +227,7 @@ export default function Setting({ navigation }: Props) {
 
           {/* Favorite Address - Name*/}
           <View className="py-2">
-            <Text className="mb-2 text-lg text-black">
-              What is the name of the location you visit frequently?
-            </Text>
+            <FormLabel text="What is the name of the location you visit frequently?" />
             <Controller
               control={control}
               rules={{ required: true }}
@@ -244,7 +246,7 @@ export default function Setting({ navigation }: Props) {
           </View>
           {/* Favorite Address - Location */}
           <View className="py-2">
-            <Text className="mb-2 text-lg text-black">Frequent visit location address</Text>
+            <FormLabel text="Frequent visit location address" />
             <Controller
               control={control}
               rules={{ required: true }}
@@ -265,7 +267,7 @@ export default function Setting({ navigation }: Props) {
           </View>
           {/* Favorite Address - Image */}
           <View className="py-2">
-            <Text className="mb-2 text-lg text-black">
+            <Text className="mb-2 mt-1 text-black">
               Upload reference image of{' '}
               {watch('gotoFavAddrsName').length > 0 ? (
                 <Text className="font-semibold text-primary">{watch('gotoFavAddrsName')}</Text>

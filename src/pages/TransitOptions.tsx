@@ -74,11 +74,11 @@ const TransitOptions = ({ navigation, route }: Props) => {
   }
   return (
     <Page disableScroll>
+      <Text className="pb-4 text-2xl">
+        {`Directions to `}
+        <Text className="font-semibold text-primary">{route.params.destinationName}</Text>
+      </Text>
       <ScrollView>
-        <Text className="pb-4 text-2xl">
-          {`Directions to `}
-          <Text className="font-semibold text-primary">{route.params.destinationName}</Text>
-        </Text>
         {transitOptions.length === 0 && (
           <View>
             <Text className="text-lg">{errorMessage ?? 'Error: No routes found'}</Text>

@@ -1,5 +1,6 @@
 import { Feather } from '@expo/vector-icons'
 import { styled } from 'nativewind'
+import { useMemo } from 'react'
 import { Pressable, Text, View } from 'react-native'
 
 import TransitTypePill from './TransitTypePill'
@@ -8,8 +9,8 @@ import { GoogleRouteStepsOverview } from '../utils/GoogleRouteUtils'
 const StyledPressable = styled(Pressable)
 
 interface Props {
-  onPress: () => void
-  index: number
+  onPress?: () => void
+  index?: number
   googleRouteStepsOverview: GoogleRouteStepsOverview
 }
 /**
@@ -18,14 +19,19 @@ interface Props {
  */
 const TransitOptionCard = ({ onPress, googleRouteStepsOverview, index }: Props) => {
   const { totalDistance, totalDuration, steps } = googleRouteStepsOverview
-
+  const routeName = useMemo(() => {
+    return typeof index !== 'undefined' ? `Route ${index + 1}` : 'Selected Route'
+  }, [index])
   return (
     <StyledPressable
-      className="relative mb-4 w-full rounded-md border-[0.5px] border-slate-300 bg-white p-4 active:opacity-75"
+      className={[
+        `relative mb-4 w-full rounded-md border-[0.5px] border-slate-300 bg-white p-4`,
+        onPress ? 'active:opacity-75' : '',
+      ].join(' ')}
       onPress={onPress}
     >
       <View className="flex flex-col">
-        <Text className="text-xl font-bold">{`Route ${index + 1}`}</Text>
+        <Text className="text-xl font-bold">{routeName}</Text>
         <View className="flex flex-row flex-wrap items-center pb-6 pt-4">
           {steps.map((step, i) => {
             return (

@@ -7,8 +7,10 @@ const StyledPressable = styled(Pressable)
 interface Props {
   type?: 'bg-primary' | 'bg-secondary' | 'bg-error' | 'bg-warning' | 'bg-success' | 'bg-white'
   fullWidth?: boolean
+  disabled?: boolean
   onPress: () => void
   title: string
+  iconAfter?: boolean
   iconName?: 'phone-call' | 'save' | 'map-pin' | 'chevron-right' | 'chevron-left'
   iconSize?: number
   titleSize?: 'text-base' | 'text-xs' | 'text-sm' | 'text-md' | 'text-lg' | 'text-xl'
@@ -18,6 +20,7 @@ interface Props {
  * Whenever you come across a new prop or style you want to pass in, feel free to refactor/extend this component
  */
 const EasyboardButton = ({
+  disabled,
   type,
   fullWidth,
   onPress,
@@ -25,6 +28,7 @@ const EasyboardButton = ({
   titleSize = 'text-base',
   iconName,
   iconSize = 20,
+  iconAfter,
 }: Props) => {
   return (
     <StyledPressable
@@ -33,11 +37,12 @@ const EasyboardButton = ({
         type,
         type === 'bg-white' ? 'border-2 border-slate-800' : '',
         fullWidth ? 'w-full' : '',
+        disabled ? 'opacity-30' : '',
       ].join(' ')}
-      onPress={onPress}
+      onPress={disabled ? () => {} : onPress}
     >
       <>
-        {iconName && (
+        {iconName && !iconAfter && (
           <Feather
             name={iconName}
             size={iconSize}
@@ -51,6 +56,13 @@ const EasyboardButton = ({
         >
           {title}
         </Text>
+        {iconName && iconAfter && (
+          <Feather
+            name={iconName}
+            size={iconSize}
+            color={type === 'bg-white' ? 'black' : 'white'}
+          />
+        )}
       </>
     </StyledPressable>
   )
