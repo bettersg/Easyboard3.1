@@ -43,10 +43,11 @@ export default function GoogleMapsDirections({ navigation, route }: Props) {
     const { high, low } = googleRoute.viewport
     return {
       latitude:
-        Math.min(high.latitude, low.latitude) + Math.abs((high.latitude - low.latitude) / 4),
+        Math.min(high.latitude, low.latitude) +
+        Math.abs((high.latitude - low.latitude) / 4),
       longitude: (high.longitude + low.longitude) / 2, // Simple logic -> middle
       latitudeDelta: Math.abs(high.latitude - low.latitude) + 0.1,
-      longitudeDelta: Math.abs(high.longitude - low.longitude) + 0.1,
+      longitudeDelta: Math.abs(high.longitude - low.longitude) + 0.1
     }
   }, [googleRoute.viewport])
 
@@ -75,7 +76,7 @@ export default function GoogleMapsDirections({ navigation, route }: Props) {
             Math.abs((startLocation.latitude - endLocation.latitude) / 4),
           longitude: (startLocation.longitude + endLocation.longitude) / 2, // Simple logic -> middle
           latitudeDelta: Math.abs(oLat - dLat) + zoom,
-          longitudeDelta: Math.abs(oLng - dLng) + zoom,
+          longitudeDelta: Math.abs(oLng - dLng) + zoom
         },
         500
       )
@@ -89,30 +90,32 @@ export default function GoogleMapsDirections({ navigation, route }: Props) {
       const startLocation = googleRoute.legs[0]?.steps[0]?.startLocation.latLng
       if (startLocation)
         return (
-          <Marker coordinate={startLocation} pinColor="blue">
-            <View className="rounded-full bg-white">
-              <MaterialIcons name="person-pin" size={40} color="black" />
+          <Marker coordinate={startLocation} pinColor='blue'>
+            <View className='rounded-full bg-white'>
+              <MaterialIcons name='person-pin' size={40} color='black' />
             </View>
           </Marker>
         )
     }
 
-    const startLocation = googleRoute.legs[0]?.steps[currentStep]?.startLocation.latLng
-    const endLocation = googleRoute.legs[0]?.steps[currentStep]?.endLocation.latLng
+    const startLocation =
+      googleRoute.legs[0]?.steps[currentStep]?.startLocation.latLng
+    const endLocation =
+      googleRoute.legs[0]?.steps[currentStep]?.endLocation.latLng
 
     return (
       <>
         {startLocation && (
-          <Marker coordinate={startLocation} pinColor="blue">
-            <View className="rounded-full bg-white">
-              <MaterialIcons name="person-pin" size={40} color="black" />
+          <Marker coordinate={startLocation} pinColor='blue'>
+            <View className='rounded-full bg-white'>
+              <MaterialIcons name='person-pin' size={40} color='black' />
             </View>
           </Marker>
         )}
         {endLocation && currentStep + 1 < googleRoute.legs[0]?.steps.length && (
-          <Marker coordinate={endLocation} pinColor="orange">
-            <View className="rounded-full bg-white">
-              <FontAwesome name="circle-o" size={24} color="black" />
+          <Marker coordinate={endLocation} pinColor='orange'>
+            <View className='rounded-full bg-white'>
+              <FontAwesome name='circle-o' size={24} color='black' />
             </View>
           </Marker>
         )}
@@ -139,13 +142,13 @@ export default function GoogleMapsDirections({ navigation, route }: Props) {
   }, [currentStep])
 
   return (
-    <View className="relative flex flex-1 justify-between bg-white">
+    <View className='relative flex flex-1 justify-between bg-white'>
       <MapView
         initialRegion={mapRegion}
         provider={PROVIDER_GOOGLE}
         ref={mapViewRef}
-        className="h-full justify-between px-6 py-4"
-        userLocationPriority="high"
+        className='h-full justify-between px-6 py-4'
+        userLocationPriority='high'
         followsUserLocation
       >
         {/* Render Final Destination Marker */}
@@ -153,28 +156,30 @@ export default function GoogleMapsDirections({ navigation, route }: Props) {
         {/* Render additional markers */}
         {startEndMarkers}
         <Polyline
-          lineJoin="round"
+          lineJoin='round'
           coordinates={PolylineCoordinates.polyline}
-          strokeColor="#4a89f3" // fallback for when `strokeColors` is not supported by the map-provider
+          strokeColor='#4a89f3' // fallback for when `strokeColors` is not supported by the map-provider
           strokeColors={PolylineCoordinates.colors}
           strokeWidth={5}
         />
       </MapView>
-      <View className="absolute bottom-0 left-0 right-0 z-10 flex-col justify-end bg-white/40 pt-2">
+      <View className='absolute bottom-0 left-0 right-0 z-10 flex-col justify-end bg-white/40 pt-2'>
         {!navigationStarted && googleRoute.legs[0] && (
-          <View className="px-3 pt-1">
+          <View className='px-3 pt-1'>
             <TransitOptionCard
-              googleRouteStepsOverview={getStepsOverViewFromGoogleRouteLeg(googleRoute.legs[0])}
+              googleRouteStepsOverview={getStepsOverViewFromGoogleRouteLeg(
+                googleRoute.legs[0]
+              )}
             />
           </View>
         )}
         {googleRoute.legs[0] && navigationStarted && (
           <Carousel
             enabled={navigationStarted}
-            mode="parallax"
+            mode='parallax'
             modeConfig={{
               parallaxScrollingScale: 0.9,
-              parallaxScrollingOffset: 50,
+              parallaxScrollingOffset: 50
             }}
             loop={false}
             ref={carouselRef}
@@ -189,36 +194,38 @@ export default function GoogleMapsDirections({ navigation, route }: Props) {
             }}
           />
         )}
-        <SafeAreaView className="flex flex-row">
+        <SafeAreaView className='flex flex-row'>
           {!navigationStarted ? (
-            <View className="mx-2 flex flex-1 px-1">
+            <View className='mx-2 flex flex-1 px-1'>
               <EasyboardButton
                 fullWidth
-                title="START"
+                title='START'
                 iconAfter
-                iconName="chevron-right"
+                iconName='chevron-right'
                 onPress={onStartTripPressed}
               />
             </View>
           ) : (
             <>
-              <View className="ml-2 flex flex-1 px-1">
+              <View className='ml-2 flex flex-1 px-1'>
                 {currentStep === 0 ? (
                   <View />
                 ) : (
                   <EasyboardButton
-                    type="bg-secondary"
+                    type='bg-secondary'
                     onPress={onPrevStepPressed}
-                    title="Previous Step"
-                    iconName="chevron-left"
+                    title='Previous Step'
+                    iconName='chevron-left'
                   />
                 )}
               </View>
-              <View className="mr-2 flex flex-1 px-1">
+              <View className='mr-2 flex flex-1 px-1'>
                 <EasyboardButton
                   onPress={onNextStepPressed}
                   title={
-                    currentStep + 1 < googleRoute.legs[0]?.steps.length ? 'Next Step' : 'Arrived'
+                    currentStep + 1 < googleRoute.legs[0]?.steps.length
+                      ? 'Next Step'
+                      : 'Arrived'
                   }
                   iconName={
                     currentStep + 1 < googleRoute.legs[0]?.steps.length
@@ -226,7 +233,9 @@ export default function GoogleMapsDirections({ navigation, route }: Props) {
                       : undefined
                   }
                   iconAfter
-                  disabled={currentStep + 1 === googleRoute.legs[0]?.steps.length}
+                  disabled={
+                    currentStep + 1 === googleRoute.legs[0]?.steps.length
+                  }
                 />
               </View>
             </>

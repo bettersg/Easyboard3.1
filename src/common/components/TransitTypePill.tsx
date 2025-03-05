@@ -15,10 +15,10 @@ const TransitTypePill = ({ travelMode, transitLine }: Props) => {
   const baseClass = 'my-2 py-1 px-2 rounded-lg flex flex-row items-center'
   if (travelMode === 'WALK') {
     return (
-      <View className="flex flex-row">
+      <View className='flex flex-row'>
         <View className={`${baseClass} bg-cyan-800`}>
-          <FontAwesome5 name="walking" size={14} color="white" />
-          <Text className="ml-1 text-white">Walk</Text>
+          <FontAwesome5 name='walking' size={14} color='white' />
+          <Text className='ml-1 text-white'>Walk</Text>
         </View>
       </View>
     )
@@ -26,14 +26,17 @@ const TransitTypePill = ({ travelMode, transitLine }: Props) => {
   if (travelMode === 'TRANSIT') {
     if (transitLine) {
       return (
-        <View className="flex flex-row">
-          <View style={{ backgroundColor: transitLine.color }} className={baseClass}>
+        <View className='flex flex-row'>
+          <View
+            style={{ backgroundColor: transitLine.color }}
+            className={baseClass}
+          >
             <FontAwesome5
               name={transitLine.vehicle.type === 'BUS' ? 'bus' : 'train'}
               size={14}
               color={transitLine.textColor}
             />
-            <Text style={{ color: transitLine.textColor }} className="ml-2">
+            <Text style={{ color: transitLine.textColor }} className='ml-2'>
               {transitLine.name}
             </Text>
           </View>

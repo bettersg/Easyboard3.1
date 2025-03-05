@@ -11,7 +11,12 @@ interface Props {
   value: string | string[] | null
 }
 
-const PhotoSelect = ({ imgChange, allowMultiple, selectionLimit, value }: Props) => {
+const PhotoSelect = ({
+  imgChange,
+  allowMultiple,
+  selectionLimit,
+  value
+}: Props) => {
   const [imgUri, setImgUri] = useState<string | null>('')
   const [multiImgUri, setMultiImgUri] = useState<string[] | null>([])
 
@@ -47,7 +52,7 @@ const PhotoSelect = ({ imgChange, allowMultiple, selectionLimit, value }: Props)
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: allowMultiple,
       selectionLimit: allowMultiple ? selectionLimit : 0,
-      quality: 1,
+      quality: 1
     })
 
     if (result && !result.canceled) {
@@ -73,7 +78,11 @@ const PhotoSelect = ({ imgChange, allowMultiple, selectionLimit, value }: Props)
           {multiImgUri.map(
             (imgUri) =>
               imgUri.length > 0 && (
-                <Image source={{ uri: imgUri }} className="mr-4 mt-4 h-20 w-20" key={imgUri} />
+                <Image
+                  source={{ uri: imgUri }}
+                  className='mr-4 mt-4 h-20 w-20'
+                  key={imgUri}
+                />
               )
           )}
         </ScrollView>
@@ -81,7 +90,13 @@ const PhotoSelect = ({ imgChange, allowMultiple, selectionLimit, value }: Props)
     }
     // Single Image
     if (imgUri != null && imgUri.length > 0 && !allowMultiple) {
-      return <Image source={{ uri: imgUri }} className="mr-4 mt-4 h-20 w-20" key={imgUri} />
+      return (
+        <Image
+          source={{ uri: imgUri }}
+          className='mr-4 mt-4 h-20 w-20'
+          key={imgUri}
+        />
+      )
     }
   }, [imgUri, allowMultiple, multiImgUri])
 

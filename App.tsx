@@ -27,7 +27,7 @@ const settingsDefaultValues: SettingValues = {
   housePhotoUri: null,
   gotoFavAddrs: null,
   gotoFavAddrsName: '',
-  gotoFavPhotoUri: [],
+  gotoFavPhotoUri: []
 }
 
 export default function App() {
@@ -42,7 +42,10 @@ export default function App() {
         )
         // clearing the settings if its all defult values
         if (JSON.stringify(settingsDefaultValues) == storedData) {
-          await SecureStore.setItemAsync(Constants.expoConfig?.extra?.settingsStoredKey, '')
+          await SecureStore.setItemAsync(
+            Constants.expoConfig?.extra?.settingsStoredKey,
+            ''
+          )
         } else if (storedData) {
           setHasSettings(true)
         }
@@ -63,18 +66,22 @@ export default function App() {
   }
 
   const onHelpPressed = () => {
-    Alert.alert('Need Help?', 'Contact your Caregiver by pressing "CALL CAREGIVER"', [
-      {
-        text: 'Cancel',
-        onPress: () => {},
-        style: 'cancel',
-      },
-      {
-        text: 'Call Caregiver',
-        isPreferred: true,
-        onPress: callCareGiver,
-      },
-    ])
+    Alert.alert(
+      'Need Help?',
+      'Contact your Caregiver by pressing "CALL CAREGIVER"',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => {},
+          style: 'cancel'
+        },
+        {
+          text: 'Call Caregiver',
+          isPreferred: true,
+          onPress: callCareGiver
+        }
+      ]
+    )
   }
 
   return (
@@ -82,43 +89,46 @@ export default function App() {
       <Stack.Navigator>
         {!hasSetting && (
           <Stack.Screen
-            name="Introduction"
+            name='Introduction'
             component={Introduction}
             options={{ title: 'Welcome' }}
           />
         )}
         <Stack.Screen
-          name="Main"
+          name='Main'
           component={Main}
           options={({ navigation }) => ({
             title: 'EasyBoard',
             headerRight: () => (
-              <Button title="Setting" onPress={() => navigation.navigate('Setting')} />
-            ),
+              <Button
+                title='Setting'
+                onPress={() => navigation.navigate('Setting')}
+              />
+            )
           })}
         />
         <Stack.Screen
-          name="Setting"
+          name='Setting'
           component={Setting}
           options={{ title: 'Settings', headerBackVisible: hasSetting }} // set this to a variable to check if the user already has settings or not
         />
         <Stack.Screen
-          name="GoogleMapsDirections"
+          name='GoogleMapsDirections'
           component={GoogleMapsDirections}
           options={{
             title: 'Start your trip',
             headerRight: () => (
               <MaterialIcons
-                name="help-outline"
+                name='help-outline'
                 size={28}
-                color="#2a62ff"
+                color='#2a62ff'
                 onPress={onHelpPressed}
               />
-            ),
+            )
           }}
         />
         <Stack.Screen
-          name="TransitOptions"
+          name='TransitOptions'
           component={TransitOptions}
           options={{ title: 'Pick a route' }}
         />

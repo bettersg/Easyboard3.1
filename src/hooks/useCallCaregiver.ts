@@ -12,7 +12,7 @@ const useCallCaregiver = () => {
       await call({
         number, // String value with the number to call
         prompt: true, // Optional boolean property. Determines if the user should be prompted prior to the call
-        skipCanOpen: true, // Skip the canOpenURL check
+        skipCanOpen: true // Skip the canOpenURL check
       })
     } catch (e) {
       console.error(e)

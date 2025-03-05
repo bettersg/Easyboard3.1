@@ -20,23 +20,27 @@ const LocationSelectButton = ({
   onPress,
   value,
   placeholder = 'Select Location',
-  textClassName,
+  textClassName
 }: Props) => {
   return (
     <StyledPressable
       className={[
         'flex flex-row rounded-sm border-[0.5px] border-textInputBorder active:opacity-75',
-        additionalClassName,
+        additionalClassName
       ].join(' ')}
       onPress={onPress}
     >
-      <View className="flex items-center justify-center rounded-l-sm border-r-[0.5px] border-textInputBorder bg-slate-200 px-2">
-        <Feather name="map-pin" size={16} color="grey" />
+      <View className='flex items-center justify-center rounded-l-sm border-r-[0.5px] border-textInputBorder bg-slate-200 px-2'>
+        <Feather name='map-pin' size={16} color='grey' />
       </View>
-      <View className="flex flex-1 justify-center px-3 py-3">
+      <View className='flex flex-1 justify-center px-3 py-3'>
         <Text
           numberOfLines={1}
-          className={['text-md', value ? 'text-black' : 'text-gray-600', textClassName].join(' ')}
+          className={[
+            'text-md',
+            value ? 'text-black' : 'text-gray-600',
+            textClassName
+          ].join(' ')}
         >
           {value ? value : placeholder}
         </Text>

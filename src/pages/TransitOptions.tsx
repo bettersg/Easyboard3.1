@@ -51,7 +51,7 @@ const TransitOptions = ({ navigation, route }: Props) => {
       navigation.navigate('GoogleMapsDirections', {
         destination: route.params.destination,
         destinationName: route.params.destinationName,
-        googleRoute: googleRoutes[i] as Route,
+        googleRoute: googleRoutes[i] as Route
       })
     }
   }
@@ -74,14 +74,18 @@ const TransitOptions = ({ navigation, route }: Props) => {
   }
   return (
     <Page disableScroll>
-      <Text className="pb-4 text-2xl">
+      <Text className='pb-4 text-2xl'>
         {`Directions to `}
-        <Text className="font-semibold text-primary">{route.params.destinationName}</Text>
+        <Text className='font-semibold text-primary'>
+          {route.params.destinationName}
+        </Text>
       </Text>
       <ScrollView>
         {transitOptions.length === 0 && (
           <View>
-            <Text className="text-lg">{errorMessage ?? 'Error: No routes found'}</Text>
+            <Text className='text-lg'>
+              {errorMessage ?? 'Error: No routes found'}
+            </Text>
           </View>
         )}
         {transitOptions.map((t, i) => (
