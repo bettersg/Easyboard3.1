@@ -109,7 +109,14 @@ To use Expo, you need to have the following tools installed on your machine:
 
   ```sh
   npm install
-  expo start # or "npm run start"
+
+  # first time only - create a development build 
+  # https://docs.expo.dev/guides/local-app-development/#local-app-compilation
+  npx expo run:android # for android, requires android studio to be installed
+  npx expo run:ios # for ios, requires a mac with xcode installed
+
+  # subsequently to start the dev server (not needed to be run with the above commands)
+  npx expo start # or "npm run start"
   ```
 
 -  iOS
@@ -118,7 +125,17 @@ To use Expo, you need to have the following tools installed on your machine:
     - Make sure you have command line tools active - [See Thread](https://developer.apple.com/forums/thread/680490)
   - For more information, see -> [How to run or debug iOS build](https://github.com/Engineering-Good/Easyboard3/blob/develop/wiki/How-to-run-or-debug-IOS-build.md)
 - Android
-  - _TODO_
+  - Can also be run on either the emulator or a physical device
+  - For emulator, follow https://developer.android.com/studio/run/managing-avds
+  - To run on a device, ensure Android Studio is installed with Android command line tools installed and follow https://developer.android.com/studio/run/device
+
+- Troubleshooting
+  ```sh
+  # if you encounter any issues while creating a development build, try deleting the ios and/or android folders and running
+  npx expo prebuild
+
+  # if there still are issues, then it is likely an issue with one of the dependencies or incompatible ios/android build tools
+  ```
 
 ### Deployment
 

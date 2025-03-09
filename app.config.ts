@@ -35,12 +35,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       'expo-build-properties',
       {
         android: {
-          compileSdkVersion: 31,
-          targetSdkVersion: 31,
-          buildToolsVersion: '31.0.0'
+          compileSdkVersion: 35,
+          targetSdkVersion: 35,
+          buildToolsVersion: '34.0.0'
         },
         ios: {
-          deploymentTarget: '13.0'
+          deploymentTarget: '15.1'
         }
       }
     ]
