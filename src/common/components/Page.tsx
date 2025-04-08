@@ -13,12 +13,17 @@ interface Props {
 }
 const Page = ({ children, disableScroll }: Props) =>
   disableScroll ? (
-    <View className="bg-defaultBackground" style={styles.container}>
-      <SafeAreaView className="flex-1 bg-defaultBackground">{children}</SafeAreaView>
+    <View className='bg-defaultBackground' style={styles.container}>
+      <SafeAreaView className='flex-1 bg-defaultBackground'>
+        {children}
+      </SafeAreaView>
     </View>
   ) : (
-    <SafeAreaView className="flex-1 bg-defaultBackground">
-      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
+    <SafeAreaView className='flex-1 bg-defaultBackground'>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
         {children}
       </ScrollView>
     </SafeAreaView>

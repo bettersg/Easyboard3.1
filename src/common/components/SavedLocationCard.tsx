@@ -23,21 +23,21 @@ const SavedLocationCard = ({
   title,
   subtitle,
   iconName = 'help-circle',
-  imageUri,
+  imageUri
 }: Props) => {
   const renderBackupImage = useMemo(() => {
     if (title === 'Home') {
       return (
         <Image
           source={require('../../../assets/default-home-image.jpg')}
-          className="h-full w-full overflow-hidden"
+          className='h-full w-full overflow-hidden'
         />
       )
     }
     return (
       <Image
         source={require('../../../assets/default-other-image.jpg')}
-        className="h-full w-full overflow-hidden"
+        className='h-full w-full overflow-hidden'
       />
     )
   }, [title])
@@ -45,25 +45,28 @@ const SavedLocationCard = ({
     <StyledPressable
       className={[
         'relative h-44 w-full rounded-sm border-2 border-slate-500 active:opacity-75',
-        borderColor,
+        borderColor
       ].join(' ')}
       onPress={onPress}
     >
       {imageUri ? (
-        <Image source={{ uri: imageUri }} className="h-full w-full overflow-hidden" />
+        <Image
+          source={{ uri: imageUri }}
+          className='h-full w-full overflow-hidden'
+        />
       ) : (
         renderBackupImage
       )}
       <View
         style={{ backgroundColor: 'rgba(0,0, 0, 0.7)' }}
-        className="absolute bottom-0 left-0 right-0 flex flex-row items-center rounded-b-sm bg-slate-600 bg-opacity-10 px-3 py-1"
+        className='absolute bottom-0 left-0 right-0 flex flex-row items-center rounded-b-sm bg-slate-600 bg-opacity-10 px-3 py-1'
       >
-        {iconName && <Feather name={iconName} size={36} color="white" />}
-        <View className="pl-3">
+        {iconName && <Feather name={iconName} size={36} color='white' />}
+        <View className='pl-3'>
           <Text numberOfLines={2} className={`text-lg font-bold text-white `}>
             {title}
           </Text>
-          <Text numberOfLines={2} className="pb-1 pr-5 text-white">
+          <Text numberOfLines={2} className='pb-1 pr-5 text-white'>
             {subtitle}
           </Text>
         </View>

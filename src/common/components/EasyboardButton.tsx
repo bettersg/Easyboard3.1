@@ -5,15 +5,32 @@ import { Pressable, Text } from 'react-native'
 const StyledPressable = styled(Pressable)
 
 interface Props {
-  type?: 'bg-primary' | 'bg-secondary' | 'bg-error' | 'bg-warning' | 'bg-success' | 'bg-white'
+  type?:
+    | 'bg-primary'
+    | 'bg-secondary'
+    | 'bg-error'
+    | 'bg-warning'
+    | 'bg-success'
+    | 'bg-white'
   fullWidth?: boolean
   disabled?: boolean
   onPress: () => void
   title: string
   iconAfter?: boolean
-  iconName?: 'phone-call' | 'save' | 'map-pin' | 'chevron-right' | 'chevron-left'
+  iconName?:
+    | 'phone-call'
+    | 'save'
+    | 'map-pin'
+    | 'chevron-right'
+    | 'chevron-left'
   iconSize?: number
-  titleSize?: 'text-base' | 'text-xs' | 'text-sm' | 'text-md' | 'text-lg' | 'text-xl'
+  titleSize?:
+    | 'text-base'
+    | 'text-xs'
+    | 'text-sm'
+    | 'text-md'
+    | 'text-lg'
+    | 'text-xl'
 }
 /**
  * This is written as generic as possible, but also as extendible as possible
@@ -28,7 +45,7 @@ const EasyboardButton = ({
   titleSize = 'text-base',
   iconName,
   iconSize = 20,
-  iconAfter,
+  iconAfter
 }: Props) => {
   return (
     <StyledPressable
@@ -37,7 +54,7 @@ const EasyboardButton = ({
         type,
         type === 'bg-white' ? 'border-2 border-slate-800' : '',
         fullWidth ? 'w-full' : '',
-        disabled ? 'opacity-30' : '',
+        disabled ? 'opacity-30' : ''
       ].join(' ')}
       onPress={disabled ? () => {} : onPress}
     >

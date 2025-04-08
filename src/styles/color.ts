@@ -20,5 +20,5 @@ export const Colors = {
   EW: '#0aa605',
   CC: '#fc8c03',
   DT: '#033dfc',
-  TE: '#a1654d',
+  TE: '#a1654d'
 }

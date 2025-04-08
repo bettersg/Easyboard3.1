@@ -1,13 +1,20 @@
 import * as Location from 'expo-location'
 import { useState, useEffect, useRef } from 'react'
-import { StyleSheet, Text, View, Dimensions, TouchableOpacity, Keyboard } from 'react-native'
+import {
+  StyleSheet,
+  Text,
+  View,
+  Dimensions,
+  TouchableOpacity,
+  Keyboard
+} from 'react-native'
 import Autocomplete from 'react-native-autocomplete-input'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 
 import {
   getGooglePlacesLocationAsync,
   getGoogleReverseGeoCodingAsync,
-  queryGooglePlacesAsync,
+  queryGooglePlacesAsync
 } from '../../apis/GooglePlacesAPI'
 import { useDebounce } from '../../hooks/_debounce'
 import LatLong from '../../interfaces/LatLong.interface'
@@ -41,7 +48,10 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
   }
   useDebounce(queryLocation, 600, [hidePrediction, search])
 
-  const tapPrediction = async function (placeId: string | number, description: string) {
+  const tapPrediction = async function (
+    placeId: string | number,
+    description: string
+  ) {
     try {
       setSearch(description)
       setHidePrediction(true)
@@ -53,7 +63,7 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
           longitude: lng,
           latitude: lat,
           latitudeDelta: 0.09,
-          longitudeDelta: 0.09,
+          longitudeDelta: 0.09
         },
         400
       )
@@ -92,14 +102,16 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
         }
         // if value prop is not null by checking if its truthy
         const coords =
-          value == true ? value.latlng : (await Location.getCurrentPositionAsync({})).coords
+          value == true
+            ? value.latlng
+            : (await Location.getCurrentPositionAsync({})).coords
         setShowUserLocation(true)
         mapViewRef.current?.animateToRegion(
           {
             longitude: coords.longitude,
             latitude: coords.latitude,
             latitudeDelta: 0.09,
-            longitudeDelta: 0.09,
+            longitudeDelta: 0.09
           },
           400
         )
@@ -110,35 +122,37 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
   }, [])
 
   return (
-    <View className="flex flex-1 items-center justify-center bg-white">
-      <View className="absolute left-0 right-0 top-12 z-10 flex flex-1 px-3">
+    <View className='flex flex-1 items-center justify-center bg-white'>
+      <View className='absolute left-0 right-0 top-12 z-10 flex flex-1 px-3'>
         <Autocomplete
           inputContainerStyle={{ borderWidth: 0 }}
           className={[
             'h-10 border-[1px] border-textInputBorder px-3 text-[14px]',
-            hidePrediction ? 'rounded-md' : 'rounded-t-md',
+            hidePrediction ? 'rounded-md' : 'rounded-t-md'
           ].join(' ')}
           hideResults={hidePrediction}
-          placeholder="Search for location"
+          placeholder='Search for location'
           data={predictions}
           value={search}
           onChangeText={(searchTerm) => {
             setSearch(searchTerm)
             setHidePrediction(false)
           }}
-          returnKeyType="done"
+          returnKeyType='done'
           flatListProps={{
             keyExtractor: (item: any) => item.place_id,
             style: styles.autocompleteList,
             renderItem: ({ item }) => (
-              <TouchableOpacity onPress={() => tapPrediction(item.place_id, item.description)}>
-                <View className="border-b-[0.5px] border-gray-300 bg-white p-2">
-                  <Text className="text-lg" numberOfLines={1}>
+              <TouchableOpacity
+                onPress={() => tapPrediction(item.place_id, item.description)}
+              >
+                <View className='border-b-[0.5px] border-gray-300 bg-white p-2'>
+                  <Text className='text-lg' numberOfLines={1}>
                     {item.description}
                   </Text>
                 </View>
               </TouchableOpacity>
-            ),
+            )
           }}
         />
       </View>
@@ -151,15 +165,17 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
           latitude: 1.3521,
           longitude: 103.822872,
           latitudeDelta: 0.3,
-          longitudeDelta: 0.3,
+          longitudeDelta: 0.3
         }}
         showsUserLocation={showUserLocation}
         showsMyLocationButton
-        onPress={({ nativeEvent: { coordinate } }) => selectPosition(coordinate)}
+        onPress={({ nativeEvent: { coordinate } }) =>
+          selectPosition(coordinate)
+        }
       >
         {marker != null && (
           <Marker
-            title="Selected location"
+            title='Selected location'
             description={marker.description}
             coordinate={marker.latlng}
           />
@@ -172,14 +188,14 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
 const styles = StyleSheet.create({
   map: {
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
+    height: Dimensions.get('window').height
   },
   autocompleteList: {
     borderBottomRightRadius: 6,
-    borderBottomLeftRadius: 6,
+    borderBottomLeftRadius: 6
   },
   autocompleteItemText: {
-    fontSize: 18,
-  },
+    fontSize: 18
+  }
 })
 export default GoogleMapView

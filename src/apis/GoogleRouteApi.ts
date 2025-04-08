@@ -11,32 +11,35 @@ const apiKey = Constants?.expoConfig?.extra?.googleMapsAPI
  * @param destinationLatLng
  * @returns
  */
-export const getGoogleRoute = async (originLatLng: LatLong, destinationLatLng: LatLong) => {
+export const getGoogleRoute = async (
+  originLatLng: LatLong,
+  destinationLatLng: LatLong
+) => {
   try {
     const params = {
       origin: {
         location: {
-          latLng: originLatLng,
-        },
+          latLng: originLatLng
+        }
       },
       destination: {
         location: {
-          latLng: destinationLatLng,
-        },
+          latLng: destinationLatLng
+        }
       },
       travelMode: 'TRANSIT',
       computeAlternativeRoutes: true,
       languageCode: 'en-US',
       transitPreferences: {
-        allowedTravelModes: ['TRAIN', 'BUS'],
+        allowedTravelModes: ['TRAIN', 'BUS']
       },
-      units: 'METRIC',
+      units: 'METRIC'
     }
     const headers = {
       'Content-Type': 'application/json',
       'X-Goog-Api-Key': apiKey,
       //   'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.legs.steps.transitDetails,routes.legs.polyline,routes.polyline.encodedPolyline'
-      'X-Goog-FieldMask': 'routes',
+      'X-Goog-FieldMask': 'routes'
       //   'X-Goog-FieldMask': 'routes.legs.steps.transitDetails'
     }
     console.log(params)

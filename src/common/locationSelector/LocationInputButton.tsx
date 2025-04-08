@@ -5,7 +5,11 @@ import GoogleMapView from './GoogleMapView'
 import styles from '../../styles/style'
 import EasyboardButton from '../components/EasyboardButton'
 
-export default function LocationInputButton({ onLocationSelect }: { onLocationSelect: any }) {
+export default function LocationInputButton({
+  onLocationSelect
+}: {
+  onLocationSelect: any
+}) {
   const [isModalOpen, setModalOpenState] = useState(false)
   const [location, setSelectedLocation] = useState(null)
 
@@ -13,23 +17,26 @@ export default function LocationInputButton({ onLocationSelect }: { onLocationSe
     setSelectedLocation(locationMarker)
   }
 
-  const cardShadowStyle = function ({ pressed }: { pressed: boolean }, backgroundColor = '#fff') {
+  const cardShadowStyle = function (
+    { pressed }: { pressed: boolean },
+    backgroundColor = '#fff'
+  ) {
     return [
       styles.pressableCard,
       {
         shadowColor: pressed ? '#fff' : '#171717',
         backgroundColor,
-        borderWidth: pressed ? 0.8 : 1,
-      },
+        borderWidth: pressed ? 0.8 : 1
+      }
     ]
   }
 
   return (
-    <View className="py-2">
+    <View className='py-2'>
       <Modal
-        presentationStyle="pageSheet"
+        presentationStyle='pageSheet'
         statusBarTranslucent
-        animationType="slide"
+        animationType='slide'
         visible={isModalOpen}
         onRequestClose={() => {
           if (location != null) onLocationSelect(location)
@@ -43,19 +50,25 @@ export default function LocationInputButton({ onLocationSelect }: { onLocationSe
         <View style={localStyles.container}>
           <View style={localStyles.doneBtnContainer}>
             <Pressable>
-              <Text style={localStyles.doneBtn} onPress={() => setModalOpenState(false)}>
+              <Text
+                style={localStyles.doneBtn}
+                onPress={() => setModalOpenState(false)}
+              >
                 Done
               </Text>
             </Pressable>
           </View>
-          <GoogleMapView onLocationMarkerDrop={onLocationMarkerDrop} value={null} />
+          <GoogleMapView
+            onLocationMarkerDrop={onLocationMarkerDrop}
+            value={null}
+          />
         </View>
       </Modal>
       <EasyboardButton
-        type="bg-white"
+        type='bg-white'
         onPress={() => setModalOpenState(true)}
-        title="Other Location"
-        iconName="chevron-right"
+        title='Other Location'
+        iconName='chevron-right'
       />
     </View>
   )
@@ -66,17 +79,17 @@ const localStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   doneBtnContainer: {
     zIndex: 2,
     position: 'absolute',
     top: 10,
-    right: 10,
+    right: 10
   },
   doneBtn: {
     color: '#007AFF',
     fontWeight: 'bold',
-    fontSize: 21,
-  },
+    fontSize: 21
+  }
 })

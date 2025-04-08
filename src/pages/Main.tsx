@@ -49,7 +49,7 @@ export default function Main({ navigation }: Props) {
     if (location != null) {
       navigation.navigate('TransitOptions', {
         destinationName: location.description,
-        destination: location,
+        destination: location
       })
     }
   }, [location])
@@ -62,45 +62,49 @@ export default function Main({ navigation }: Props) {
       {userSetting && (
         <>
           <View>
-            <Text className="mb-3 text-xl font-bold">Where do you want to go?</Text>
+            <Text className='mb-3 text-xl font-bold'>
+              Where do you want to go?
+            </Text>
             <SavedLocationCard
-              borderColor="border-cyan-800"
+              borderColor='border-cyan-800'
               onPress={() => {
                 navigation.navigate('TransitOptions', {
                   destinationName: 'Home',
-                  destination: userSetting.houseAddrs,
+                  destination: userSetting.houseAddrs
                 })
               }}
-              title="Home"
+              title='Home'
               subtitle={userSetting.houseAddrs.description}
               imageUri={userSetting.housePhotoUri}
-              iconName="home"
+              iconName='home'
             />
-            <View className="h-2" />
+            <View className='h-2' />
             <SavedLocationCard
-              borderColor="border-secondary"
+              borderColor='border-secondary'
               onPress={() => {
                 navigation.navigate('TransitOptions', {
                   destination: userSetting.gotoFavAddrs,
-                  destinationName: userSetting.gotoFavAddrsName,
+                  destinationName: userSetting.gotoFavAddrsName
                 })
               }}
               title={userSetting.gotoFavAddrsName}
               subtitle={userSetting.gotoFavAddrs.description}
               imageUri={userSetting.gotoFavPhotoUri}
-              iconName="map"
+              iconName='map'
             />
             <LocationInputButton
-              onLocationSelect={(markerLocation: any) => setMarkerLocation(markerLocation)}
+              onLocationSelect={(markerLocation: any) =>
+                setMarkerLocation(markerLocation)
+              }
             />
           </View>
 
-          <View className="flex flex-col">
+          <View className='flex flex-col'>
             <EasyboardButton
-              type="bg-primary"
+              type='bg-primary'
               onPress={callCareGiver}
-              title="CALL CAREGIVER"
-              iconName="phone-call"
+              title='CALL CAREGIVER'
+              iconName='phone-call'
             />
             {/* <View className="h-2" />
             <EasyboardButton

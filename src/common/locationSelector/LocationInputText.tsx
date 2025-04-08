@@ -7,7 +7,7 @@ import LocationSelectButton from '../components/LocationSelectButton'
 
 export default function LocationTextInput({
   onLocationSelect,
-  value,
+  value
 }: {
   onLocationSelect: any
   value: any
@@ -26,9 +26,9 @@ export default function LocationTextInput({
   return (
     <View>
       <Modal
-        presentationStyle="pageSheet"
+        presentationStyle='pageSheet'
         statusBarTranslucent
-        animationType="slide"
+        animationType='slide'
         visible={isModalOpen}
         onRequestClose={() => {
           if (location != null) onLocationSelect(location)
@@ -42,16 +42,25 @@ export default function LocationTextInput({
         <View style={styles.container}>
           <View style={styles.doneBtnContainer}>
             <Pressable>
-              <Text style={styles.doneBtn} onPress={() => setModalOpenState(false)}>
+              <Text
+                style={styles.doneBtn}
+                onPress={() => setModalOpenState(false)}
+              >
                 Done
               </Text>
             </Pressable>
           </View>
-          <GoogleMapView onLocationMarkerDrop={onLocationMarkerDrop} value={location} />
+          <GoogleMapView
+            onLocationMarkerDrop={onLocationMarkerDrop}
+            value={location}
+          />
         </View>
       </Modal>
 
-      <LocationSelectButton onPress={() => setModalOpenState(true)} value={location?.description} />
+      <LocationSelectButton
+        onPress={() => setModalOpenState(true)}
+        value={location?.description}
+      />
     </View>
   )
 }
@@ -61,23 +70,23 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   inputBtn: {
     borderColor: '#000',
     borderWidth: 1,
     padding: 10,
-    color: '#000',
+    color: '#000'
   },
   doneBtnContainer: {
     zIndex: 2,
     position: 'absolute',
     top: 10,
-    right: 10,
+    right: 10
   },
   doneBtn: {
     color: '#007AFF',
     fontWeight: 'bold',
-    fontSize: 21,
-  },
+    fontSize: 21
+  }
 })

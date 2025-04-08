@@ -17,13 +17,15 @@ export interface GoogleRouteStepsOverviewStep {
  * @param leg
  * @returns
  */
-export const getStepsOverViewFromGoogleRouteLeg = (leg: Leg): GoogleRouteStepsOverview => {
+export const getStepsOverViewFromGoogleRouteLeg = (
+  leg: Leg
+): GoogleRouteStepsOverview => {
   const totalDuration = leg.localizedValues.duration.text
   const totalDistance = leg.localizedValues.distance.text
   const steps = leg.stepsOverview.multiModalSegments.map((e) => {
     const overview: GoogleRouteStepsOverviewStep = {
       travelMode: e.travelMode,
-      instruction: e.navigationInstruction?.instructions,
+      instruction: e.navigationInstruction?.instructions
     }
     if (e.travelMode === 'TRANSIT') {
       // We try to get more information.
@@ -35,6 +37,6 @@ export const getStepsOverViewFromGoogleRouteLeg = (leg: Leg): GoogleRouteStepsOv
   return {
     totalDistance,
     totalDuration,
-    steps,
+    steps
   }
 }
