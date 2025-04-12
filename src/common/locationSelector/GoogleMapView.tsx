@@ -6,7 +6,8 @@ import {
   View,
   Dimensions,
   TouchableOpacity,
-  Keyboard
+  Keyboard,
+  StatusBar
 } from 'react-native'
 import Autocomplete from 'react-native-autocomplete-input'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
@@ -38,7 +39,7 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
 
   const queryLocation = async function () {
     try {
-      if (!hidePrediction) {
+      if (!hidePrediction && search) {
         const predictions = await queryGooglePlacesAsync(search)
         setPredictions(predictions)
       }
@@ -62,8 +63,8 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
         {
           longitude: lng,
           latitude: lat,
-          latitudeDelta: 0.09,
-          longitudeDelta: 0.09
+          latitudeDelta: 0.007,
+          longitudeDelta: 0.007
         },
         400
       )
@@ -94,6 +95,7 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
   useEffect(() => {
     ;(async () => {
       try {
+        console.log('here')
         const { status } = await Location.requestForegroundPermissionsAsync()
         if (status !== 'granted') {
           // setErrorMsg("Permission to access location was denied");
@@ -106,15 +108,23 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
             ? value.latlng
             : (await Location.getCurrentPositionAsync({})).coords
         setShowUserLocation(true)
+        console.log('COO', coords)
         mapViewRef.current?.animateToRegion(
           {
             longitude: coords.longitude,
             latitude: coords.latitude,
-            latitudeDelta: 0.09,
-            longitudeDelta: 0.09
+            latitudeDelta: 0.007,
+            longitudeDelta: 0.007
           },
           400
         )
+        mapViewRef.current?.setCamera({
+          center: {
+            latitude: coords.latitude,
+            longitude: coords.longitude
+          },
+          zoom: 15
+        })
       } catch (e) {
         console.error(e)
       }
@@ -122,8 +132,11 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
   }, [])
 
   return (
-    <View className='flex flex-1 items-center justify-center bg-white'>
-      <View className='absolute left-0 right-0 top-12 z-10 flex flex-1 px-3'>
+    <View className='flex flex-1 items-center justify-center'>
+      <View
+        className={`absolute left-0 right-0 z-10 flex flex-1 px-3`}
+        style={{ top: (StatusBar.currentHeight || 10) * 2 }}
+      >
         <Autocomplete
           inputContainerStyle={{ borderWidth: 0 }}
           className={[
@@ -158,7 +171,12 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
       </View>
       <MapView
         ref={mapViewRef}
-        mapPadding={{ top: 30, left: 30, bottom: 30, right: 20 }}
+        mapPadding={{
+          top: Dimensions.get('screen').height * 0.85,
+          left: 30,
+          bottom: 30,
+          right: Dimensions.get('screen').width * 0.75
+        }}
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={{
@@ -167,6 +185,16 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
           latitudeDelta: 0.3,
           longitudeDelta: 0.3
         }}
+        // initialCamera={{
+        //   center: {
+        //     latitude: 1.3521,
+        //     longitude: 103.822872
+        //   },
+        //   pitch: 0,
+        //   heading: 0,
+        //   altitude: 1000,
+        //   zoom: 10
+        // }}
         showsUserLocation={showUserLocation}
         showsMyLocationButton
         onPress={({ nativeEvent: { coordinate } }) =>

@@ -60,12 +60,18 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       image: './assets/splash.png',
       resizeMode: 'contain',
       backgroundColor: '#ffffff'
-    }
+    },
+    newArchEnabled: true
   },
   android: {
     adaptiveIcon: {
       foregroundImage: './assets/adaptive-icon.png',
       backgroundColor: '#FFFFFF'
+    },
+    config: {
+      googleMaps: {
+        apiKey: 'AIzaSyDmMnmiEOJmo-iH5--shOV-T7vm-Cl2aT0'
+      }
     },
     permissions: ['android.permission.RECORD_AUDIO'],
     splash: {
@@ -73,7 +79,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       resizeMode: 'contain',
       backgroundColor: '#ffffff'
     },
-    package: 'org.engineeringgood.EasyBoard.RN'
+    package: 'org.engineeringgood.EasyBoard.RN',
+    newArchEnabled: true
   },
   web: {
     favicon: './assets/favicon.png'

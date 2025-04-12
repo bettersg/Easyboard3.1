@@ -1,6 +1,5 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { StatusBar } from 'expo-status-bar'
-import { Image, Text, View } from 'react-native'
+import { Image, Text, View, StatusBar } from 'react-native'
 
 import EasyboardButton from '../common/components/EasyboardButton'
 import Page from '../common/components/Page'
@@ -11,6 +10,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Introduction'>
 const Introduction = ({ navigation }: Props) => {
   return (
     <Page>
+      <StatusBar barStyle='default' />
       <View className='flex flex-1 items-center'>
         <Image
           source={require('./../../assets/adaptive-icon.png')}
@@ -42,7 +42,6 @@ const Introduction = ({ navigation }: Props) => {
           titleSize='text-lg'
         />
       </View>
-      <StatusBar style='auto' />
     </Page>
   )
 }

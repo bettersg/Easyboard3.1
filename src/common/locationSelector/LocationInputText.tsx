@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Pressable, Modal, Text, View, StyleSheet } from 'react-native'
+import { Modal, View, StyleSheet, Dimensions } from 'react-native'
 
 import GoogleMapView from './GoogleMapView'
 import Location from '../../interfaces/Location.interface'
 import LocationSelectButton from '../components/LocationSelectButton'
+import EasyboardButton from '../components/EasyboardButton'
 
 export default function LocationTextInput({
   onLocationSelect,
@@ -41,14 +42,11 @@ export default function LocationTextInput({
       >
         <View style={styles.container}>
           <View style={styles.doneBtnContainer}>
-            <Pressable>
-              <Text
-                style={styles.doneBtn}
-                onPress={() => setModalOpenState(false)}
-              >
-                Done
-              </Text>
-            </Pressable>
+            <EasyboardButton
+              type='bg-white'
+              onPress={() => setModalOpenState(false)}
+              title='Done'
+            />
           </View>
           <GoogleMapView
             onLocationMarkerDrop={onLocationMarkerDrop}
@@ -68,7 +66,6 @@ export default function LocationTextInput({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center'
   },
@@ -81,8 +78,8 @@ const styles = StyleSheet.create({
   doneBtnContainer: {
     zIndex: 2,
     position: 'absolute',
-    top: 10,
-    right: 10
+    left: Dimensions.get('screen').width * 0.75,
+    top: Dimensions.get('screen').height * 0.85
   },
   doneBtn: {
     color: '#007AFF',
