@@ -35,7 +35,7 @@
     "react-native": "0.76.7",
     "react-native-autocomplete-input": "^5.1.1",
     "react-native-gesture-handler": "~2.20.2",
-    "react-native-maps": "^1.21.0",
+    "react-native-maps": "^1.23.8",
     "react-native-phone-call": "^1.2.0",
     "react-native-reanimated": "~3.16.1",
     "react-native-reanimated-carousel": "^3.5.1",
