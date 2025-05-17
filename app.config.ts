@@ -9,8 +9,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   version: '1.0.0',
   extra: {
     settingsStoredKey: 'setting',
-    googleMapsAPI: 'AIzaSyDmMnmiEOJmo-iH5--shOV-T7vm-Cl2aT0',
-    cityMapperAPI: '6jpwkWlakoUlsL4yzquR9L9xuAb4v6ng',
+    googleMapsAPI: '',
+    cityMapperAPI: '',
     eas: {
       projectId: 'f9d59e35-0f83-450d-ad37-273dce41a868'
     }
