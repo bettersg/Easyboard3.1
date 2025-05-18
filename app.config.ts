@@ -9,7 +9,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   version: '1.0.0',
   extra: {
     settingsStoredKey: 'setting',
-    googleMapsAPI: '',
+    googleMapsAPI: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY,
     cityMapperAPI: '',
     eas: {
       projectId: 'f9d59e35-0f83-450d-ad37-273dce41a868'
@@ -54,7 +54,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     bundleIdentifier: 'org.engineeringgood.EasyBoard.RN',
     buildNumber: '2.21',
     config: {
-      googleMapsApiKey: 'AIzaSyDmMnmiEOJmo-iH5--shOV-T7vm-Cl2aT0'
+      googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
     },
     splash: {
       image: './assets/splash.png',
@@ -70,7 +70,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
     config: {
       googleMaps: {
-        apiKey: 'AIzaSyDmMnmiEOJmo-iH5--shOV-T7vm-Cl2aT0'
+        apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
       }
     },
     permissions: ['android.permission.RECORD_AUDIO'],
