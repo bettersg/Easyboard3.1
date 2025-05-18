@@ -11,6 +11,7 @@ import {
 } from 'react-native'
 import Autocomplete from 'react-native-autocomplete-input'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 
 import {
   getGooglePlacesLocationAsync,
@@ -33,6 +34,7 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
   const [predictions, setPredictions] = useState<any>([])
   const [hidePrediction, setHidePrediction] = useState(true)
   const [showUserLocation, setShowUserLocation] = useState(false)
+  const [location, setLocation] = useState<Location.LocationObject | null>(null)
 
   // Marker States
   const [marker, setMarker] = useState(value)
@@ -86,6 +88,31 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
     }
   }
 
+  const goToCurrentLocation = async () => {
+    try {
+      const { coords } =
+        location || (await Location.getCurrentPositionAsync({}))
+      setMarker({
+        description: 'Current Location',
+        latlng: {
+          latitude: coords.latitude,
+          longitude: coords.longitude
+        }
+      })
+      mapViewRef.current?.animateToRegion(
+        {
+          longitude: coords.longitude,
+          latitude: coords.latitude,
+          latitudeDelta: 0.007,
+          longitudeDelta: 0.007
+        },
+        400
+      )
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   // watch marker value change and update the parent component
   useEffect(() => {
     if (marker) onLocationMarkerDrop(marker)
@@ -95,18 +122,18 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
   useEffect(() => {
     ;(async () => {
       try {
-        console.log('here')
         const { status } = await Location.requestForegroundPermissionsAsync()
         if (status !== 'granted') {
           // setErrorMsg("Permission to access location was denied");
           console.error('Permission to access location was denied')
           return
         }
+
+        const currLocation = await Location.getCurrentPositionAsync({})
+        setLocation(currLocation)
+
         // if value prop is not null by checking if its truthy
-        const coords =
-          value == true
-            ? value.latlng
-            : (await Location.getCurrentPositionAsync({})).coords
+        const coords = value == true ? value.latlng : currLocation.coords
         setShowUserLocation(true)
         console.log('COO', coords)
         mapViewRef.current?.animateToRegion(
@@ -171,12 +198,6 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
       </View>
       <MapView
         ref={mapViewRef}
-        mapPadding={{
-          top: Dimensions.get('screen').height * 0.85,
-          left: 30,
-          bottom: 30,
-          right: Dimensions.get('screen').width * 0.75
-        }}
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={{
@@ -185,18 +206,8 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
           latitudeDelta: 0.3,
           longitudeDelta: 0.3
         }}
-        // initialCamera={{
-        //   center: {
-        //     latitude: 1.3521,
-        //     longitude: 103.822872
-        //   },
-        //   pitch: 0,
-        //   heading: 0,
-        //   altitude: 1000,
-        //   zoom: 10
-        // }}
         showsUserLocation={showUserLocation}
-        showsMyLocationButton
+        showsMyLocationButton={false}
         onPress={({ nativeEvent: { coordinate } }) =>
           selectPosition(coordinate)
         }
@@ -209,6 +220,17 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
           />
         )}
       </MapView>
+      <View style={styles.locationButtonView}>
+        <MaterialCommunityIcons.Button
+          name='crosshairs-gps'
+          onPress={goToCurrentLocation}
+          style={styles.locationButton}
+          backgroundColor={'#222'}
+          color={'#fff'}
+          size={30}
+          borderRadius={500}
+        />
+      </View>
     </View>
   )
 }
@@ -224,6 +246,14 @@ const styles = StyleSheet.create({
   },
   autocompleteItemText: {
     fontSize: 18
+  },
+  locationButton: { padding: 10, marginRight: -10 },
+  locationButtonView: {
+    position: 'absolute',
+    opacity: 0.8,
+    padding: 0,
+    bottom: 80,
+    right: 20
   }
 })
 export default GoogleMapView
