@@ -135,7 +135,6 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
         // if value prop is not null by checking if its truthy
         const coords = value == true ? value.latlng : currLocation.coords
         setShowUserLocation(true)
-        console.log('COO', coords)
         mapViewRef.current?.animateToRegion(
           {
             longitude: coords.longitude,
