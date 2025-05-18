@@ -109,7 +109,6 @@ export default function App() {
                 style={styles.settingsButton}
                 // workaround as onPress does not work
                 onPressOut={() => {
-                  console.log('clicked setting')
                   navigation.navigate('Setting')
                 }}
               />
