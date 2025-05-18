@@ -9,7 +9,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   version: '1.0.0',
   extra: {
     settingsStoredKey: 'setting',
-    googleMapsAPI: '',
+    googleMapsAPI: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY,
     cityMapperAPI: '',
     eas: {
       projectId: 'f9d59e35-0f83-450d-ad37-273dce41a868'
@@ -54,18 +54,24 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     bundleIdentifier: 'org.engineeringgood.EasyBoard.RN',
     buildNumber: '2.21',
     config: {
-      googleMapsApiKey: 'AIzaSyDmMnmiEOJmo-iH5--shOV-T7vm-Cl2aT0'
+      googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
     },
     splash: {
       image: './assets/splash.png',
       resizeMode: 'contain',
       backgroundColor: '#ffffff'
-    }
+    },
+    newArchEnabled: true
   },
   android: {
     adaptiveIcon: {
       foregroundImage: './assets/adaptive-icon.png',
       backgroundColor: '#FFFFFF'
+    },
+    config: {
+      googleMaps: {
+        apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
+      }
     },
     permissions: ['android.permission.RECORD_AUDIO'],
     splash: {
@@ -73,7 +79,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       resizeMode: 'contain',
       backgroundColor: '#ffffff'
     },
-    package: 'org.engineeringgood.EasyBoard.RN'
+    package: 'org.engineeringgood.EasyBoard.RN',
+    newArchEnabled: true
   },
   web: {
     favicon: './assets/favicon.png'

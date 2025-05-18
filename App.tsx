@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import Constants from 'expo-constants'
 import * as SecureStore from 'expo-secure-store'
 import { useEffect, useState } from 'react'
-import { Alert, Button } from 'react-native'
+import { Alert, Text, Pressable, StyleSheet } from 'react-native'
 
 import 'react-native-gesture-handler'
 
@@ -100,9 +100,17 @@ export default function App() {
           options={({ navigation }) => ({
             title: 'EasyBoard',
             headerRight: () => (
-              <Button
-                title='Setting'
-                onPress={() => navigation.navigate('Setting')}
+              <MaterialIcons.Button
+                name='settings'
+                backgroundColor={'transparent'}
+                color={'#000'}
+                size={30}
+                borderRadius={500}
+                style={styles.settingsButton}
+                // workaround as onPress does not work
+                onPressOut={() => {
+                  navigation.navigate('Setting')
+                }}
               />
             )
           })}
@@ -136,3 +144,7 @@ export default function App() {
     </NavigationContainer>
   )
 }
+
+const styles = StyleSheet.create({
+  settingsButton: { padding: 10, marginRight: -10 }
+})

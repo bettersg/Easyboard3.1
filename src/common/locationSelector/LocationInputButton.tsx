@@ -49,14 +49,11 @@ export default function LocationInputButton({
       >
         <View style={localStyles.container}>
           <View style={localStyles.doneBtnContainer}>
-            <Pressable>
-              <Text
-                style={localStyles.doneBtn}
-                onPress={() => setModalOpenState(false)}
-              >
-                Done
-              </Text>
-            </Pressable>
+            <EasyboardButton
+              type='bg-white'
+              onPress={() => setModalOpenState(false)}
+              title='Done'
+            />
           </View>
           <GoogleMapView
             onLocationMarkerDrop={onLocationMarkerDrop}
@@ -84,12 +81,16 @@ const localStyles = StyleSheet.create({
   doneBtnContainer: {
     zIndex: 2,
     position: 'absolute',
-    top: 10,
-    right: 10
+    bottom: 80,
+    right: 20
   },
   doneBtn: {
-    color: '#007AFF',
-    fontWeight: 'bold',
-    fontSize: 21
+    color: '#fff',
+    fontSize: 16,
+    padding: 10,
+    backgroundColor: '#2ecc71',
+    borderRadius: 15,
+    textAlign: 'center',
+    lineHeight: 25
   }
 })

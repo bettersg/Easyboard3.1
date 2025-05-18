@@ -6,10 +6,12 @@ import {
   View,
   Dimensions,
   TouchableOpacity,
-  Keyboard
+  Keyboard,
+  StatusBar
 } from 'react-native'
 import Autocomplete from 'react-native-autocomplete-input'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
+import { MaterialIcons } from '@expo/vector-icons'
 
 import {
   getGooglePlacesLocationAsync,
@@ -32,13 +34,14 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
   const [predictions, setPredictions] = useState<any>([])
   const [hidePrediction, setHidePrediction] = useState(true)
   const [showUserLocation, setShowUserLocation] = useState(false)
+  const [location, setLocation] = useState<Location.LocationObject | null>(null)
 
   // Marker States
   const [marker, setMarker] = useState(value)
 
   const queryLocation = async function () {
     try {
-      if (!hidePrediction) {
+      if (!hidePrediction && search) {
         const predictions = await queryGooglePlacesAsync(search)
         setPredictions(predictions)
       }
@@ -62,8 +65,8 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
         {
           longitude: lng,
           latitude: lat,
-          latitudeDelta: 0.09,
-          longitudeDelta: 0.09
+          latitudeDelta: 0.007,
+          longitudeDelta: 0.007
         },
         400
       )
@@ -85,6 +88,31 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
     }
   }
 
+  const goToCurrentLocation = async () => {
+    try {
+      const { coords } =
+        location || (await Location.getCurrentPositionAsync({}))
+      setMarker({
+        description: 'Current Location',
+        latlng: {
+          latitude: coords.latitude,
+          longitude: coords.longitude
+        }
+      })
+      mapViewRef.current?.animateToRegion(
+        {
+          longitude: coords.longitude,
+          latitude: coords.latitude,
+          latitudeDelta: 0.007,
+          longitudeDelta: 0.007
+        },
+        400
+      )
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   // watch marker value change and update the parent component
   useEffect(() => {
     if (marker) onLocationMarkerDrop(marker)
@@ -100,21 +128,29 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
           console.error('Permission to access location was denied')
           return
         }
+
+        const currLocation = await Location.getCurrentPositionAsync({})
+        setLocation(currLocation)
+
         // if value prop is not null by checking if its truthy
-        const coords =
-          value == true
-            ? value.latlng
-            : (await Location.getCurrentPositionAsync({})).coords
+        const coords = value == true ? value.latlng : currLocation.coords
         setShowUserLocation(true)
         mapViewRef.current?.animateToRegion(
           {
             longitude: coords.longitude,
             latitude: coords.latitude,
-            latitudeDelta: 0.09,
-            longitudeDelta: 0.09
+            latitudeDelta: 0.007,
+            longitudeDelta: 0.007
           },
           400
         )
+        mapViewRef.current?.setCamera({
+          center: {
+            latitude: coords.latitude,
+            longitude: coords.longitude
+          },
+          zoom: 15
+        })
       } catch (e) {
         console.error(e)
       }
@@ -122,8 +158,11 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
   }, [])
 
   return (
-    <View className='flex flex-1 items-center justify-center bg-white'>
-      <View className='absolute left-0 right-0 top-12 z-10 flex flex-1 px-3'>
+    <View className='flex flex-1 items-center justify-center'>
+      <View
+        className={`absolute left-0 right-0 z-10 flex flex-1 px-3`}
+        style={{ top: (StatusBar.currentHeight || 10) * 2 }}
+      >
         <Autocomplete
           inputContainerStyle={{ borderWidth: 0 }}
           className={[
@@ -158,7 +197,6 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
       </View>
       <MapView
         ref={mapViewRef}
-        mapPadding={{ top: 30, left: 30, bottom: 30, right: 20 }}
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={{
@@ -168,7 +206,7 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
           longitudeDelta: 0.3
         }}
         showsUserLocation={showUserLocation}
-        showsMyLocationButton
+        showsMyLocationButton={false}
         onPress={({ nativeEvent: { coordinate } }) =>
           selectPosition(coordinate)
         }
@@ -181,6 +219,17 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
           />
         )}
       </MapView>
+      <View style={styles.locationButtonView}>
+        <MaterialIcons.Button
+          name='gps-fixed'
+          onPress={goToCurrentLocation}
+          style={styles.locationButton}
+          backgroundColor={'#222'}
+          color={'#fff'}
+          size={30}
+          borderRadius={500}
+        />
+      </View>
     </View>
   )
 }
@@ -196,6 +245,13 @@ const styles = StyleSheet.create({
   },
   autocompleteItemText: {
     fontSize: 18
+  },
+  locationButton: { padding: 10, marginRight: -10 },
+  locationButtonView: {
+    position: 'absolute',
+    padding: 0,
+    bottom: 80,
+    left: 20
   }
 })
 export default GoogleMapView

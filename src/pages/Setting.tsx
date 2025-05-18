@@ -321,7 +321,6 @@ export default function Setting({ navigation }: Props) {
           />
         </View>
       </ScrollView>
-      <StatusBar style='auto' />
     </Page>
   )
 }
