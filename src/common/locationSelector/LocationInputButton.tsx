@@ -48,17 +48,13 @@ export default function LocationInputButton({
         }}
       >
         <View style={localStyles.container}>
-          {/* TODO: improve UX around closing the map screen */}
-          {/* <View style={localStyles.doneBtnContainer}>
-            <Pressable>
-              <Text
-                style={localStyles.doneBtn}
-                onPress={() => setModalOpenState(false)}
-              >
-                Done
-              </Text>
-            </Pressable>
-          </View> */}
+          <View style={localStyles.doneBtnContainer}>
+            <EasyboardButton
+              type='bg-white'
+              onPress={() => setModalOpenState(false)}
+              title='Done'
+            />
+          </View>
           <GoogleMapView
             onLocationMarkerDrop={onLocationMarkerDrop}
             value={null}
@@ -85,8 +81,8 @@ const localStyles = StyleSheet.create({
   doneBtnContainer: {
     zIndex: 2,
     position: 'absolute',
-    top: 50,
-    right: 10
+    bottom: 80,
+    right: 20
   },
   doneBtn: {
     color: '#fff',

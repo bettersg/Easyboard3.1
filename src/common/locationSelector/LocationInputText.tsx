@@ -80,10 +80,5 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 80,
     right: 20
-  },
-  doneBtn: {
-    color: '#007AFF',
-    fontWeight: 'bold',
-    fontSize: 21
   }
 })
