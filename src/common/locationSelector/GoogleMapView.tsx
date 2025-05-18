@@ -11,7 +11,7 @@ import {
 } from 'react-native'
 import Autocomplete from 'react-native-autocomplete-input'
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
+import { MaterialIcons } from '@expo/vector-icons'
 
 import {
   getGooglePlacesLocationAsync,
@@ -221,8 +221,8 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
         )}
       </MapView>
       <View style={styles.locationButtonView}>
-        <MaterialCommunityIcons.Button
-          name='crosshairs-gps'
+        <MaterialIcons.Button
+          name='gps-fixed'
           onPress={goToCurrentLocation}
           style={styles.locationButton}
           backgroundColor={'#222'}
@@ -250,10 +250,9 @@ const styles = StyleSheet.create({
   locationButton: { padding: 10, marginRight: -10 },
   locationButtonView: {
     position: 'absolute',
-    opacity: 0.8,
     padding: 0,
     bottom: 80,
-    right: 20
+    left: 20
   }
 })
 export default GoogleMapView

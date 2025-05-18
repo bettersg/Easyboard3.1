@@ -78,8 +78,8 @@ const styles = StyleSheet.create({
   doneBtnContainer: {
     zIndex: 2,
     position: 'absolute',
-    left: Dimensions.get('screen').width * 0.75,
-    top: Dimensions.get('screen').height * 0.85
+    bottom: 80,
+    right: 20
   },
   doneBtn: {
     color: '#007AFF',
