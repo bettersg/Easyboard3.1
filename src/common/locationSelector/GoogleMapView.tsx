@@ -10,7 +10,7 @@ import {
   StatusBar
 } from 'react-native'
 import Autocomplete from 'react-native-autocomplete-input'
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
+import MapView, { Marker } from 'react-native-maps'
 import { MaterialIcons } from '@expo/vector-icons'
 
 import {
@@ -197,7 +197,6 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
       </View>
       <MapView
         ref={mapViewRef}
-        provider={PROVIDER_GOOGLE}
         style={styles.map}
         initialRegion={{
           latitude: 1.3521,
