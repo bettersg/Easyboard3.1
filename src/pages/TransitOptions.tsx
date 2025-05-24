@@ -72,33 +72,84 @@ const TransitOptions = ({ navigation, route }: Props) => {
       </Page>
     )
   }
+
   return (
     <Page disableScroll>
-      <Text className='pb-4 text-2xl'>
-        {`Directions to `}
-        <Text className='font-semibold text-primary'>
-          {route.params.destinationName}
-        </Text>
-      </Text>
-      <ScrollView>
-        {transitOptions.length === 0 && (
-          <View>
-            <Text className='text-lg'>
-              {errorMessage ?? 'Error: No routes found'}
+      <View style={{ 
+        padding: 16, 
+        paddingTop: 24,
+        backgroundColor: '#F9FAFB',
+        flex: 1
+      }}>
+        <View style={{ marginBottom: 24 }}>
+          <Text style={{ 
+            fontSize: 22,
+            fontWeight: '700',
+            color: '#1F2937',
+            marginBottom: 8
+          }}>
+            Directions to{' '}
+            <Text style={{ 
+              color: '#4F46E5',
+              fontWeight: '700'
+            }}>
+              {route.params.destinationName}
             </Text>
+          </Text>
+          <Text style={{ 
+            fontSize: 16,
+            color: '#6B7280',
+            lineHeight: 24,
+            fontWeight: '500'
+          }}>
+            Choose your preferred route
+          </Text>
+        </View>
+
+        <ScrollView 
+          showsVerticalScrollIndicator={false} 
+          showsHorizontalScrollIndicator={false}
+          style={{ flex: 1 }}
+        >
+          {transitOptions.length === 0 && (
+            <View style={{ 
+              backgroundColor: 'white',
+              borderRadius: 16,
+              padding: 16,
+              borderWidth: 1,
+              borderColor: '#E5E7EB',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 1 },
+              shadowOpacity: 0.05,
+              shadowRadius: 2,
+              elevation: 2,
+            }}>
+              <Text style={{ 
+                fontSize: 16,
+                color: '#EF4444',
+                fontWeight: '500'
+              }}>
+                {errorMessage ?? 'Error: No routes found'}
+              </Text>
+            </View>
+          )}
+          
+          <View style={{ gap: 10 }}>
+            {transitOptions.map((t, i) => (
+              <TransitOptionCard
+                key={i}
+                index={i}
+                googleRouteStepsOverview={t}
+                onPress={() => {
+                  onTransitOptionPressed(i)
+                }}
+              />
+            ))}
           </View>
-        )}
-        {transitOptions.map((t, i) => (
-          <TransitOptionCard
-            index={i}
-            googleRouteStepsOverview={t}
-            onPress={() => {
-              onTransitOptionPressed(i)
-            }}
-          />
-        ))}
-      </ScrollView>
+        </ScrollView>
+      </View>
     </Page>
   )
 }
+
 export default TransitOptions

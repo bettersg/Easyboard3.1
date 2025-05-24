@@ -21,6 +21,7 @@ import Page from '../common/components/Page'
 import LocationTextInput from '../common/locationSelector/LocationInputText'
 import RootStackParamList from '../types/RootStackParamList.type'
 import { SettingKey, SettingValues } from '../types/SettingKey.type'
+import FormLabel from '../common/components/FormLabel'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Setting'>
 
@@ -147,10 +148,6 @@ export default function Setting({ navigation }: Props) {
     })()
   }, [])
 
-  const FormLabel = ({ text }: { text: string }) => (
-    <Text className='mb-2 mt-1 text-black'>{text}</Text>
-  )
-
   if (isLoading) {
     return (
       <Page>
@@ -161,11 +158,14 @@ export default function Setting({ navigation }: Props) {
 
   return (
     <Page>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
         <View>
           {/* Name Input */}
           <View className='py-2'>
-            <FormLabel text='What is your name?' />
+            <FormLabel 
+              text='What is your name?' 
+              required
+            />
             <Controller
               control={control}
               rules={{ required: true }}
@@ -185,7 +185,10 @@ export default function Setting({ navigation }: Props) {
           </View>
           {/* Caregiver Phone Number */}
           <View className='py-2'>
-            <FormLabel text="What is your caregiver's phone number?" />
+            <FormLabel 
+              text="What is your caregiver's phone number?" 
+              required
+            />
             <Controller
               control={control}
               rules={{
@@ -206,14 +209,14 @@ export default function Setting({ navigation }: Props) {
               )}
               name='careGiverPhoneNumber'
             />
-            {renderError(
-              errors.careGiverPhoneNumber,
-              "Caregiver's Phone Number"
-            )}
+            {renderError(errors.careGiverPhoneNumber, "Caregiver's Phone Number")}
           </View>
           {/* Home Address */}
           <View className='py-2'>
-            <FormLabel text='Where is your home?' />
+            <FormLabel 
+              text='Where is your home?' 
+              required
+            />
             <Controller
               control={control}
               rules={{ required: true }}
@@ -234,7 +237,9 @@ export default function Setting({ navigation }: Props) {
           </View>
           {/* Home Address - Photo */}
           <View className='py-2'>
-            <FormLabel text='Upload reference image of home' />
+            <FormLabel 
+              text='Upload reference image of home' 
+            />
             <Controller
               control={control}
               render={() => (
@@ -249,7 +254,10 @@ export default function Setting({ navigation }: Props) {
 
           {/* Favorite Address - Name*/}
           <View className='py-2'>
-            <FormLabel text='What is the name of the location you visit frequently?' />
+            <FormLabel 
+              text='What is the name of the location you visit frequently?' 
+              required
+            />
             <Controller
               control={control}
               rules={{ required: true }}
@@ -268,7 +276,10 @@ export default function Setting({ navigation }: Props) {
           </View>
           {/* Favorite Address - Location */}
           <View className='py-2'>
-            <FormLabel text='Frequent visit location address' />
+            <FormLabel 
+              text='Frequent visit location address' 
+              required
+            />
             <Controller
               control={control}
               rules={{ required: true }}
@@ -289,16 +300,9 @@ export default function Setting({ navigation }: Props) {
           </View>
           {/* Favorite Address - Image */}
           <View className='py-2'>
-            <Text className='mb-2 mt-1 text-black'>
-              Upload reference image of{' '}
-              {watch('gotoFavAddrsName').length > 0 ? (
-                <Text className='font-semibold text-primary'>
-                  {watch('gotoFavAddrsName')}
-                </Text>
-              ) : (
-                'frequently visited location'
-              )}
-            </Text>
+            <FormLabel 
+              text={`Upload reference image of ${watch('gotoFavAddrsName').length > 0 ? watch('gotoFavAddrsName') : 'frequently visited location'}`}
+            />
             <Controller
               control={control}
               render={() => (

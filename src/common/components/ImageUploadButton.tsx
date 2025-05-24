@@ -1,7 +1,5 @@
-import { styled } from 'nativewind'
 import { Pressable, Text, View } from 'react-native'
-
-const StyledPressable = styled(Pressable)
+import { Feather } from '@expo/vector-icons'
 
 interface Props {
   additionalClassName?: string
@@ -9,6 +7,7 @@ interface Props {
   value?: string
   placeholder?: string
   textClassName?: string
+  disabled?: boolean
 }
 /**
  * This is written as generic as possible, but also as extendible as possible
@@ -19,32 +18,65 @@ const ImageUploadButton = ({
   onPress,
   value,
   placeholder = 'Upload Image',
-  textClassName
+  textClassName,
+  disabled = false
 }: Props) => {
   return (
-    <StyledPressable
-      className={[
-        'flex flex-row rounded-sm border-[0.5px] border-textInputBorder active:opacity-75',
-        additionalClassName
-      ].join(' ')}
+    <Pressable
+      style={({ pressed }) => [
+        {
+          flexDirection: 'row',
+          borderRadius: 8,
+          borderWidth: 1,
+          borderColor: '#E5E7EB',
+          backgroundColor: 'white',
+          opacity: disabled ? 0.5 : pressed ? 0.75 : 1
+        }
+      ]}
       onPress={onPress}
+      disabled={disabled}
     >
-      <View className='flex flex-1 px-2 py-3'>
+      <View style={{ 
+        flex: 1, 
+        flexDirection: 'row', 
+        alignItems: 'center',
+        paddingHorizontal: 16,
+        paddingVertical: 12
+      }}>
+        <Feather 
+          name="image" 
+          size={20} 
+          color={value ? '#4F46E5' : '#9CA3AF'} 
+          style={{ marginRight: 12 }}
+        />
         <Text
           numberOfLines={1}
-          className={[
-            'text-md',
-            value ? 'text-black' : 'text-gray-600',
-            textClassName
-          ].join(' ')}
+          style={{
+            fontSize: 16,
+            color: value ? '#111827' : '#6B7280',
+            fontWeight: value ? '500' : '400'
+          }}
         >
           {value ? value : placeholder}
         </Text>
       </View>
-      <View className='flex items-center justify-center rounded-r-sm border-l-[0.5px] border-textInputBorder bg-slate-200 px-3 py-3'>
-        <Text className='text-md text-black'>Browse</Text>
-      </View>
-    </StyledPressable>
+      {/* <View style={{ 
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderLeftWidth: 1,
+        borderLeftColor: '#E5E7EB',
+        backgroundColor: '#F9FAFB',
+        paddingHorizontal: 16,
+        paddingVertical: 12
+      }}>
+        <Feather 
+          name="upload" 
+          size={18} 
+          color={value ? '#4F46E5' : '#9CA3AF'} 
+        />
+      </View> */}
+    </Pressable>
   )
 }
+
 export default ImageUploadButton

@@ -1,12 +1,9 @@
 import { Feather } from '@expo/vector-icons'
-import { styled } from 'nativewind'
 import { useMemo } from 'react'
 import { Pressable, Text, View } from 'react-native'
 
 import TransitTypePill from './TransitTypePill'
 import { GoogleRouteStepsOverview } from '../utils/GoogleRouteUtils'
-
-const StyledPressable = styled(Pressable)
 
 interface Props {
   onPress?: () => void
@@ -29,43 +26,98 @@ const TransitOptionCard = ({
       : 'Selected Route'
   }, [index])
   return (
-    <StyledPressable
-      className={[
-        `relative mb-4 w-full rounded-md border-[0.5px] border-slate-300 bg-white p-4`,
-        onPress ? 'active:opacity-75' : ''
-      ].join(' ')}
+    <Pressable
+      style={({ pressed }) => [
+        {
+          opacity: pressed ? 0.75 : 1,
+          backgroundColor: 'white',
+          borderRadius: 8,
+          borderWidth: 0.5,
+          borderColor: '#CBD5E1',
+          padding: 16,
+          marginBottom: 16,
+          width: '100%'
+        }
+      ]}
       onPress={onPress}
     >
-      <View className='flex flex-col'>
-        <Text className='text-xl font-bold'>{routeName}</Text>
-        <View className='flex flex-row flex-wrap items-center pb-6 pt-4'>
+      <View style={{ flexDirection: 'column' }}>
+        <Text style={{ 
+          fontSize: 20,
+          fontWeight: '700',
+          color: '#1F2937'
+        }}>
+          {routeName}
+        </Text>
+        <View style={{ 
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          paddingTop: 16,
+          paddingBottom: 24
+        }}>
           {steps.map((step, i) => {
             return (
-              <>
+              <View key={`step-${i}`} style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <TransitTypePill
                   travelMode={step.travelMode}
                   transitLine={step.transitLine}
                 />
                 {i !== steps.length - 1 && (
-                  <View className='px-1'>
+                  <View style={{ paddingHorizontal: 4 }}>
                     <Feather name='chevron-right' size={20} color='black' />
                   </View>
                 )}
-              </>
+              </View>
             )
           })}
         </View>
 
-        <View className='flex flex-row items-baseline justify-between pb-2 pr-2'>
-          <Text>Estimated distance:</Text>
-          <Text className='text-lg font-bold'>{totalDistance}</Text>
+        <View style={{ 
+          flexDirection: 'row',
+          alignItems: 'baseline',
+          justifyContent: 'space-between',
+          paddingBottom: 8,
+          paddingRight: 8
+        }}>
+          <Text style={{ 
+            fontSize: 16,
+            color: '#4B5563'
+          }}>
+            Estimated distance:
+          </Text>
+          <Text style={{ 
+            fontSize: 18,
+            fontWeight: '600',
+            color: '#4F46E5'
+          }}>
+            {totalDistance}
+          </Text>
         </View>
-        <View className='flex flex-row items-baseline justify-between pb-2 pr-2'>
-          <Text>Estimated journey time:</Text>
-          <Text className='text-lg font-bold'>{totalDuration}</Text>
+        <View style={{ 
+          flexDirection: 'row',
+          alignItems: 'baseline',
+          justifyContent: 'space-between',
+          paddingBottom: 8,
+          paddingRight: 8
+        }}>
+          <Text style={{ 
+            fontSize: 16,
+            color: '#4B5563'
+          }}>
+            Estimated journey time:
+          </Text>
+          <Text style={{ 
+            fontSize: 18,
+            fontWeight: '600',
+            color: '#4F46E5'
+          }}>
+            {totalDuration}
+          </Text>
         </View>
       </View>
-    </StyledPressable>
+    </Pressable>
   )
 }
+
 export default TransitOptionCard

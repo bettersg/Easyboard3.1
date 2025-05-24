@@ -6,13 +6,17 @@ import Location from '../../interfaces/Location.interface'
 import LocationSelectButton from '../components/LocationSelectButton'
 import EasyboardButton from '../components/EasyboardButton'
 
+interface Props {
+  onLocationSelect: (location: Location) => void
+  value: Location | null
+  additionalClassName?: string
+}
+
 export default function LocationTextInput({
   onLocationSelect,
-  value
-}: {
-  onLocationSelect: any
-  value: any
-}) {
+  value,
+  additionalClassName
+}: Props) {
   const [isModalOpen, setModalOpenState] = useState(false)
   const [location, setSelectedLocation] = useState<Location | null>(null)
 
@@ -20,12 +24,13 @@ export default function LocationTextInput({
     setSelectedLocation(value)
   }, [value])
 
-  const onLocationMarkerDrop = function (locationMarker: any) {
+  const onLocationMarkerDrop = function (locationMarker: Location) {
     setSelectedLocation(locationMarker)
     onLocationSelect(locationMarker) // Propagate back to parent
   }
+
   return (
-    <View>
+    <View className={additionalClassName}>
       <Modal
         presentationStyle='pageSheet'
         statusBarTranslucent
@@ -46,6 +51,7 @@ export default function LocationTextInput({
               type='bg-white'
               onPress={() => setModalOpenState(false)}
               title='Done'
+              iconName="save"
             />
           </View>
           <GoogleMapView
@@ -58,6 +64,7 @@ export default function LocationTextInput({
       <LocationSelectButton
         onPress={() => setModalOpenState(true)}
         value={location?.description}
+        additionalClassName="active:bg-gray-50"
       />
     </View>
   )
@@ -67,18 +74,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center'
-  },
-  inputBtn: {
-    borderColor: '#000',
-    borderWidth: 1,
-    padding: 10,
-    color: '#000'
+    justifyContent: 'center',
+    backgroundColor: '#fff'
   },
   doneBtnContainer: {
     zIndex: 2,
     position: 'absolute',
     bottom: 80,
-    right: 20
+    right: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5
   }
 })
