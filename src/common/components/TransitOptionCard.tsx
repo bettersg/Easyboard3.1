@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons'
 import { styled } from 'nativewind'
-import { useMemo } from 'react'
+import { Fragment, useMemo } from 'react'
 import { Pressable, Text, View } from 'react-native'
 
 import TransitTypePill from './TransitTypePill'
@@ -41,7 +41,7 @@ const TransitOptionCard = ({
         <View className='flex flex-row flex-wrap items-center pb-6 pt-4'>
           {steps.map((step, i) => {
             return (
-              <>
+              <Fragment key={i}>
                 <TransitTypePill
                   travelMode={step.travelMode}
                   transitLine={step.transitLine}
@@ -51,7 +51,7 @@ const TransitOptionCard = ({
                     <Feather name='chevron-right' size={20} color='black' />
                   </View>
                 )}
-              </>
+              </Fragment>
             )
           })}
         </View>

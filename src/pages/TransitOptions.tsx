@@ -90,6 +90,7 @@ const TransitOptions = ({ navigation, route }: Props) => {
         )}
         {transitOptions.map((t, i) => (
           <TransitOptionCard
+            key={i}
             index={i}
             googleRouteStepsOverview={t}
             onPress={() => {
