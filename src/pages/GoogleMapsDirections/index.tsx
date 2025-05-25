@@ -146,7 +146,7 @@ export default function GoogleMapsDirections({ navigation, route }: Props) {
       <MapView
         initialRegion={mapRegion}
         ref={mapViewRef}
-        className='h-full justify-between px-6 py-4'
+        className='h-full justify-between'
         userLocationPriority='high'
         followsUserLocation
       >
