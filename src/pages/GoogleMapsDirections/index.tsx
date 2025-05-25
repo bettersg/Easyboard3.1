@@ -3,7 +3,7 @@ import { decode } from '@googlemaps/polyline-codec'
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useMemo, useRef, useState, useEffect, useCallback } from 'react'
 import { SafeAreaView, View, Dimensions, Text } from 'react-native'
-import MapView, { Polyline, Marker, PROVIDER_GOOGLE } from 'react-native-maps'
+import MapView, { Polyline, Marker } from 'react-native-maps'
 import Carousel from 'react-native-reanimated-carousel'
 import type { ICarouselInstance } from 'react-native-reanimated-carousel'
 
@@ -145,7 +145,6 @@ export default function GoogleMapsDirections({ navigation, route }: Props) {
     <View className='relative flex flex-1 justify-between bg-white'>
       <MapView
         initialRegion={mapRegion}
-        provider={PROVIDER_GOOGLE}
         ref={mapViewRef}
         className='h-full justify-between px-6 py-4'
         userLocationPriority='high'
