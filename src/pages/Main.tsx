@@ -63,15 +63,11 @@ export default function Main({ navigation }: Props) {
     <Page disableScroll>
       {userSetting && (
         <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            style={{ flex: 1 }}
-            contentContainerStyle={{
+          <View style={{
               padding: 16,
               paddingTop: 24,
               paddingBottom: 120
-            }}
-          >
+            }}>
             {/* Header Section */}
             <View >
               <Text style={{
@@ -85,19 +81,6 @@ export default function Main({ navigation }: Props) {
             </View>
 
             {/* Saved Locations Section */}
-            <View style={{
-              backgroundColor: 'white',
-              borderRadius: 16,
-              borderWidth: 1,
-              borderColor: '#E5E7EB',
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 1 },
-              shadowOpacity: 0.05,
-              shadowRadius: 2,
-              elevation: 2,
-              padding: 16,
-              marginBottom: 24
-            }}>
               <SavedLocationCard
                 borderColor='border-cyan-800'
                 onPress={() => {
@@ -134,8 +117,7 @@ export default function Main({ navigation }: Props) {
                   setMarkerLocation(markerLocation)
                 }
               />
-            </View>
-          </ScrollView>
+          </View>
 
           {/* Fixed Call Caregiver Button */}
           <View style={{
