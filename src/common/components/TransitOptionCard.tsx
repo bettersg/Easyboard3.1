@@ -34,8 +34,7 @@ const TransitOptionCard = ({
           borderRadius: 8,
           borderWidth: 0.5,
           borderColor: '#CBD5E1',
-          padding: 16,
-          marginBottom: 16,
+          padding: 12,
           width: '100%'
         }
       ]}
@@ -43,7 +42,7 @@ const TransitOptionCard = ({
     >
       <View style={{ flexDirection: 'column' }}>
         <Text style={{ 
-          fontSize: 20,
+          fontSize: 18,
           fontWeight: '700',
           color: '#1F2937'
         }}>
@@ -53,8 +52,7 @@ const TransitOptionCard = ({
           flexDirection: 'row',
           flexWrap: 'wrap',
           alignItems: 'center',
-          paddingTop: 16,
-          paddingBottom: 24
+          paddingTop: 10
         }}>
           {steps.map((step, i) => {
             return (
@@ -65,7 +63,7 @@ const TransitOptionCard = ({
                 />
                 {i !== steps.length - 1 && (
                   <View style={{ paddingHorizontal: 4 }}>
-                    <Feather name='chevron-right' size={20} color='black' />
+                    <Feather name='chevron-right' size={18} color='black' />
                   </View>
                 )}
               </View>
@@ -78,7 +76,7 @@ const TransitOptionCard = ({
           alignItems: 'baseline',
           justifyContent: 'space-between',
           paddingBottom: 8,
-          paddingRight: 8
+          paddingRight: 4
         }}>
           <Text style={{ 
             fontSize: 16,
@@ -98,7 +96,6 @@ const TransitOptionCard = ({
           flexDirection: 'row',
           alignItems: 'baseline',
           justifyContent: 'space-between',
-          paddingBottom: 8,
           paddingRight: 8
         }}>
           <Text style={{ 

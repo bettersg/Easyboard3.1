@@ -75,44 +75,48 @@ const TransitOptions = ({ navigation, route }: Props) => {
 
   return (
     <Page disableScroll>
-      <View style={{ 
-        padding: 16, 
-        paddingTop: 24,
+      <View style={{
         backgroundColor: '#F9FAFB',
         flex: 1
       }}>
-        <View style={{ marginBottom: 24 }}>
-          <Text style={{ 
-            fontSize: 22,
+        <View style={{
+          paddingHorizontal: 12,
+          paddingTop: 16,
+          paddingBottom: 8,
+          backgroundColor: '#F9FAFB'
+        }}>
+          <Text style={{
+            fontSize: 20,
             fontWeight: '700',
             color: '#1F2937',
             marginBottom: 8
           }}>
             Directions to{' '}
-            <Text style={{ 
+            <Text style={{
               color: '#4F46E5',
               fontWeight: '700'
             }}>
               {route.params.destinationName}
             </Text>
           </Text>
-          <Text style={{ 
+          <Text style={{
             fontSize: 16,
             color: '#6B7280',
-            lineHeight: 24,
-            fontWeight: '500'
+            lineHeight: 20,
+            fontWeight: '500',
+            paddingBottom: 8,
           }}>
             Choose your preferred route
           </Text>
         </View>
 
-        <ScrollView 
-          showsVerticalScrollIndicator={false} 
+        <ScrollView
+          showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
           style={{ flex: 1 }}
         >
           {transitOptions.length === 0 && (
-            <View style={{ 
+            <View style={{
               backgroundColor: 'white',
               borderRadius: 16,
               padding: 16,
@@ -124,7 +128,7 @@ const TransitOptions = ({ navigation, route }: Props) => {
               shadowRadius: 2,
               elevation: 2,
             }}>
-              <Text style={{ 
+              <Text style={{
                 fontSize: 16,
                 color: '#EF4444',
                 fontWeight: '500'
@@ -133,8 +137,8 @@ const TransitOptions = ({ navigation, route }: Props) => {
               </Text>
             </View>
           )}
-          
-          <View style={{ gap: 10 }}>
+
+          <View style={{ gap: 8 }}>
             {transitOptions.map((t, i) => (
               <TransitOptionCard
                 key={i}

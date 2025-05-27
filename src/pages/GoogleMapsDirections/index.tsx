@@ -196,7 +196,7 @@ export default function GoogleMapsDirections({ navigation, route }: Props) {
         )}
         <SafeAreaView className='flex flex-row'>
           {!navigationStarted ? (
-            <View className='mx-2 flex flex-1 px-1'>
+            <View className='mx-2 flex flex-1 px-1 mb-2 mt-2'>
               <EasyboardButton
                 fullWidth
                 title='START'
@@ -207,7 +207,7 @@ export default function GoogleMapsDirections({ navigation, route }: Props) {
             </View>
           ) : (
             <>
-              <View className='ml-2 flex flex-1 px-1'>
+              <View className='ml-2 flex flex-1 px-1 mb-2'>
                 {currentStep === 0 ? (
                   <View />
                 ) : (
@@ -219,7 +219,7 @@ export default function GoogleMapsDirections({ navigation, route }: Props) {
                   />
                 )}
               </View>
-              <View className='mr-2 flex flex-1 px-1'>
+              <View className='mr-2 flex flex-1 px-1 mb-2'>
                 <EasyboardButton
                   onPress={onNextStepPressed}
                   title={
