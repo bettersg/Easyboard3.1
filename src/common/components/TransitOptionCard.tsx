@@ -6,8 +6,6 @@ import { Pressable, Text, View } from 'react-native'
 import TransitTypePill from './TransitTypePill'
 import { GoogleRouteStepsOverview } from '../utils/GoogleRouteUtils'
 
-const StyledPressable = styled(Pressable)
-
 interface Props {
   onPress?: () => void
   index?: number
@@ -29,16 +27,34 @@ const TransitOptionCard = ({
       : 'Selected Route'
   }, [index])
   return (
-    <StyledPressable
-      className={[
-        `relative mb-4 w-full rounded-md border-[0.5px] border-slate-300 bg-white p-4`,
-        onPress ? 'active:opacity-75' : ''
-      ].join(' ')}
+    <Pressable
+      style={({ pressed }) => [
+        {
+          opacity: pressed ? 0.75 : 1,
+          backgroundColor: 'white',
+          borderRadius: 8,
+          borderWidth: 0.5,
+          borderColor: '#CBD5E1',
+          padding: 12,
+          width: '100%'
+        }
+      ]}
       onPress={onPress}
     >
-      <View className='flex flex-col'>
-        <Text className='text-xl font-bold'>{routeName}</Text>
-        <View className='flex flex-row flex-wrap items-center pb-6 pt-4'>
+      <View style={{ flexDirection: 'column' }}>
+        <Text style={{
+          fontSize: 18,
+          fontWeight: '700',
+          color: '#1F2937'
+        }}>
+          {routeName}
+        </Text>
+        <View style={{
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          paddingTop: 10
+        }}>
           {steps.map((step, i) => {
             return (
               <Fragment key={i}>
@@ -47,8 +63,8 @@ const TransitOptionCard = ({
                   transitLine={step.transitLine}
                 />
                 {i !== steps.length - 1 && (
-                  <View className='px-1'>
-                    <Feather name='chevron-right' size={20} color='black' />
+                  <View style={{ paddingHorizontal: 4 }}>
+                    <Feather name='chevron-right' size={18} color='black' />
                   </View>
                 )}
               </Fragment>
@@ -56,16 +72,50 @@ const TransitOptionCard = ({
           })}
         </View>
 
-        <View className='flex flex-row items-baseline justify-between pb-2 pr-2'>
-          <Text>Estimated distance:</Text>
-          <Text className='text-lg font-bold'>{totalDistance}</Text>
+        <View style={{
+          flexDirection: 'row',
+          alignItems: 'baseline',
+          justifyContent: 'space-between',
+          paddingBottom: 8,
+          paddingRight: 4
+        }}>
+          <Text style={{
+            fontSize: 16,
+            color: '#4B5563'
+          }}>
+            Estimated distance:
+          </Text>
+          <Text style={{
+            fontSize: 18,
+            fontWeight: '600',
+            color: '#4F46E5'
+          }}>
+            {totalDistance}
+          </Text>
         </View>
-        <View className='flex flex-row items-baseline justify-between pb-2 pr-2'>
-          <Text>Estimated journey time:</Text>
-          <Text className='text-lg font-bold'>{totalDuration}</Text>
+        <View style={{
+          flexDirection: 'row',
+          alignItems: 'baseline',
+          justifyContent: 'space-between',
+          paddingRight: 8
+        }}>
+          <Text style={{
+            fontSize: 16,
+            color: '#4B5563'
+          }}>
+            Estimated journey time:
+          </Text>
+          <Text style={{
+            fontSize: 18,
+            fontWeight: '600',
+            color: '#4F46E5'
+          }}>
+            {totalDuration}
+          </Text>
         </View>
       </View>
-    </StyledPressable>
+    </Pressable>
   )
 }
+
 export default TransitOptionCard

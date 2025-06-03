@@ -5,7 +5,7 @@ import { Colors } from './color'
 export default StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 24,
+    paddingHorizontal: 16,
     paddingVertical: 16,
     justifyContent: 'space-between'
   },

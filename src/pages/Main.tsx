@@ -2,7 +2,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import Constants from 'expo-constants'
 import * as SecureStore from 'expo-secure-store'
 import { useEffect, useState } from 'react'
-import { Text, View, Alert } from 'react-native'
+import { Text, View, Alert, ScrollView } from 'react-native'
 
 import EasyboardButton from '../common/components/EasyboardButton'
 import Page from '../common/components/Page'
@@ -17,8 +17,9 @@ export default function Main({ navigation }: Props) {
   const callCareGiver = useCallCaregiver()
   const [userSetting, setUserSetting] = useState<any>(null)
   const [location, setMarkerLocation] = useState<any>(null)
+
   useEffect(() => {
-    ;(async () => {
+    ; (async () => {
       try {
         const storedData = await SecureStore.getItemAsync(
           Constants?.expoConfig?.extra?.settingsStoredKey
@@ -57,64 +58,101 @@ export default function Main({ navigation }: Props) {
   const onShareLocation = () => {
     Alert.alert('Feature coming soon')
   }
+
   return (
-    <Page>
+    <Page disableScroll>
       {userSetting && (
-        <>
-          <View>
-            <Text className='mb-3 text-xl font-bold'>
-              Where do you want to go?
-            </Text>
-            <SavedLocationCard
-              borderColor='border-cyan-800'
-              onPress={() => {
-                navigation.navigate('TransitOptions', {
-                  destinationName: 'Home',
-                  destination: userSetting.houseAddrs
-                })
-              }}
-              title='Home'
-              subtitle={userSetting.houseAddrs.description}
-              imageUri={userSetting.housePhotoUri}
-              iconName='home'
-            />
-            <View className='h-2' />
-            <SavedLocationCard
-              borderColor='border-secondary'
-              onPress={() => {
-                navigation.navigate('TransitOptions', {
-                  destination: userSetting.gotoFavAddrs,
-                  destinationName: userSetting.gotoFavAddrsName
-                })
-              }}
-              title={userSetting.gotoFavAddrsName}
-              subtitle={userSetting.gotoFavAddrs.description}
-              imageUri={userSetting.gotoFavPhotoUri}
-              iconName='map'
-            />
-            <LocationInputButton
-              onLocationSelect={(markerLocation: any) =>
-                setMarkerLocation(markerLocation)
-              }
-            />
+        <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
+          <View style={{
+              padding: 16,
+              paddingTop: 24,
+              paddingBottom: 120
+            }}>
+            {/* Header Section */}
+            <View >
+              <Text style={{
+                fontSize: 23,
+                fontWeight: '700',
+                color: '#1F2937',
+                marginBottom: 20
+              }}>
+                Where do you want to go?
+              </Text>
+            </View>
+
+            {/* Saved Locations Section */}
+              <SavedLocationCard
+                borderColor='border-cyan-800'
+                onPress={() => {
+                  navigation.navigate('TransitOptions', {
+                    destinationName: 'Home',
+                    destination: userSetting.houseAddrs
+                  })
+                }}
+                title='Home'
+                subtitle={userSetting.houseAddrs.description}
+                imageUri={userSetting.housePhotoUri}
+                iconName='home'
+              />
+
+              <View style={{ height: 16 }} />
+
+              <SavedLocationCard
+                borderColor='border-secondary'
+                onPress={() => {
+                  navigation.navigate('TransitOptions', {
+                    destination: userSetting.gotoFavAddrs,
+                    destinationName: userSetting.gotoFavAddrsName
+                  })
+                }}
+                title={userSetting.gotoFavAddrsName}
+                subtitle={userSetting.gotoFavAddrs.description}
+                imageUri={userSetting.gotoFavPhotoUri}
+                iconName='map'
+              />
+              <View style={{ height: 16 }} />
+
+              <LocationInputButton
+                onLocationSelect={(markerLocation: any) =>
+                  setMarkerLocation(markerLocation)
+                }
+              />
           </View>
 
-          <View className='flex flex-col'>
+          {/* Fixed Call Caregiver Button */}
+          <View style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            backgroundColor: 'white',
+            padding: 16,
+            borderTopWidth: 1,
+            borderTopColor: '#E5E7EB',
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: -2 },
+            shadowOpacity: 0.05,
+            shadowRadius: 2,
+            elevation: 2,
+            zIndex: 1
+          }}>
             <EasyboardButton
               type='bg-primary'
               onPress={callCareGiver}
               title='CALL CAREGIVER'
               iconName='phone-call'
+              titleSize="text-lg"
             />
-            {/* <View className="h-2" />
-            <EasyboardButton
+            <View style={{ height: 16 }} />
+            {/* <EasyboardButton
               type="bg-secondary"
               onPress={onShareLocation}
               title="SHARE LOCATION"
               iconName="map-pin"
+              titleSize="text-lg"
             /> */}
           </View>
-        </>
+        </View>
       )}
     </Page>
   )
