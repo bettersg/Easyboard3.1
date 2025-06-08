@@ -91,12 +91,10 @@ export default function Setting({ navigation }: Props) {
         data
       )
       Alert.alert('Data Saved')
-      if (!isNewUser) navigation.goBack()
-      else
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Main' }]
-        })
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Main' }]
+      })
     } catch (e) {
       console.error(e)
     }
@@ -128,7 +126,7 @@ export default function Setting({ navigation }: Props) {
   }
 
   useEffect(() => {
-    ;(async () => {
+    (async () => {
       try {
         const storedData = await SecureStore.getItemAsync(
           Constants?.expoConfig?.extra?.settingsStoredKey
@@ -162,8 +160,8 @@ export default function Setting({ navigation }: Props) {
         <View>
           {/* Name Input */}
           <View className='py-2'>
-            <FormLabel 
-              text='What is your name?' 
+            <FormLabel
+              text='What is your name?'
               required
             />
             <Controller
@@ -185,8 +183,8 @@ export default function Setting({ navigation }: Props) {
           </View>
           {/* Caregiver Phone Number */}
           <View className='py-2'>
-            <FormLabel 
-              text="What is your caregiver's phone number?" 
+            <FormLabel
+              text="What is your caregiver's phone number?"
               required
             />
             <Controller
@@ -213,8 +211,8 @@ export default function Setting({ navigation }: Props) {
           </View>
           {/* Home Address */}
           <View className='py-2'>
-            <FormLabel 
-              text='Where is your home?' 
+            <FormLabel
+              text='Where is your home?'
               required
             />
             <Controller
@@ -237,8 +235,8 @@ export default function Setting({ navigation }: Props) {
           </View>
           {/* Home Address - Photo */}
           <View className='py-2'>
-            <FormLabel 
-              text='Upload reference image of home' 
+            <FormLabel
+              text='Upload reference image of home'
             />
             <Controller
               control={control}
@@ -254,8 +252,8 @@ export default function Setting({ navigation }: Props) {
 
           {/* Favorite Address - Name*/}
           <View className='py-2'>
-            <FormLabel 
-              text='What is the name of the location you visit frequently?' 
+            <FormLabel
+              text='What is the name of the location you visit frequently?'
               required
             />
             <Controller
@@ -276,8 +274,8 @@ export default function Setting({ navigation }: Props) {
           </View>
           {/* Favorite Address - Location */}
           <View className='py-2'>
-            <FormLabel 
-              text='Frequent visit location address' 
+            <FormLabel
+              text='Frequent visit location address'
               required
             />
             <Controller
@@ -300,7 +298,7 @@ export default function Setting({ navigation }: Props) {
           </View>
           {/* Favorite Address - Image */}
           <View className='py-2'>
-            <FormLabel 
+            <FormLabel
               text={`Upload reference image of ${watch('gotoFavAddrsName').length > 0 ? watch('gotoFavAddrsName') : 'frequently visited location'}`}
             />
             <Controller

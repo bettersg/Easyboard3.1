@@ -23,7 +23,7 @@ export default function OTPVerification({ navigation, route }: Props) {
     setTimeout(() => {
       setIsVerifying(false)
       if (userType === 'CAREGIVER') {
-        navigation.navigate('Main')
+        navigation.navigate('CaregiverMain')
       } else {
         navigation.navigate('Introduction')
       }

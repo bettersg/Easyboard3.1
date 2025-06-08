@@ -17,6 +17,8 @@ import Setting from './src/pages/Setting'
 import TransitOptions from './src/pages/TransitOptions'
 import Authentication from './src/pages/Authentication'
 import OTPVerification from './src/pages/OTPVerification'
+import CaregiverMain from './src/pages/CaregiverMain'
+import TrackPWIDMap from './src/pages/TrackPWIDMap'
 import { RootStackParamList } from './src/types/RootStackParamList.type'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
@@ -80,11 +82,11 @@ export default function App() {
             headerBackTitle: 'Back'
           }}
         />
-         <Stack.Screen
-            name='Introduction'
-            component={Introduction}
-            options={{ title: 'Welcome' }}
-          />
+        <Stack.Screen
+          name='Introduction'
+          component={Introduction}
+          options={{ title: 'Welcome' }}
+        />
         <Stack.Screen
           name='Main'
           component={Main}
@@ -104,6 +106,16 @@ export default function App() {
               />
             )
           })}
+        />
+        <Stack.Screen
+          name='CaregiverMain'
+          component={CaregiverMain}
+          options={{title: 'Caregiver Dashboard'}}
+        />
+        <Stack.Screen
+          name='TrackPWIDMap'
+          component={TrackPWIDMap}
+          options={{ title: 'Track PWID Location' }}
         />
         <Stack.Screen
           name='Setting'

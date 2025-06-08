@@ -27,4 +27,6 @@ export type RootStackParamList = {
     phoneNumber: string
     userType: 'PWID' | 'CAREGIVER'
   }
+  CaregiverMain: undefined
+  TrackPWIDMap: undefined
 }
