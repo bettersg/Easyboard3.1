@@ -5,7 +5,6 @@ import Constants from 'expo-constants'
 import * as SecureStore from 'expo-secure-store'
 import { useEffect, useState } from 'react'
 import { Alert, Text, Pressable, StyleSheet } from 'react-native'
-
 import 'react-native-gesture-handler'
 
 import LoadingIndicator from './src/common/components/LoadingIndicator'
@@ -16,45 +15,26 @@ import Introduction from './src/pages/Introduction'
 import Main from './src/pages/Main'
 import Setting from './src/pages/Setting'
 import TransitOptions from './src/pages/TransitOptions'
-import RootStackParamList from './src/types/RootStackParamList.type'
-import { SettingValues } from './src/types/SettingKey.type'
+import Authentication from './src/pages/Authentication'
+import OTPVerification from './src/pages/OTPVerification'
+import { RootStackParamList } from './src/types/RootStackParamList.type'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
-const settingsDefaultValues: SettingValues = {
-  name: null,
-  careGiverPhoneNumber: '',
-  houseAddrs: null,
-  housePhotoUri: null,
-  gotoFavAddrs: null,
-  gotoFavAddrsName: '',
-  gotoFavPhotoUri: []
-}
 
 export default function App() {
   const callCareGiver = useCallCaregiver()
-  const [isLoading, setIsLoading] = useState(true)
-  const [hasSetting, setHasSettings] = useState(false)
+  const [hasAuthen, setHasAuthen] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
+
   useEffect(() => {
-    ;(async () => {
+    const checkAuthen = async () => {
       try {
-        const storedData = await SecureStore.getItemAsync(
-          Constants.expoConfig?.extra?.settingsStoredKey
-        )
-        // clearing the settings if its all defult values
-        if (JSON.stringify(settingsDefaultValues) == storedData) {
-          await SecureStore.setItemAsync(
-            Constants.expoConfig?.extra?.settingsStoredKey,
-            ''
-          )
-        } else if (storedData) {
-          setHasSettings(true)
-        }
-      } catch (e) {
-        console.error(e)
+      } catch (error) {
       } finally {
         setIsLoading(false)
       }
-    })()
+    }
+    checkAuthen()
   }, [])
 
   if (isLoading) {
@@ -72,7 +52,7 @@ export default function App() {
       [
         {
           text: 'Cancel',
-          onPress: () => {},
+          onPress: () => { },
           style: 'cancel'
         },
         {
@@ -87,13 +67,24 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {!hasSetting && (
-          <Stack.Screen
+        <Stack.Screen
+          name='Authentication'
+          component={Authentication}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name='OTPVerification'
+          component={OTPVerification}
+          options={{
+            title: '',
+            headerBackTitle: 'Back'
+          }}
+        />
+         <Stack.Screen
             name='Introduction'
             component={Introduction}
             options={{ title: 'Welcome' }}
           />
-        )}
         <Stack.Screen
           name='Main'
           component={Main}
@@ -107,7 +98,6 @@ export default function App() {
                 size={30}
                 borderRadius={500}
                 style={styles.settingsButton}
-                // workaround as onPress does not work
                 onPressOut={() => {
                   navigation.navigate('Setting')
                 }}
@@ -118,7 +108,7 @@ export default function App() {
         <Stack.Screen
           name='Setting'
           component={Setting}
-          options={{ title: 'Settings', headerBackVisible: hasSetting }} // set this to a variable to check if the user already has settings or not
+          options={{ title: 'Settings', headerBackVisible: hasAuthen }}
         />
         <Stack.Screen
           name='GoogleMapsDirections'
