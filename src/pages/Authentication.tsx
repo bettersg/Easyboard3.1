@@ -1,36 +1,40 @@
-import { useState } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import React, { useState } from 'react'
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native'
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import EasyboardTextInput from '../common/components/EasyboardTextInput'
 import EasyboardButton from '../common/components/EasyboardButton'
 import { RootStackParamList } from '../types/RootStackParamList.type'
-
+import auth from '@react-native-firebase/auth'
 type Props = NativeStackScreenProps<RootStackParamList, 'Authentication'>
 
 type UserType = 'PWID' | 'CAREGIVER'
 
 const Authentication = ({ navigation }: Props) => {
-  const [phoneNumber, setPhoneNumber] = useState('')
-  const [userType, setUserType] = useState<UserType>('PWID')
-  const [isLoading, setIsLoading] = useState(false)
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [userType, setUserType] = useState<UserType>('PWID');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSendOTP = async () => {
-    if (phoneNumber.length < 8) {
+    if (phoneNumber.length !== 8) {
+      Alert.alert('Error', 'Please enter a valid phone number');
       return
     }
-    
     setIsLoading(true)
     try {
-      // TODO: Implement OTP sending logic here
-      // After successful OTP send, navigate to OTP verification screen
+      // Format phone number to E.164 format
+      const formattedPhone = `+65${phoneNumber}`;
+      // Send OTP
+      const confirmation = await auth().signInWithPhoneNumber(formattedPhone);
+      // Navigate to OTP verification screen with the confirmation
       navigation.navigate('OTPVerification', {
-        phoneNumber,
-        userType
-      })
+        phoneNumber: formattedPhone,
+        userType,
+        confirmation
+      });
     } catch (error) {
-      console.error('Error sending OTP:', error)
+      Alert.alert('Error', 'Failed to send OTP. Please try again.');
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
@@ -49,7 +53,7 @@ const Authentication = ({ navigation }: Props) => {
             onChangeText={setPhoneNumber}
             placeholder="Enter your phone number"
             keyboardType="phone-pad"
-            maxLength={10}
+            maxLength={8}
           />
         </View>
 
@@ -87,7 +91,7 @@ const Authentication = ({ navigation }: Props) => {
         <EasyboardButton
           title="Send OTP"
           onPress={handleSendOTP}
-          disabled={phoneNumber.length < 8 || isLoading}
+          disabled={phoneNumber.length !== 8 || isLoading}
         />
       </View>
     </View>
@@ -126,14 +130,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#000',
     marginBottom: 8
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 16,
-    fontSize: 16,
-    backgroundColor: '#f8f8f8'
   },
   userTypeContainer: {
     marginBottom: 32
@@ -189,11 +185,6 @@ const styles = StyleSheet.create({
   radioTextSelected: {
     color: '#007AFF',
     fontWeight: '600'
-  },
-  errorText: {
-    color: '#FF3B30',
-    fontSize: 14,
-    marginTop: 8
   },
   buttonContainer: {
     marginTop: 'auto',

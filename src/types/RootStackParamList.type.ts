@@ -1,5 +1,6 @@
 import { Route } from './GoogleRoute.type'
 import LatLong from '../interfaces/LatLong.interface'
+import { FirebaseAuthTypes } from '@react-native-firebase/auth'
 
 export type RootStackParamList = {
   Main: undefined
@@ -26,6 +27,7 @@ export type RootStackParamList = {
   OTPVerification: {
     phoneNumber: string
     userType: 'PWID' | 'CAREGIVER'
+    confirmation: FirebaseAuthTypes.ConfirmationResult
   }
   CaregiverMain: undefined
   TrackPWIDMap: undefined

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../types/RootStackParamList.type'
 import EasyboardButton from '../common/components/EasyboardButton'
@@ -8,27 +8,42 @@ import { useState } from 'react'
 type Props = NativeStackScreenProps<RootStackParamList, 'OTPVerification'>
 
 export default function OTPVerification({ navigation, route }: Props) {
-  const { phoneNumber, userType } = route.params
-  const [otp, setOtp] = useState('')
-  const [error, setError] = useState('')
-  const [isVerifying, setIsVerifying] = useState(false)
+  const { phoneNumber, userType, confirmation } = route.params;
+  const [otp, setOtp] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleVerifyOTP = () => {
+  const handleVerifyOTP = async () => {
     if (otp.length !== 6) {
-      setError('Please enter a valid 6-digit OTP')
-      return
+      Alert.alert('Error', 'Please enter a valid 6-digit OTP')
+      return;
     }
-    setIsVerifying(true)
-    // TODO: Implement OTP verification
-    setTimeout(() => {
-      setIsVerifying(false)
-      if (userType === 'CAREGIVER') {
-        navigation.navigate('CaregiverMain')
-      } else {
-        navigation.navigate('Introduction')
+    setIsLoading(true);
+    try {
+      // Confirm the OTP
+      const userCredential = await confirmation.confirm(otp);
+
+      if (!userCredential) {
+        throw new Error('Failed to verify OTP')
       }
-    }, 2000)
+
+      // Store user type in user profile
+      await userCredential.user.updateProfile({
+        displayName: userType
+      });
+
+      // Navigate to appropriate screen based on user type
+      if (userType === 'CAREGIVER') {
+        navigation.navigate('CaregiverMain');
+      } else {
+        navigation.navigate('Introduction');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to verify OTP. Please try again.')
+    } finally {
+      setIsLoading(false);
+    }
   }
+
 
   return (
     <View style={styles.container}>
@@ -49,7 +64,6 @@ export default function OTPVerification({ navigation, route }: Props) {
             keyboardType="number-pad"
             maxLength={6}
           />
-          {error && <Text style={styles.errorText}>{error}</Text>}
         </View>
 
         <TouchableOpacity style={styles.resendContainer}>
@@ -62,7 +76,7 @@ export default function OTPVerification({ navigation, route }: Props) {
         <EasyboardButton
           title="Verify OTP"
           onPress={handleVerifyOTP}
-          disabled={isVerifying || otp.length !== 6}
+          disabled={otp.length !== 6 || isLoading}
         />
       </View>
     </View>
