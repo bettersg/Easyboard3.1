@@ -5,6 +5,8 @@ import EasyboardTextInput from '../common/components/EasyboardTextInput'
 import EasyboardButton from '../common/components/EasyboardButton'
 import { RootStackParamList } from '../types/RootStackParamList.type'
 import auth from '@react-native-firebase/auth'
+import { useAuth } from '../contexts/AppContext'
+
 type Props = NativeStackScreenProps<RootStackParamList, 'Authentication'>
 
 type UserType = 'PWID' | 'CAREGIVER'
@@ -13,6 +15,7 @@ const Authentication = ({ navigation }: Props) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [userType, setUserType] = useState<UserType>('PWID');
   const [isLoading, setIsLoading] = useState(false);
+  const { setConfirmation } = useAuth();
 
   const handleSendOTP = async () => {
     if (phoneNumber.length !== 8) {
@@ -25,11 +28,12 @@ const Authentication = ({ navigation }: Props) => {
       const formattedPhone = `+65${phoneNumber}`;
       // Send OTP
       const confirmation = await auth().signInWithPhoneNumber(formattedPhone);
-      // Navigate to OTP verification screen with the confirmation
+      // Store confirmation in context
+      setConfirmation(confirmation);
+      // Navigate to OTP verification screen
       navigation.navigate('OTPVerification', {
         phoneNumber: formattedPhone,
-        userType,
-        confirmation
+        userType
       });
     } catch (error) {
       Alert.alert('Error', 'Failed to send OTP. Please try again.');

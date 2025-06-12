@@ -4,15 +4,22 @@ import { RootStackParamList } from '../types/RootStackParamList.type'
 import EasyboardButton from '../common/components/EasyboardButton'
 import EasyboardTextInput from '../common/components/EasyboardTextInput'
 import { useState } from 'react'
+import { useAuth } from '../contexts/AppContext'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'OTPVerification'>
 
 export default function OTPVerification({ navigation, route }: Props) {
-  const { phoneNumber, userType, confirmation } = route.params;
+  const { phoneNumber, userType } = route.params;
+  const { confirmation } = useAuth();
   const [otp, setOtp] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleVerifyOTP = async () => {
+    if (!confirmation) {
+      Alert.alert('Error', 'No confirmation found. Please try again.');
+      return;
+    }
+
     if (otp.length !== 6) {
       Alert.alert('Error', 'Please enter a valid 6-digit OTP')
       return;

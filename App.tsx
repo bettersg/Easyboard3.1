@@ -20,6 +20,7 @@ import OTPVerification from './src/pages/OTPVerification'
 import CaregiverMain from './src/pages/CaregiverMain'
 import TrackPWIDMap from './src/pages/TrackPWIDMap'
 import { RootStackParamList } from './src/types/RootStackParamList.type'
+import { AppProvider } from './src/contexts/AppContext'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
@@ -67,83 +68,85 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name='Authentication'
-          component={Authentication}
-          options={{ headerShown: false }}
-        />
-        <Stack.Screen
-          name='OTPVerification'
-          component={OTPVerification}
-          options={{
-            title: '',
-            headerBackTitle: 'Back'
-          }}
-        />
-        <Stack.Screen
-          name='Introduction'
-          component={Introduction}
-          options={{ title: 'Welcome' }}
-        />
-        <Stack.Screen
-          name='Main'
-          component={Main}
-          options={({ navigation }) => ({
-            title: 'EasyBoard',
-            headerRight: () => (
-              <MaterialIcons.Button
-                name='settings'
-                backgroundColor={'transparent'}
-                color={'#000'}
-                size={30}
-                borderRadius={500}
-                style={styles.settingsButton}
-                onPressOut={() => {
-                  navigation.navigate('Setting')
-                }}
-              />
-            )
-          })}
-        />
-        <Stack.Screen
-          name='CaregiverMain'
-          component={CaregiverMain}
-          options={{title: 'Caregiver Dashboard'}}
-        />
-        <Stack.Screen
-          name='TrackPWIDMap'
-          component={TrackPWIDMap}
-          options={{ title: 'Track PWID Location' }}
-        />
-        <Stack.Screen
-          name='Setting'
-          component={Setting}
-          options={{ title: 'Settings', headerBackVisible: hasAuthen }}
-        />
-        <Stack.Screen
-          name='GoogleMapsDirections'
-          component={GoogleMapsDirections}
-          options={{
-            title: 'Start your trip',
-            headerRight: () => (
-              <MaterialIcons
-                name='help-outline'
-                size={28}
-                color='#2a62ff'
-                onPress={onHelpPressed}
-              />
-            )
-          }}
-        />
-        <Stack.Screen
-          name='TransitOptions'
-          component={TransitOptions}
-          options={{ title: 'Pick a route' }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <AppProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name='Authentication'
+            component={Authentication}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name='OTPVerification'
+            component={OTPVerification}
+            options={{
+              title: '',
+              headerBackTitle: 'Back'
+            }}
+          />
+          <Stack.Screen
+            name='Introduction'
+            component={Introduction}
+            options={{ title: 'Welcome' }}
+          />
+          <Stack.Screen
+            name='Main'
+            component={Main}
+            options={({ navigation }) => ({
+              title: 'EasyBoard',
+              headerRight: () => (
+                <MaterialIcons.Button
+                  name='settings'
+                  backgroundColor={'transparent'}
+                  color={'#000'}
+                  size={30}
+                  borderRadius={500}
+                  style={styles.settingsButton}
+                  onPressOut={() => {
+                    navigation.navigate('Setting')
+                  }}
+                />
+              )
+            })}
+          />
+          <Stack.Screen
+            name='CaregiverMain'
+            component={CaregiverMain}
+            options={{title: 'Caregiver Dashboard'}}
+          />
+          <Stack.Screen
+            name='TrackPWIDMap'
+            component={TrackPWIDMap}
+            options={{ title: 'Track PWID Location' }}
+          />
+          <Stack.Screen
+            name='Setting'
+            component={Setting}
+            options={{ title: 'Settings', headerBackVisible: hasAuthen }}
+          />
+          <Stack.Screen
+            name='GoogleMapsDirections'
+            component={GoogleMapsDirections}
+            options={{
+              title: 'Start your trip',
+              headerRight: () => (
+                <MaterialIcons
+                  name='help-outline'
+                  size={28}
+                  color='#2a62ff'
+                  onPress={onHelpPressed}
+                />
+              )
+            }}
+          />
+          <Stack.Screen
+            name='TransitOptions'
+            component={TransitOptions}
+            options={{ title: 'Pick a route' }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </AppProvider>
   )
 }
 
