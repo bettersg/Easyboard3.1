@@ -16,6 +16,7 @@ import Main from './src/pages/Main'
 import Setting from './src/pages/Setting'
 import TransitOptions from './src/pages/TransitOptions'
 import Authentication from './src/pages/Authentication'
+import Registration from './src/pages/Registration'
 import OTPVerification from './src/pages/OTPVerification'
 import CaregiverMain from './src/pages/CaregiverMain'
 import TrackPWIDMap from './src/pages/TrackPWIDMap'
@@ -77,11 +78,15 @@ export default function App() {
             options={{ headerShown: false }}
           />
           <Stack.Screen
+            name='Registration'
+            component={Registration}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
             name='OTPVerification'
             component={OTPVerification}
             options={{
               title: '',
-              headerBackTitle: 'Back'
             }}
           />
           <Stack.Screen

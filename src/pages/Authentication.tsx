@@ -9,11 +9,8 @@ import { useAuth } from '../contexts/AppContext'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Authentication'>
 
-type UserType = 'PWID' | 'CAREGIVER'
-
 const Authentication = ({ navigation }: Props) => {
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [userType, setUserType] = useState<UserType>('PWID');
   const [isLoading, setIsLoading] = useState(false);
   const { setConfirmation } = useAuth();
 
@@ -25,15 +22,14 @@ const Authentication = ({ navigation }: Props) => {
     setIsLoading(true)
     try {
       // Format phone number to E.164 format
-      const formattedPhone = `+65${phoneNumber}`;
+      const formattedPhone = `65${phoneNumber}`;
       // Send OTP
-      const confirmation = await auth().signInWithPhoneNumber(formattedPhone);
+      const confirmation = await auth().signInWithPhoneNumber(`+${formattedPhone}`);
       // Store confirmation in context
       setConfirmation(confirmation);
       // Navigate to OTP verification screen
       navigation.navigate('OTPVerification', {
-        phoneNumber: formattedPhone,
-        userType
+        phoneNumber: formattedPhone
       });
     } catch (error) {
       Alert.alert('Error', 'Failed to send OTP. Please try again.');
@@ -47,7 +43,7 @@ const Authentication = ({ navigation }: Props) => {
       <View style={styles.content}>
         <View style={styles.header}>
           <Text style={styles.title}>Welcome to EasyBoard</Text>
-          <Text style={styles.subtitle}>Please enter your phone number to continue</Text>
+          <Text style={styles.subtitle}>Please enter your phone number to login</Text>
         </View>
 
         <View style={styles.inputContainer}>
@@ -60,43 +56,20 @@ const Authentication = ({ navigation }: Props) => {
             maxLength={8}
           />
         </View>
-
-        <View style={styles.userTypeContainer}>
-          <Text style={styles.userTypeLabel}>I am a:</Text>
-          <View style={styles.radioGroup}>
-            <TouchableOpacity
-              style={[styles.radioOption, userType === 'PWID' && styles.radioSelected]}
-              onPress={() => setUserType('PWID')}
-            >
-              <View style={[styles.radioCircle, userType === 'PWID' && styles.radioCircleSelected]}>
-                {userType === 'PWID' && <View style={styles.radioInnerCircle} />}
-              </View>
-              <Text style={[styles.radioText, userType === 'PWID' && styles.radioTextSelected]}>
-                PWID
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.radioOption, userType === 'CAREGIVER' && styles.radioSelected]}
-              onPress={() => setUserType('CAREGIVER')}
-            >
-              <View style={[styles.radioCircle, userType === 'CAREGIVER' && styles.radioCircleSelected]}>
-                {userType === 'CAREGIVER' && <View style={styles.radioInnerCircle} />}
-              </View>
-              <Text style={[styles.radioText, userType === 'CAREGIVER' && styles.radioTextSelected]}>
-                Caregiver
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
       </View>
 
       <View style={styles.buttonContainer}>
         <EasyboardButton
-          title="Send OTP"
+          title="Login"
           onPress={handleSendOTP}
           disabled={phoneNumber.length !== 8 || isLoading}
         />
+        <TouchableOpacity 
+          style={styles.registerLink}
+          onPress={() => navigation.navigate('Registration')}
+        >
+          <Text style={styles.registerText}>New user? Register here</Text>
+        </TouchableOpacity>
       </View>
     </View>
   )
@@ -105,96 +78,46 @@ const Authentication = ({ navigation }: Props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+    padding: 20,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 20
+    justifyContent: 'center',
   },
   header: {
-    marginTop: 40,
-    marginBottom: 32
+    marginBottom: 30,
   },
   title: {
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#000',
-    marginBottom: 8
+    marginBottom: 10,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
     color: '#666',
-    marginBottom: 32
+    textAlign: 'center',
   },
   inputContainer: {
-    marginBottom: 24
+    marginBottom: 20,
   },
   label: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#000',
-    marginBottom: 8
-  },
-  userTypeContainer: {
-    marginBottom: 32
-  },
-  userTypeLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000',
-    marginBottom: 16
-  },
-  radioGroup: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20
-  },
-  radioOption: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    minWidth: 140
-  },
-  radioSelected: {
-    borderColor: '#007AFF',
-    backgroundColor: '#F0F8FF'
-  },
-  radioCircle: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#ddd',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8
-  },
-  radioCircleSelected: {
-    borderColor: '#007AFF',
-    backgroundColor: '#007AFF'
-  },
-  radioInnerCircle: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#fff'
-  },
-  radioText: {
-    fontSize: 16,
-    color: '#000'
-  },
-  radioTextSelected: {
-    color: '#007AFF',
-    fontWeight: '600'
+    marginBottom: 8,
+    color: '#333',
   },
   buttonContainer: {
-    marginTop: 'auto',
-    paddingHorizontal: 20,
-    paddingBottom: 40
-  }
+    marginBottom: 20,
+  },
+  registerLink: {
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  registerText: {
+    color: '#007AFF',
+    fontSize: 16,
+  },
 })
 
 export default Authentication 

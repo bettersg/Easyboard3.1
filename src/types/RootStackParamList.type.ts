@@ -23,9 +23,10 @@ export type RootStackParamList = {
   Direction: undefined
   Setting: undefined
   Authentication: undefined
+  Registration: undefined
   OTPVerification: {
     phoneNumber: string
-    userType: 'PWID' | 'CAREGIVER'
+    userType?: 'PWID' | 'CAREGIVER'
   }
   CaregiverMain: undefined
   TrackPWIDMap: undefined

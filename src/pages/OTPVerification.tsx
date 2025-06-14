@@ -1,10 +1,11 @@
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native'
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../types/RootStackParamList.type'
-import EasyboardButton from '../common/components/EasyboardButton'
-import EasyboardTextInput from '../common/components/EasyboardTextInput'
 import { useState } from 'react'
 import { useAuth } from '../contexts/AppContext'
+import { createUser } from '../services/userService'
+import EasyboardTextInput from '../common/components/EasyboardTextInput'
+import EasyboardButton from '../common/components/EasyboardButton'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'OTPVerification'>
 
@@ -33,10 +34,11 @@ export default function OTPVerification({ navigation, route }: Props) {
         throw new Error('Failed to verify OTP')
       }
 
-      // Store user type in user profile
-      await userCredential.user.updateProfile({
-        displayName: userType
-      });
+      // If userType is provided, this is a registration flow
+      if (userType) {
+        // Create new user for registration
+        await createUser(phoneNumber, userType, userCredential.user.uid);
+      }
 
       // Navigate to appropriate screen based on user type
       if (userType === 'CAREGIVER') {
@@ -45,12 +47,11 @@ export default function OTPVerification({ navigation, route }: Props) {
         navigation.navigate('Introduction');
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to verify OTP. Please try again.')
+      Alert.alert('Error', 'Failed to verify OTP. Please try again.');
     } finally {
       setIsLoading(false);
     }
   }
-
 
   return (
     <View style={styles.container}>
@@ -58,7 +59,7 @@ export default function OTPVerification({ navigation, route }: Props) {
         <View style={styles.header}>
           <Text style={styles.title}>Enter Verification</Text>
           <Text style={styles.subtitle}>
-            We've sent a 6-digit code to {phoneNumber}
+            We've sent a 6-digit code to +{phoneNumber}
           </Text>
         </View>
 
@@ -93,39 +94,37 @@ export default function OTPVerification({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+    padding: 20,
   },
   content: {
     flex: 1,
-    paddingHorizontal: 20
+    justifyContent: 'center',
   },
   header: {
-    marginTop: 20,
-    marginBottom: 32
+    marginBottom: 30,
   },
   title: {
-    fontSize: 32,
+    fontSize: 24,
     fontWeight: 'bold',
-    color: '#000',
-    marginBottom: 8
+    marginBottom: 10,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
-    color: '#666'
+    color: '#666',
+    textAlign: 'center',
   },
   inputContainer: {
-    marginBottom: 24
+    marginBottom: 20,
   },
   label: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#000',
-    marginBottom: 8
+    marginBottom: 8,
+    color: '#333',
   },
-  errorText: {
-    color: '#FF3B30',
-    fontSize: 14,
-    marginTop: 8
+  buttonContainer: {
+    marginBottom: 20,
   },
   resendContainer: {
     flexDirection: 'row',
@@ -141,9 +140,4 @@ const styles = StyleSheet.create({
     color: '#007AFF',
     fontWeight: '600'
   },
-  buttonContainer: {
-    marginTop: 'auto',
-    paddingHorizontal: 20,
-    paddingBottom: 40
-  }
 }) 
