@@ -6,6 +6,7 @@ import EasyboardButton from '../common/components/EasyboardButton'
 import { RootStackParamList } from '../types/RootStackParamList.type'
 import auth from '@react-native-firebase/auth'
 import { useAuth } from '../contexts/AppContext'
+import { getUserData } from '../services/userService'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Authentication'>
 
@@ -23,13 +24,22 @@ const Authentication = ({ navigation }: Props) => {
     try {
       // Format phone number to E.164 format
       const formattedPhone = `65${phoneNumber}`;
+
+      // Check if user exists
+      const existingUser = await getUserData(formattedPhone);
+      if (!existingUser) {
+        Alert.alert('Login Failed', 'This phone number is not registered. Please register first.');
+        return;
+      }
+
       // Send OTP
       const confirmation = await auth().signInWithPhoneNumber(`+${formattedPhone}`);
       // Store confirmation in context
       setConfirmation(confirmation);
       // Navigate to OTP verification screen
       navigation.navigate('OTPVerification', {
-        phoneNumber: formattedPhone
+        phoneNumber: formattedPhone,
+        userType: existingUser.userType
       });
     } catch (error) {
       Alert.alert('Error', 'Failed to send OTP. Please try again.');

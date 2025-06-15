@@ -43,6 +43,7 @@ const Registration = ({ navigation }: Props) => {
       navigation.navigate('OTPVerification', {
         phoneNumber: formattedPhone,
         userType,
+        isRegistration: true
       })
     } catch (error) {
       Alert.alert('Error', 'Failed to send OTP. Please try again.')

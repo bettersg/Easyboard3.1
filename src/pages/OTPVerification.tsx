@@ -4,13 +4,14 @@ import { RootStackParamList } from '../types/RootStackParamList.type'
 import { useState } from 'react'
 import { useAuth } from '../contexts/AppContext'
 import { createUser } from '../services/userService'
+import { setUserData } from '../services/storageService'
 import EasyboardTextInput from '../common/components/EasyboardTextInput'
 import EasyboardButton from '../common/components/EasyboardButton'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'OTPVerification'>
 
 export default function OTPVerification({ navigation, route }: Props) {
-  const { phoneNumber, userType } = route.params;
+  const { phoneNumber, userType, isRegistration } = route.params;
   const { confirmation } = useAuth();
   const [otp, setOtp] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -34,11 +35,13 @@ export default function OTPVerification({ navigation, route }: Props) {
         throw new Error('Failed to verify OTP')
       }
 
-      // If userType is provided, this is a registration flow
-      if (userType) {
-        // Create new user for registration
+      // If this is a registration flow, create new user
+      if (isRegistration) {
         await createUser(phoneNumber, userType, userCredential.user.uid);
       }
+
+      // Store user data in local storage
+      await setUserData({ phoneNumber, userType });
 
       // Navigate to appropriate screen based on user type
       if (userType === 'CAREGIVER') {
