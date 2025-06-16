@@ -44,10 +44,10 @@ export default function OTPVerification({ navigation, route }: Props) {
       await setUserData({ phoneNumber, userType });
 
       // Navigate to appropriate screen based on user type
-      if (userType === 'CAREGIVER') {
-        navigation.navigate('CaregiverMain');
-      } else {
+      if (userType === 'PWID') {
         navigation.navigate('Introduction');
+      } else {
+        navigation.navigate('CaregiverMain');
       }
     } catch (error) {
       Alert.alert('Error', 'Failed to verify OTP. Please try again.');

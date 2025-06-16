@@ -22,6 +22,7 @@ import CaregiverMain from './src/pages/CaregiverMain'
 import TrackPWIDMap from './src/pages/TrackPWIDMap'
 import { RootStackParamList } from './src/types/RootStackParamList.type'
 import { AppProvider } from './src/contexts/AppContext'
+import { getUserData } from './src/services/storageService'
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 
@@ -29,17 +30,29 @@ export default function App() {
   const callCareGiver = useCallCaregiver()
   const [hasAuthen, setHasAuthen] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [initialRoute, setInitialRoute] = useState<keyof RootStackParamList>('Authentication')
 
   useEffect(() => {
-    const checkAuthen = async () => {
-      try {
-      } catch (error) {
-      } finally {
-        setIsLoading(false)
+  let isMounted = true
+  const checkAuthen = async () => {
+    try {
+      const userData = await getUserData()
+      if (userData && isMounted) {
+        setHasAuthen(true)
+        const route = userData.userType === 'PWID' ? 'Main' : 'CaregiverMain';
+        setInitialRoute(route)
       }
+    } catch (error) {
+      if (isMounted) setInitialRoute('Authentication')
+    } finally {
+      if (isMounted) setIsLoading(false)
     }
-    checkAuthen()
-  }, [])
+  }
+  checkAuthen()
+  return () => {
+    isMounted = false
+  }
+}, [])
 
   if (isLoading) {
     return (
@@ -71,7 +84,7 @@ export default function App() {
   return (
     <AppProvider>
       <NavigationContainer>
-        <Stack.Navigator>
+        <Stack.Navigator initialRouteName={initialRoute}>
           <Stack.Screen
             name='Authentication'
             component={Authentication}
