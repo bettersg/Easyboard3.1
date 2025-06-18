@@ -142,7 +142,7 @@ export default function GoogleMapsDirections({ navigation, route }: Props) {
   }, [currentStep])
 
   return (
-    <View className='relative flex flex-1 justify-between bg-white'>
+    <View className='relative flex flex-1 justify-between bg-defaultBackground'>
       <MapView
         initialRegion={mapRegion}
         provider={PROVIDER_GOOGLE}

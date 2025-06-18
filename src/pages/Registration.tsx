@@ -57,7 +57,7 @@ const Registration = ({ navigation }: Props) => {
       <View style={styles.content}>
         <View style={styles.header}>
           <Text style={styles.title}>Register for EasyBoard</Text>
-          <Text style={styles.subtitle}>Please enter your phone number to continue</Text>
+          <Text style={styles.subtitle}>Please enter your phone number to register</Text>
         </View>
 
         <View style={styles.inputContainer}>
@@ -121,7 +121,7 @@ const Registration = ({ navigation }: Props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F5F5F5',
     padding: 20,
   },
   content: {
@@ -138,25 +138,28 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: 17,
+    color: '#4D4D4D',
     textAlign: 'center',
+    fontWeight: '400',
   },
   inputContainer: {
     marginBottom: 20,
   },
   label: {
-    fontSize: 16,
+    fontSize: 18,
     marginBottom: 8,
     color: '#333',
+    fontWeight: '500',
   },
   userTypeContainer: {
     marginBottom: 20,
   },
   userTypeLabel: {
-    fontSize: 16,
+    fontSize: 18,
     marginBottom: 8,
     color: '#333',
+    fontWeight: '500',
   },
   radioGroup: {
     flexDirection: 'row',
@@ -191,8 +194,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#007AFF',
   },
   radioText: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#666',
+    fontWeight: '500',
   },
   radioTextSelected: {
     color: '#007AFF',

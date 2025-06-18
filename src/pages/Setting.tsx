@@ -19,7 +19,7 @@ import EasyboardTextInput from '../common/components/EasyboardTextInput'
 import LoadingIndicator from '../common/components/LoadingIndicator'
 import Page from '../common/components/Page'
 import LocationTextInput from '../common/locationSelector/LocationInputText'
-import RootStackParamList from '../types/RootStackParamList.type'
+import { RootStackParamList } from '../types/RootStackParamList.type'
 import { SettingKey, SettingValues } from '../types/SettingKey.type'
 import FormLabel from '../common/components/FormLabel'
 
@@ -69,12 +69,12 @@ export default function Setting({ navigation }: Props) {
     // Manually check the validation
     if (await trigger()) {
       // Use the build in validation
-      handleSubmit(saveSettings(), () => {
+      handleSubmit(saveSettings, () => {
         Alert.alert(
           'Field Errors',
           'There are some fields that have some errors.'
         )
-      })
+      })()
     } else {
       Alert.alert(
         'Field Errors',

@@ -88,7 +88,7 @@ const Authentication = ({ navigation }: Props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F5F5F5',
     padding: 20,
   },
   content: {
@@ -105,17 +105,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: 17,
+    color: '#4D4D4D',
     textAlign: 'center',
+    fontWeight: '400',
   },
   inputContainer: {
     marginBottom: 20,
   },
   label: {
-    fontSize: 16,
+    fontSize: 18,
     marginBottom: 8,
     color: '#333',
+    fontWeight: '500',
   },
   buttonContainer: {
     marginBottom: 20,

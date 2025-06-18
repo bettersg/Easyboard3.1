@@ -32,12 +32,11 @@ export default function CaregiverMain({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#F5F5F5'
   },
   header: {
     padding: 20,
     paddingTop: 40,
-    backgroundColor: '#fff'
   },
   title: {
     fontSize: 32,
