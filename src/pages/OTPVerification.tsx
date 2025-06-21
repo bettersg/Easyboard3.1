@@ -4,7 +4,7 @@ import { RootStackParamList } from '../types/RootStackParamList.type'
 import { useState } from 'react'
 import { useAuth } from '../contexts/AppContext'
 import { createUser } from '../services/userService'
-import { setUserData } from '../services/storageService'
+import { setUserStorage } from '../services/storageService'
 import EasyboardTextInput from '../common/components/EasyboardTextInput'
 import EasyboardButton from '../common/components/EasyboardButton'
 
@@ -12,7 +12,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'OTPVerification'>
 
 export default function OTPVerification({ navigation, route }: Props) {
   const { phoneNumber, userType, isRegistration } = route.params;
-  const { confirmation } = useAuth();
+  const { confirmation, setAuthentication } = useAuth();
   const [otp, setOtp] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -41,14 +41,10 @@ export default function OTPVerification({ navigation, route }: Props) {
       }
 
       // Store user data in local storage
-      await setUserData({ phoneNumber, userType });
+      await setUserStorage({ phoneNumber, userType, loggedAt: Date.now() });
 
-      // Navigate to appropriate screen based on user type
-      if (userType === 'PWID') {
-        navigation.navigate('Introduction');
-      } else {
-        navigation.navigate('CaregiverMain');
-      }
+      // Update authentication state - this will trigger App.tsx to re-render with the correct stack
+      setAuthentication(true, userType, isRegistration);
     } catch (error) {
       Alert.alert('Error', 'Failed to verify OTP. Please try again.');
     } finally {

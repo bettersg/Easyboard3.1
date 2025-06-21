@@ -22,7 +22,8 @@ import LocationTextInput from '../common/locationSelector/LocationInputText'
 import { RootStackParamList } from '../types/RootStackParamList.type'
 import { SettingKey, SettingValues } from '../types/SettingKey.type'
 import FormLabel from '../common/components/FormLabel'
-
+import { updatePWIDCaregiver } from '../services/userService'
+import { getUserStorage } from '../services/storageService'
 type Props = NativeStackScreenProps<RootStackParamList, 'Setting'>
 
 const PHONE_NUMBER_LENGTH = 8
@@ -90,6 +91,10 @@ export default function Setting({ navigation }: Props) {
         Constants?.expoConfig?.extra?.settingsStoredKey,
         data
       )
+      const userStorage = await getUserStorage();
+      if (userStorage) {
+        await updatePWIDCaregiver(userStorage.phoneNumber, `65${watch().careGiverPhoneNumber}`);
+      }
       Alert.alert('Data Saved')
       navigation.reset({
         index: 0,
