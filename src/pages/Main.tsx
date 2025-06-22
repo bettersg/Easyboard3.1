@@ -9,7 +9,8 @@ import Page from '../common/components/Page'
 import SavedLocationCard from '../common/components/SavedLocationCard'
 import LocationInputButton from '../common/locationSelector/LocationInputButton'
 import useCallCaregiver from '../hooks/useCallCaregiver'
-import RootStackParamList from '../types/RootStackParamList.type'
+import { RootStackParamList } from '../types/RootStackParamList.type'
+import { useLocationSharing } from '../contexts/LocationSharingContext'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Main'>
 
@@ -17,6 +18,7 @@ export default function Main({ navigation }: Props) {
   const callCareGiver = useCallCaregiver()
   const [userSetting, setUserSetting] = useState<any>(null)
   const [location, setMarkerLocation] = useState<any>(null)
+  const { isLocationSharing, setIsLocationSharing } = useLocationSharing();
 
   useEffect(() => {
     ; (async () => {
@@ -56,7 +58,7 @@ export default function Main({ navigation }: Props) {
   }, [location])
 
   const onShareLocation = () => {
-    Alert.alert('Feature coming soon')
+    setIsLocationSharing(!isLocationSharing);
   }
 
   return (
@@ -144,13 +146,13 @@ export default function Main({ navigation }: Props) {
               titleSize="text-lg"
             />
             <View style={{ height: 16 }} />
-            {/* <EasyboardButton
+            <EasyboardButton
               type="bg-secondary"
               onPress={onShareLocation}
-              title="SHARE LOCATION"
+              title={isLocationSharing ? "STOP SHARING" : "SHARE LOCATION"}
               iconName="map-pin"
               titleSize="text-lg"
-            /> */}
+            />
           </View>
         </View>
       )}
