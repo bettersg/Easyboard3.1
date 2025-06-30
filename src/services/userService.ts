@@ -15,6 +15,7 @@ export interface PWIDUser {
   deviceName: string;
   caregiverPhone?: string;
   location?: Location;
+  fcmToken?: string; // FCM token for push notifications
   createdAt: number;
   updatedAt: number;
 }
@@ -26,6 +27,7 @@ export interface CaregiverUser {
   uid_pwids: {
     [key: string]: boolean;
   };
+  fcmToken?: string; // FCM token for push notifications
   createdAt: number;
   updatedAt: number;
 }
@@ -110,6 +112,28 @@ export async function removePWIDFromCaregiver(caregiverPhone: string, pwidPhone:
     await database().ref(`users/${caregiverPhone}/updatedAt`).set(Date.now());
   } catch (error) {
     console.error('Error removing PWID from caregiver:', error);
+    throw error;
+  }
+}
+
+// Store FCM token for a user
+export async function storeFCMToken(phoneNumber: string, fcmToken: string): Promise<void> {
+  try {
+    await database().ref(`users/${phoneNumber}/fcmToken`).set(fcmToken);
+    await database().ref(`users/${phoneNumber}/updatedAt`).set(Date.now());
+  } catch (error) {
+    console.error('Error storing FCM token:', error);
+    throw error;
+  }
+}
+
+// Get FCM token for a user
+export async function getFCMToken(phoneNumber: string): Promise<string | null> {
+  try {
+    const snapshot = await database().ref(`users/${phoneNumber}/fcmToken`).once('value');
+    return snapshot.val();
+  } catch (error) {
+    console.error('Error getting FCM token for user:', error);
     throw error;
   }
 } 

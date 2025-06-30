@@ -1,6 +1,9 @@
 package org.engineeringgood.EasyBoard.RN
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.os.Build
 import android.content.res.Configuration
 
 import com.facebook.react.PackageList
@@ -47,6 +50,17 @@ class MainApplication : Application(), ReactApplication {
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
       // If you opted-in for the New Architecture, we load the native entry point for this app.
       load()
+    }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      val notificationManager: NotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+      val locationChannelId = "location-share-cn"
+      val locationChannelName = "Location Sharing"
+      val locationChannelDescription = "Notifications for when location is shared."
+      val locationChannelImportance = NotificationManager.IMPORTANCE_HIGH
+      val locationChannel = NotificationChannel(locationChannelId, locationChannelName, locationChannelImportance).apply {
+          description = locationChannelDescription
+      }
+      notificationManager.createNotificationChannel(locationChannel)
     }
     ApplicationLifecycleDispatcher.onApplicationCreate(this)
   }

@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import * as Location from 'expo-location';
 import { Alert } from 'react-native';
-import { updatePWIDLocation } from '../services/userService';
+import { updatePWIDLocation, getUserData } from '../services/userService';
 import { getUserStorage } from '../services/storageService';
+import notificationService from '../services/notificationService';
 
 type LocationSharingContextType = {
   isLocationSharing: boolean;
@@ -47,6 +48,9 @@ export const LocationSharingProvider: React.FC<{ children: React.ReactNode }> = 
         return;
       }
 
+      // Send notification to caregiver when location sharing starts
+      await sendNotificationToCaregiver();
+
       locationSubscription.current = await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.High,
@@ -65,6 +69,20 @@ export const LocationSharingProvider: React.FC<{ children: React.ReactNode }> = 
           }
         }
       );
+    };
+
+    const sendNotificationToCaregiver = async () => {
+      try {
+        if (!pwidPhoneNumber) return;
+        // Get PWID user data to find caregiver
+        const pwidUser = await getUserData(pwidPhoneNumber);
+        if (pwidUser && pwidUser.userType === 'PWID' && pwidUser.caregiverPhone) {
+          // Send notification to caregiver when location sharing starts
+          await notificationService.sendLocationShareNotification(pwidPhoneNumber, pwidUser.caregiverPhone);
+        }
+      } catch (error) {
+        console.error('Error sending notification to caregiver:', error);
+      }
     };
 
     if (isLocationSharing) {

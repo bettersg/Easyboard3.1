@@ -7,6 +7,7 @@ import { getUserStorage, clearUserStorage, isSessionExpired } from './src/servic
 import AuthStack from './src/navigation/AuthStack'
 import PWIDStack from './src/navigation/PWIDStack'
 import CaregiverStack from './src/navigation/CaregiverStack'
+import notificationService from './src/services/notificationService'
 
 function AppContent() {
   const { hasAuthen, userType, setAuthentication } = useAuth()
@@ -37,6 +38,24 @@ function AppContent() {
       isMounted = false
     }
   }, [setAuthentication])
+
+  // Initialize notification service
+  useEffect(() => {
+    const initializeNotifications = async () => {
+      try {
+        await notificationService.initialize();
+        notificationService.setupNotificationListeners();
+        console.log('Notification service initialized successfully');
+      } catch (error) {
+        console.error('Failed to initialize notification service:', error);
+      }
+    };
+
+    // Only initialize when user is authenticated
+    if (hasAuthen) {
+      initializeNotifications();
+    }
+  }, [hasAuthen, userType]); // Re-initialize when user changes
 
   if (isLoading) {
     return (
