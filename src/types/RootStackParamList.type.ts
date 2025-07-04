@@ -30,5 +30,5 @@ export type RootStackParamList = {
     isRegistration?: boolean
   }
   CaregiverMain: undefined
-  TrackPWIDMap: undefined
+  TrackPWIDMap: { pwidPhoneNumber: string }
 }

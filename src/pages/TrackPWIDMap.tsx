@@ -1,57 +1,87 @@
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native'
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../types/RootStackParamList.type'
 import Page from '../common/components/Page'
 import { MaterialIcons } from '@expo/vector-icons'
-
+import { useEffect, useState, useRef } from 'react'
+import { listenToPWIDLocation, Location } from '../services/userService'
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps'
 type Props = NativeStackScreenProps<RootStackParamList, 'TrackPWIDMap'>
 
-export default function TrackPWIDMap({ navigation }: Props) {
+export default function TrackPWIDMap({ route }: Props) {
+  const { pwidPhoneNumber } = route.params
+  const [location, setLocation] = useState<Location | null>(null)
+  const [lastUpdated, setLastUpdated] = useState<string>('')
+  const mapViewRef = useRef<MapView>(null)
+
+  useEffect(() => {
+    // Set up real-time location listener
+    const unsubscribe = listenToPWIDLocation(pwidPhoneNumber, (newLocation) => {
+      setLocation(newLocation)
+      const updateTime = new Date(newLocation.updatedAt).toLocaleTimeString()
+      setLastUpdated(updateTime)
+
+      // Animate map to the new location
+      mapViewRef.current?.animateToRegion(
+        {
+          latitude: newLocation.lat,
+          longitude: newLocation.lng,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        },
+        1000
+      )
+    })
+
+    // Clean up listener on unmount
+    return () => unsubscribe()
+  }, [pwidPhoneNumber])
+
+  const handleCall = () => {
+    if (pwidPhoneNumber) {
+      Linking.openURL(`tel:${pwidPhoneNumber}`).catch(err => console.error('Failed to open URL: ', err))
+    }
+  }
+
   return (
     <Page>
       <View style={styles.container}>
-        {/* Map View will be added here */}
-        <View style={styles.mapPlaceholder}>
-          <Text style={styles.placeholderText}>Map View Coming Soon</Text>
-        </View>
-
-        {/* Tracking Info Panel */}
-        <View style={styles.infoPanel}>
-          <View style={styles.infoHeader}>
-            <Text style={styles.infoTitle}>Tracking PWID</Text>
-            <TouchableOpacity style={styles.refreshButton}>
-              <MaterialIcons name="refresh" size={24} color="#007AFF" />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.infoContent}>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Name:</Text>
-              <Text style={styles.infoValue}>John Doe</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Last Updated:</Text>
-              <Text style={styles.infoValue}>2 minutes ago</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Status:</Text>
-              <View style={styles.statusContainer}>
-                <View style={styles.statusDot} />
-                <Text style={styles.statusText}>Moving</Text>
+        <MapView
+          ref={mapViewRef}
+          style={styles.map}
+          provider={PROVIDER_GOOGLE}
+          initialRegion={{
+            latitude: 1.3521, // Default to Singapore
+            longitude: 103.8198,
+            latitudeDelta: 0.2,
+            longitudeDelta: 0.2,
+          }}
+        >
+          {location && (
+            <Marker coordinate={{ latitude: location.lat, longitude: location.lng }} title={pwidPhoneNumber || 'PWID Location'}>
+              <View style={styles.markerContainer}>
+                <MaterialIcons name="person-pin-circle" size={40} color="#007AFF" />
               </View>
-            </View>
+            </Marker>
+          )}
+        </MapView>
+
+        <View style={styles.infoPanel}>
+          <Text style={styles.infoTitle}>Tracking {pwidPhoneNumber || 'PWID'}</Text>
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>Last Updated:</Text>
+            <Text style={styles.infoValue}>{lastUpdated || 'N/A'}</Text>
           </View>
         </View>
 
-        {/* Action Buttons */}
         <View style={styles.actionButtons}>
-          <TouchableOpacity style={styles.actionButton}>
-            <MaterialIcons name="call" size={24} color="#007AFF" />
-            <Text style={styles.actionButtonText}>Call PWID</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
-            <MaterialIcons name="notifications" size={24} color="#007AFF" />
-            <Text style={styles.actionButtonText}>Send Alert</Text>
+          <TouchableOpacity
+            style={[styles.actionButton, pwidPhoneNumber ? styles.actionButtonEnabled : styles.actionButtonDisabled]}
+            onPress={handleCall}
+            disabled={!pwidPhoneNumber}
+          >
+            <MaterialIcons name="call" size={24} color={pwidPhoneNumber ? "#fff" : "#ccc"} />
+            <Text style={[styles.actionButtonText, pwidPhoneNumber ? styles.actionButtonTextEnabled : styles.actionButtonTextDisabled]}>Call PWID</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -64,74 +94,44 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5F5F5'
   },
-  mapPlaceholder: {
+  map: {
     flex: 1,
-    backgroundColor: '#f0f0f0',
-    justifyContent: 'center',
-    alignItems: 'center'
   },
-  placeholderText: {
-    fontSize: 16,
-    color: '#666'
+  markerContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   infoPanel: {
     backgroundColor: '#fff',
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0'
-  },
-  infoHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16
+    borderTopColor: '#e0e0e0',
+    gap: 12,
   },
   infoTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#000'
-  },
-  refreshButton: {
-    padding: 8
-  },
-  infoContent: {
-    gap: 12
+    color: '#000',
   },
   infoRow: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   infoLabel: {
     fontSize: 16,
     color: '#666',
-    width: 100
+    width: 120,
   },
   infoValue: {
     fontSize: 16,
     color: '#000',
-    flex: 1
-  },
-  statusContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8
-  },
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#4CAF50'
-  },
-  statusText: {
-    fontSize: 16,
-    color: '#4CAF50'
+    flex: 1,
   },
   actionButtons: {
     flexDirection: 'row',
-    padding: 16,
-    gap: 16,
+    paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0'
+    borderTopColor: '#e0e0e0',
   },
   actionButton: {
     flex: 1,
@@ -140,11 +140,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     padding: 12,
-    backgroundColor: '#f8f8f8',
-    borderRadius: 8
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  actionButtonEnabled: {
+    backgroundColor: '#007AFF',
+  },
+  actionButtonDisabled: {
+    backgroundColor: '#f0f0f0',
   },
   actionButtonText: {
     fontSize: 16,
-    color: '#007AFF'
-  }
+  },
+  actionButtonTextEnabled: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  actionButtonTextDisabled: {
+    color: '#ccc',
+    fontWeight: 'bold',
+  },
 }) 

@@ -136,4 +136,20 @@ export async function getFCMToken(phoneNumber: string): Promise<string | null> {
     console.error('Error getting FCM token for user:', error);
     throw error;
   }
-} 
+}
+
+export function listenToPWIDLocation(
+  phoneNumber: string,
+  callback: (location: Location) => void
+): () => void {
+  const ref = database().ref(`users/${phoneNumber}/location`);
+
+  const listener = (snapshot: any) => {
+    const val = snapshot.val();
+    if (val) callback(val);
+  };
+
+  ref.on('value', listener);
+  // Return unsubscribe function
+  return () => ref.off('value', listener);
+}

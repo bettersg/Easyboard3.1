@@ -8,6 +8,7 @@ import AuthStack from './src/navigation/AuthStack'
 import PWIDStack from './src/navigation/PWIDStack'
 import CaregiverStack from './src/navigation/CaregiverStack'
 import notificationService from './src/services/notificationService'
+import { navigationRef } from './src/navigation/RootNavigation'
 
 function AppContent() {
   const { hasAuthen, userType, setAuthentication } = useAuth()
@@ -66,7 +67,7 @@ function AppContent() {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       {!hasAuthen ? (
         <AuthStack />
       ) : userType === 'PWID' ? (

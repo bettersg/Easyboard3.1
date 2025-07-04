@@ -3,6 +3,7 @@ import { Alert } from 'react-native';
 import { getUserStorage } from './storageService';
 import fcmService from './fcmService';
 import { getUserData, storeFCMToken, getFCMToken } from './userService';
+import { navigate } from '../navigation/RootNavigation';
 
 export interface NotificationData {
   title: string;
@@ -157,7 +158,7 @@ export class NotificationService {
     if (data?.type === 'location-share') {
       // Navigate to tracking screen or show location on map
       console.log('Navigate to location tracking for PWID:', data.pwidPhoneNumber);
-      // You'll need to implement navigation logic here
+      navigate('TrackPWIDMap', { pwidPhoneNumber: data.pwidPhoneNumber });
     }
   }
 }
