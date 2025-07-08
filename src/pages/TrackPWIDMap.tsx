@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity, Linking } from 'react-native'
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../types/RootStackParamList.type'
-import Page from '../common/components/Page'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useEffect, useState, useRef } from 'react'
 import { listenToPWIDLocation, Location } from '../services/userService'
@@ -52,80 +51,73 @@ export default function TrackPWIDMap({ route }: Props) {
   })()
 
   return (
-    <Page>
-      <View style={styles.container}>
-        <MapView
-          ref={mapViewRef}
-          style={styles.map}
-          provider={PROVIDER_GOOGLE}
-          initialRegion={{
-            latitude: 1.3521, // Default to Singapore
-            longitude: 103.8198,
-            latitudeDelta: 0.2,
-            longitudeDelta: 0.2,
-          }}
-        >
-          {location && (
-            <Marker coordinate={{ latitude: location.lat, longitude: location.lng }} title={pwidPhoneNumber || 'PWID Location'}>
-              <View style={styles.markerContainer}>
-                <MaterialIcons name="person-pin-circle" size={40} color="#007AFF" />
-              </View>
-            </Marker>
-          )}
-        </MapView>
-
-        <View style={styles.infoPanel}>
-          <View style={styles.titleRow}>
-            <Text style={styles.infoTitle}>Tracking {pwidPhoneNumber || 'PWID'}</Text>
-            <View style={styles.statusContainer}>
-              <MaterialIcons name={statusIcon.name} size={20} color={statusIcon.color} />
-              <Text style={[styles.statusText, { color: statusIcon.color }]}>{location ? 'Sharing' : 'Not Sharing'}</Text>
+    <View style={{ flex: 1 }}>
+      <MapView
+        ref={mapViewRef}
+        style={StyleSheet.absoluteFill}
+        provider={PROVIDER_GOOGLE}
+        initialRegion={{
+          latitude: 1.3521, // Default to Singapore
+          longitude: 103.8198,
+          latitudeDelta: 0.2,
+          longitudeDelta: 0.2,
+        }}
+      >
+        {location && (
+          <Marker coordinate={{ latitude: location.lat, longitude: location.lng }} title={pwidPhoneNumber || 'PWID Location'}>
+            <View style={styles.markerContainer}>
+              <MaterialIcons name="person-pin-circle" size={40} color="#007AFF" />
             </View>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Last Updated:</Text>
-            <Text style={styles.infoValue}>{lastUpdated || 'N/A'}</Text>
+          </Marker>
+        )}
+      </MapView>
+
+      {/* Overlay: Info Panel at Bottom */}
+      <View style={styles.overlayInfoPanel}>
+        <View style={styles.statusRow}>
+          <Text style={styles.infoTitle}>Tracking {pwidPhoneNumber || 'PWID'}</Text>
+          <View style={styles.statusContainer}>
+            <MaterialIcons name={statusIcon.name} size={20} color={statusIcon.color} />
+            <Text style={[styles.statusText, { color: statusIcon.color }]}>{location ? 'Sharing' : 'Not Sharing'}</Text>
           </View>
         </View>
-
-        <View style={styles.actionButtons}>
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Last Updated:</Text>
+          <Text style={styles.infoValue}>{lastUpdated || 'N/A'}</Text>
           <TouchableOpacity
-            style={[styles.actionButton, pwidPhoneNumber ? styles.actionButtonEnabled : styles.actionButtonDisabled]}
+            style={styles.inlineCallButton}
             onPress={handleCall}
             disabled={!pwidPhoneNumber}
           >
-            <MaterialIcons name="call" size={24} color={pwidPhoneNumber ? "#fff" : "#ccc"} />
-            <Text style={[styles.actionButtonText, pwidPhoneNumber ? styles.actionButtonTextEnabled : styles.actionButtonTextDisabled]}>Call PWID</Text>
+            <MaterialIcons name="call" size={20} color={pwidPhoneNumber ? "#007AFF" : "#ccc"} />
+            <Text style={[styles.inlineCallText, { color: pwidPhoneNumber ? "#007AFF" : "#ccc" }]}>PWID</Text>
           </TouchableOpacity>
         </View>
       </View>
-    </Page>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5'
-  },
-  map: {
-    flex: 1,
-  },
   markerContainer: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  infoPanel: {
-    backgroundColor: '#fff',
-    padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
-    gap: 12,
+  overlayInfoPanel: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0, // closer to bottom now that call button is inline
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    padding: 12,
+    paddingBottom: 30,
+    elevation: 4,
   },
-  titleRow: {
+  statusRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginBottom: 4,
   },
   infoTitle: {
     fontSize: 20,
@@ -149,6 +141,7 @@ const styles = StyleSheet.create({
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginTop: 2,
   },
   infoLabel: {
     fontSize: 16,
@@ -160,41 +153,19 @@ const styles = StyleSheet.create({
     color: '#000',
     flex: 1,
   },
-  actionButtons: {
-    flexDirection: 'row',
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
-  },
-  actionButton: {
-    flex: 1,
+  inlineCallButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    padding: 12,
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 2,
-  },
-  actionButtonEnabled: {
-    backgroundColor: '#007AFF',
-  },
-  actionButtonDisabled: {
+    marginLeft: 12,
+    padding: 6,
+    borderRadius: 12,
     backgroundColor: '#f0f0f0',
+    justifyContent: 'center'
   },
-  actionButtonText: {
-    fontSize: 16,
-  },
-  actionButtonTextEnabled: {
-    color: '#fff',
+  inlineCallText: {
+    marginLeft: 4,
     fontWeight: 'bold',
-  },
-  actionButtonTextDisabled: {
-    color: '#ccc',
-    fontWeight: 'bold',
+    fontSize: 15,
+    opacity: 1,
   },
 }) 

@@ -66,6 +66,7 @@ export class NotificationService {
       const caregiverToken = await getFCMToken(caregiverPhoneNumber);
       if (!caregiverToken) {
         console.log('Caregiver FCM token not found');
+        Alert.alert('Information', 'Caregiver is not available for notifications');
         return;
       }
 
@@ -95,6 +96,7 @@ export class NotificationService {
       const caregiverToken = await getFCMToken(caregiverPhoneNumber);
       if (!caregiverToken) {
         console.log('Caregiver FCM token not found');
+        Alert.alert('Information', 'Caregiver is not available for notifications');
         return;
       }
 
