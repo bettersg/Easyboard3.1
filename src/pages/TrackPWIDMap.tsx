@@ -43,6 +43,14 @@ export default function TrackPWIDMap({ route }: Props) {
     }
   }
 
+  const statusIcon = (() => {
+    if (location) {
+      return { name: 'location-on' as const, color: '#4CAF50' } // Green for sharing
+    } else {
+      return { name: 'location-off' as const, color: '#F44336' } // Red for not sharing
+    }
+  })()
+
   return (
     <Page>
       <View style={styles.container}>
@@ -67,7 +75,13 @@ export default function TrackPWIDMap({ route }: Props) {
         </MapView>
 
         <View style={styles.infoPanel}>
-          <Text style={styles.infoTitle}>Tracking {pwidPhoneNumber || 'PWID'}</Text>
+          <View style={styles.titleRow}>
+            <Text style={styles.infoTitle}>Tracking {pwidPhoneNumber || 'PWID'}</Text>
+            <View style={styles.statusContainer}>
+              <MaterialIcons name={statusIcon.name} size={20} color={statusIcon.color} />
+              <Text style={[styles.statusText, { color: statusIcon.color }]}>{location ? 'Sharing' : 'Not Sharing'}</Text>
+            </View>
+          </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Last Updated:</Text>
             <Text style={styles.infoValue}>{lastUpdated || 'N/A'}</Text>
@@ -108,10 +122,29 @@ const styles = StyleSheet.create({
     borderTopColor: '#e0e0e0',
     gap: 12,
   },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   infoTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#000',
+    flex: 1,
+  },
+  statusContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    backgroundColor: '#f8f9fa',
+  },
+  statusText: {
+    fontSize: 14,
+    fontWeight: '600',
   },
   infoRow: {
     flexDirection: 'row',
