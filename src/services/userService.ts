@@ -76,6 +76,16 @@ export async function updatePWIDLocation(phoneNumber: string, location: Location
   }
 }
 
+export async function clearPWIDLocation(phoneNumber: string): Promise<void> {
+  try {
+    await database().ref(`users/${phoneNumber}/location`).remove();
+    await database().ref(`users/${phoneNumber}/updatedAt`).set(Date.now());
+  } catch (error) {
+    console.error('Error clearing PWID location:', error);
+    throw error;
+  }
+}
+
 export async function addPWIDToCaregiver(caregiverPhone: string, pwidPhone: string): Promise<void> {
   try {
     await database().ref(`users/${caregiverPhone}/uid_pwids/${pwidPhone}`).set(true);

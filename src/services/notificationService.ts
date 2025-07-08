@@ -1,8 +1,8 @@
-import messaging from '@react-native-firebase/messaging';
+import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 import { Alert } from 'react-native';
 import { getUserStorage } from './storageService';
 import fcmService from './fcmService';
-import { getUserData, storeFCMToken, getFCMToken } from './userService';
+import { storeFCMToken, getFCMToken } from './userService';
 import { navigate } from '../navigation/RootNavigation';
 
 export interface NotificationData {
@@ -88,6 +88,37 @@ export class NotificationService {
     }
   }
 
+  // Send notification to caregiver when PWID stops sharing location
+  public async sendLocationStopNotification(pwidPhoneNumber: string, caregiverPhoneNumber: string, reason?: string): Promise<void> {
+    try {
+      // Get caregiver's FCM token
+      const caregiverToken = await getFCMToken(caregiverPhoneNumber);
+      if (!caregiverToken) {
+        console.log('Caregiver FCM token not found');
+        return;
+      }
+
+      const stopReason = reason || 'Location sharing stopped';
+      const notificationData: NotificationData = {
+        title: 'Location Share Stopped',
+        body: `${pwidPhoneNumber} has stopped sharing their location. ${stopReason}`,
+        data: {
+          type: 'location-stop',
+          pwidPhoneNumber,
+          reason: stopReason,
+          timestamp: Date.now().toString()
+        }
+      };
+
+      // Send notification via Firebase Cloud Messaging
+      await this.sendFCMNotification(caregiverToken, notificationData);
+
+      console.log('Location stop notification sent successfully');
+    } catch (error) {
+      console.error('Error sending location stop notification:', error);
+    }
+  }
+
   // Send FCM notification
   private async sendFCMNotification(token: string, notification: NotificationData): Promise<void> {
     try {
@@ -117,48 +148,56 @@ export class NotificationService {
   public setupNotificationListeners(): (() => void) | undefined {
     // Handle notification when app is in foreground
     const unsubscribeForeground = messaging().onMessage(async remoteMessage => {
-      console.log('Received foreground message:', remoteMessage);
-
-      // Show alert for foreground messages
-      Alert.alert(
-        remoteMessage.notification?.title || 'New Message',
-        remoteMessage.notification?.body || '',
-        [
-          {
-            text: 'OK',
-            onPress: () => {
-              // Handle notification tap
-              this.handleNotificationNavigation(remoteMessage.data);
+      const userData = await getUserStorage();
+      if (userData?.userType === 'CAREGIVER') {
+        Alert.alert(
+          remoteMessage.notification?.title || 'New Message',
+          remoteMessage.notification?.body || '',
+          [
+            {
+              text: 'OK',
+              onPress: async () => await this.handleNotification(remoteMessage),
             },
-          },
-        ]
-      );
+          ]
+        );
+      }
     });
 
     // Handle notification when app is opened from background
     messaging().onNotificationOpenedApp(remoteMessage => {
-      // Handle navigation based on notification data
-      this.handleNotificationNavigation(remoteMessage.data);
+      if (remoteMessage) this.handleNotification(remoteMessage);
     });
 
-    // Handle notification when app is opened from quit state
-    messaging()
-      .getInitialNotification()
-      .then(remoteMessage => {
-        if (remoteMessage) {
-          this.handleNotificationNavigation(remoteMessage.data);
-        }
-      });
+    // Handle notification when app is opened from quit state (cold start)
+    messaging().getInitialNotification().then(remoteMessage => {
+      if (remoteMessage) this.handleNotification(remoteMessage);
+    });
 
     return unsubscribeForeground;
   }
 
-  // Handle navigation based on notification data
-  private handleNotificationNavigation(data: any): void {
-    if (data?.type === 'location-share') {
-      // Navigate to tracking screen or show location on map
-      console.log('Navigate to location tracking for PWID:', data.pwidPhoneNumber);
-      navigate('TrackPWIDMap', { pwidPhoneNumber: data.pwidPhoneNumber });
+  private async handleNotification(remoteMessage: FirebaseMessagingTypes.RemoteMessage) {
+    const type = remoteMessage.data?.type;
+    const userData = await getUserStorage();
+
+    if (!type || !userData) return;
+
+    switch (type) {
+      case 'location-share':
+        if (userData.userType === 'CAREGIVER') {
+          const pwidPhoneNumber = remoteMessage.data?.pwidPhoneNumber?.toString();
+          if (pwidPhoneNumber) navigate('TrackPWIDMap', { pwidPhoneNumber });
+        }
+        break;
+      case 'location-stop':
+        if (userData.userType === 'CAREGIVER') {
+          const pwidPhoneNumber = remoteMessage.data?.pwidPhoneNumber?.toString();
+          if (pwidPhoneNumber) navigate('TrackPWIDMap', { pwidPhoneNumber });
+        }
+        break;
+      // 👉 Add more notification types below if needed
+      default:
+        console.log('Unhandled notification type:', type);
     }
   }
 }

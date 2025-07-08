@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import * as Location from 'expo-location';
 import { Alert } from 'react-native';
-import { updatePWIDLocation, getUserData } from '../services/userService';
+import { updatePWIDLocation, getUserData, clearPWIDLocation } from '../services/userService';
 import { getUserStorage } from '../services/storageService';
 import notificationService from '../services/notificationService';
 
@@ -20,6 +20,7 @@ export const LocationSharingProvider: React.FC<{ children: React.ReactNode }> = 
   const [pwidPhoneNumber, setPwidPhoneNumber] = useState<string | null>(null);
   const [destination, setDestinationState] = useState<{ lat: number, lng: number } | null>(null);
   const destinationRef = useRef<{ lat: number, lng: number } | null>(null);
+  const arrivalDetectedRef = useRef<boolean>(false);
 
   // Keep destinationRef in sync with destination
   useEffect(() => {
@@ -37,12 +38,19 @@ export const LocationSharingProvider: React.FC<{ children: React.ReactNode }> = 
   }, []);
 
   useEffect(() => {
-    const stopSharing = () => {
+    const cleanup = () => {
       if (locationSubscription.current) {
         locationSubscription.current.remove();
         locationSubscription.current = null;
       }
-      setDestinationState(null); // Clear destination when sharing stops
+      setDestinationState(null);
+      // Clear PWID location from database
+      if (pwidPhoneNumber) clearPWIDLocation(pwidPhoneNumber).catch(err => { });
+    };
+
+    const stopSharing = async () => {
+      cleanup();
+      await sendStopNotificationToCaregiver();
     };
 
     const startSharing = async () => {
@@ -51,7 +59,7 @@ export const LocationSharingProvider: React.FC<{ children: React.ReactNode }> = 
         setIsLocationSharingState(false);
         return;
       }
-      
+
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         Alert.alert('Permission denied', 'Location permission is required to share your location.');
@@ -60,7 +68,7 @@ export const LocationSharingProvider: React.FC<{ children: React.ReactNode }> = 
       }
 
       // Send notification when sharing starts (runs once per effect execution)
-      await sendNotificationToCaregiver();
+      await sendShareNotificationToCaregiver();
 
       locationSubscription.current = await Location.watchPositionAsync(
         {
@@ -85,9 +93,11 @@ export const LocationSharingProvider: React.FC<{ children: React.ReactNode }> = 
                 destinationRef.current.lng
               );
               if (distance < 20) { //meters threshold
+                // Mark that we've detected arrival
+                arrivalDetectedRef.current = true;
                 setIsLocationSharingState(false);
-                setDestinationState(null);
                 Alert.alert('Arrived', 'You have reached your destination. Location sharing stopped.');
+                // Note: stopSharing() will be called automatically by useEffect, which clears destination
               }
             }
           } catch (e) {
@@ -97,7 +107,7 @@ export const LocationSharingProvider: React.FC<{ children: React.ReactNode }> = 
       );
     };
 
-    const sendNotificationToCaregiver = async () => {
+    const sendShareNotificationToCaregiver = async () => {
       try {
         if (!pwidPhoneNumber) return;
         // Get PWID user data to find caregiver
@@ -111,16 +121,29 @@ export const LocationSharingProvider: React.FC<{ children: React.ReactNode }> = 
       }
     };
 
+    const sendStopNotificationToCaregiver = async () => {
+      try {
+        if (!pwidPhoneNumber) return;
+        // Get PWID user data to find caregiver
+        const pwidUser = await getUserData(pwidPhoneNumber);
+        if (pwidUser && pwidUser.userType === 'PWID' && pwidUser.caregiverPhone) {
+          const reason = arrivalDetectedRef.current ? 'Arrived at destination' : 'Location sharing stopped manually';
+          arrivalDetectedRef.current = false;
+          // Send notification to caregiver when location sharing stops
+          await notificationService.sendLocationStopNotification(pwidPhoneNumber, pwidUser.caregiverPhone, reason);
+        }
+      } catch (error) {
+        console.error('Error sending stop notification to caregiver:', error);
+      }
+    };
+
     if (isLocationSharing) {
       startSharing();
     } else {
       stopSharing();
     }
-
-    return () => {
-      stopSharing();// Cleanup on unmount
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => cleanup();// Cleanup on unmount - don't send notification for cleanup
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLocationSharing, pwidPhoneNumber]);
 
   const setIsLocationSharing = (share: boolean) => {
@@ -147,9 +170,9 @@ export const LocationSharingProvider: React.FC<{ children: React.ReactNode }> = 
   }
 
   return (
-    <LocationSharingContext.Provider value={{ 
-      isLocationSharing, 
-      setIsLocationSharing, 
+    <LocationSharingContext.Provider value={{
+      isLocationSharing,
+      setIsLocationSharing,
       destination,
       setDestination
     }}>

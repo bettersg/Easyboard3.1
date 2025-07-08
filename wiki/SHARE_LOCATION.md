@@ -33,7 +33,9 @@ The location sharing feature in EasyBoard allows PWID (Persons with Intellectual
    setIsLocationSharing(false);
    ```
    - Location sharing stops
+   - **Notification sent to caregiver** (location sharing stopped)
    - Location watcher is cleaned up
+   - PWID location is cleared from database
 
 ### Scenario 2: Route-Based Location Sharing (With Destination)
 
@@ -51,6 +53,7 @@ The location sharing feature in EasyBoard allows PWID (Persons with Intellectual
    - **No additional notification sent** (sharing already active)
    - Auto-stop logic becomes active
    - When PWID reaches within 20 meters of destination, sharing automatically stops
+   - **Notification sent to caregiver** (arrived at destination)
 
 ### Scenario 3: Direct Route-Based Sharing
 
@@ -66,14 +69,18 @@ The location sharing feature in EasyBoard allows PWID (Persons with Intellectual
 ## Technical Implementation
 
 ### Notification Logic
-- **When sent:** Only when location sharing transitions from `false` to `true`
+- **Start notifications:** Sent when location sharing transitions from `false` to `true`
+- **Stop notifications:** Sent when location sharing stops (manual stop or arrival at destination)
+- **Stop reasons:** 
+  - "Location sharing stopped manually" - when PWID manually stops sharing
+  - "Arrived at destination" - when PWID reaches destination and auto-stops
 - **When NOT sent:** When destination is set/changed while sharing is already active
-- **Tracking:** Uses `hasStartedSharingRef` to prevent duplicate notifications in the same session
+- **Implementation:** Uses arrival detection ref to distinguish between manual stops and arrivals
 
 ### Auto-Stop Logic
 - **Condition:** Only active when `destination` is not null
 - **Threshold:** 20 meters from destination
-- **Behavior:** Automatically stops sharing and clears destination when PWID arrives
+- **Behavior:** Automatically stops sharing, clears destination, and sends notification when PWID arrives
 
 ### Location Updates
 - **Frequency:** Every 3 seconds or when moving 1 meter
@@ -166,8 +173,11 @@ useEffect(() => {
 - [ ] Caregiver receives notification when sharing starts
 - [ ] Location updates are sent to database
 - [ ] Manual stop works correctly
+- [ ] **Caregiver receives notification when sharing stops manually**
+- [ ] **PWID location is cleared from database when sharing stops**
 - [ ] Setting destination while sharing doesn't send duplicate notification
 - [ ] Auto-stop works when PWID reaches destination
+- [ ] **Caregiver receives notification when PWID arrives at destination**
 - [ ] Sharing stops automatically when destination is reached
 - [ ] Error handling works for permission denied
 - [ ] Error handling works for missing phone number 
