@@ -24,9 +24,6 @@ export interface CaregiverUser {
   uid: string;  // Firebase Auth UID
   userType: 'CAREGIVER';
   deviceName: string;
-  uid_pwids: {
-    [key: string]: boolean;
-  };
   fcmToken?: string; // FCM token for push notifications
   createdAt: number;
   updatedAt: number;
@@ -53,7 +50,6 @@ export async function createUser(phoneNumber: string, userType: UserType, uid: s
         uid,
         userType: 'CAREGIVER',
         deviceName,
-        uid_pwids: {},
         createdAt: timestamp,
         updatedAt: timestamp
       };
@@ -86,16 +82,6 @@ export async function clearPWIDLocation(phoneNumber: string): Promise<void> {
   }
 }
 
-export async function addPWIDToCaregiver(caregiverPhone: string, pwidPhone: string): Promise<void> {
-  try {
-    await database().ref(`users/${caregiverPhone}/uid_pwids/${pwidPhone}`).set(true);
-    await database().ref(`users/${caregiverPhone}/updatedAt`).set(Date.now());
-  } catch (error) {
-    console.error('Error adding PWID to caregiver:', error);
-    throw error;
-  }
-}
-
 export async function getUserData(phoneNumber: string): Promise<UserData | null> {
   try {
     const snapshot = await database().ref(`users/${phoneNumber}`).once('value');
@@ -112,16 +98,6 @@ export async function updatePWIDCaregiver(pwidPhone: string, caregiverPhone: str
     await database().ref(`users/${pwidPhone}/updatedAt`).set(Date.now());
   } catch (error) {
     console.error('Error updating PWID caregiver:', error);
-    throw error;
-  }
-}
-
-export async function removePWIDFromCaregiver(caregiverPhone: string, pwidPhone: string): Promise<void> {
-  try {
-    await database().ref(`users/${caregiverPhone}/uid_pwids/${pwidPhone}`).remove();
-    await database().ref(`users/${caregiverPhone}/updatedAt`).set(Date.now());
-  } catch (error) {
-    console.error('Error removing PWID from caregiver:', error);
     throw error;
   }
 }
@@ -148,10 +124,7 @@ export async function getFCMToken(phoneNumber: string): Promise<string | null> {
   }
 }
 
-export function listenToPWIDLocation(
-  phoneNumber: string,
-  callback: (location: Location) => void
-): () => void {
+export function listenToPWIDLocation(phoneNumber: string, callback: (location: Location) => void): () => void {
   const ref = database().ref(`users/${phoneNumber}/location`);
 
   const listener = (snapshot: any) => {
@@ -162,4 +135,17 @@ export function listenToPWIDLocation(
   ref.on('value', listener);
   // Return unsubscribe function
   return () => ref.off('value', listener);
+}
+
+export async function getPWIDsByCaregiverPhone(caregiverPhone: string): Promise<any[]> {
+  const snapshot = await database().ref('users').orderByChild('caregiverPhone').equalTo(caregiverPhone).once('value');
+
+  const pwidUsers: any[] = [];
+  snapshot.forEach(child => {
+    if (child.val().userType === 'PWID') {
+      pwidUsers.push({ pwidPhone: child.key, ...child.val() });
+    }
+    return undefined;
+  });
+  return pwidUsers;
 }

@@ -10,7 +10,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'TrackPWIDMap'>
 export default function TrackPWIDMap({ route }: Props) {
   const { pwidPhoneNumber } = route.params
   const [location, setLocation] = useState<Location | null>(null)
-  const [lastUpdated, setLastUpdated] = useState<string>('')
+  const [locationUpdated, setLocationUpdated] = useState<string>('')
   const mapViewRef = useRef<MapView>(null)
 
   useEffect(() => {
@@ -18,7 +18,7 @@ export default function TrackPWIDMap({ route }: Props) {
     const unsubscribe = listenToPWIDLocation(pwidPhoneNumber, (newLocation) => {
       setLocation(newLocation)
       const updateTime = new Date(newLocation.updatedAt).toLocaleTimeString()
-      setLastUpdated(updateTime)
+      setLocationUpdated(updateTime)
 
       // Animate map to the new location
       mapViewRef.current?.animateToRegion(
@@ -82,15 +82,15 @@ export default function TrackPWIDMap({ route }: Props) {
           </View>
         </View>
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Last Updated:</Text>
-          <Text style={styles.infoValue}>{lastUpdated || 'N/A'}</Text>
+          <Text style={styles.infoLabel}>Updated:</Text>
+          <Text style={styles.infoValue}>{locationUpdated || 'N/A'}</Text>
           <TouchableOpacity
             style={styles.inlineCallButton}
             onPress={handleCall}
             disabled={!pwidPhoneNumber}
           >
             <MaterialIcons name="call" size={20} color={pwidPhoneNumber ? "#007AFF" : "#ccc"} />
-            <Text style={[styles.inlineCallText, { color: pwidPhoneNumber ? "#007AFF" : "#ccc" }]}>PWID</Text>
+            <Text style={[styles.inlineCallText, { color: pwidPhoneNumber ? "#007AFF" : "#ccc" }]}>Call</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   infoLabel: {
     fontSize: 16,
     color: '#666',
-    width: 120,
+    width: 85,
   },
   infoValue: {
     fontSize: 16,

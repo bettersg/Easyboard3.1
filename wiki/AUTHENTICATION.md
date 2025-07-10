@@ -133,9 +133,6 @@ interface CaregiverUser {
   uid: string;                    // Firebase Auth UID
   userType: 'CAREGIVER';
   deviceName: string;             // Device name for identification
-  uid_pwids: {                    // Associated PWID users
-    [key: string]: boolean;
-  };
   fcmToken?: string;              // FCM token for notifications
   createdAt: number;              // Timestamp when user was created
   updatedAt: number;              // Timestamp of last update
@@ -332,4 +329,8 @@ CaregiverStack
 1. **Token Refresh**: Automatic token refresh mechanism
 2. **Device Verification**: Device fingerprinting for security
 3. **Audit Logging**: Track authentication events
-4. **Rate Limiting**: Enhanced rate limiting for OTP requests 
+4. **Rate Limiting**: Enhanced rate limiting for OTP requests
+
+## Additional Notes
+
+To get all PWIDs for a caregiver, query users where caregiverPhone equals the caregiver's phone number. 

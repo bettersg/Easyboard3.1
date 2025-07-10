@@ -9,7 +9,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function CaregiverStack() {
   return (
     <Stack.Navigator initialRouteName="CaregiverMain">
-      <Stack.Screen name="CaregiverMain" component={CaregiverMain} options={{ title: 'Caregiver Dashboard' }} />
+      <Stack.Screen name="CaregiverMain" component={CaregiverMain} options={{ headerShown: false }} />
       <Stack.Screen name="TrackPWIDMap" component={TrackPWIDMap} options={{ title: 'Track PWID Location' }} />
     </Stack.Navigator>
   );
