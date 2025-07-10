@@ -16,20 +16,25 @@ export default function TrackPWIDMap({ route }: Props) {
   useEffect(() => {
     // Set up real-time location listener
     const unsubscribe = listenToPWIDLocation(pwidPhoneNumber, (newLocation) => {
-      setLocation(newLocation)
-      const updateTime = new Date(newLocation.updatedAt).toLocaleTimeString()
-      setLocationUpdated(updateTime)
+      if (newLocation) {
+        setLocation(newLocation)
+        const updateTime = new Date(newLocation.updatedAt).toLocaleTimeString()
+        setLocationUpdated(updateTime)
 
-      // Animate map to the new location
-      mapViewRef.current?.animateToRegion(
-        {
-          latitude: newLocation.lat,
-          longitude: newLocation.lng,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
-        },
-        1000
-      )
+        // Animate map to the new location
+        mapViewRef.current?.animateToRegion(
+          {
+            latitude: newLocation.lat,
+            longitude: newLocation.lng,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01
+          },
+          1000
+        )
+      } else {
+        setLocation(null);
+        setLocationUpdated('');
+      }
     })
 
     // Clean up listener on unmount

@@ -128,8 +128,7 @@ export function listenToPWIDLocation(phoneNumber: string, callback: (location: L
   const ref = database().ref(`users/${phoneNumber}/location`);
 
   const listener = (snapshot: any) => {
-    const val = snapshot.val();
-    if (val) callback(val);
+    callback(snapshot.val());
   };
 
   ref.on('value', listener);

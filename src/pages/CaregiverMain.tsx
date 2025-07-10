@@ -2,10 +2,11 @@ import { View, Text, StyleSheet, TouchableOpacity, FlatList, RefreshControl, Lin
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../types/RootStackParamList.type'
 import { MaterialIcons } from '@expo/vector-icons'
-import { useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { getPWIDsByCaregiverPhone } from '../services/userService'
 import { getUserStorage } from '../services/storageService'
 import LoadingIndicator from '../common/components/LoadingIndicator'
+import { useFocusEffect } from '@react-navigation/native'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CaregiverMain'>
 
@@ -30,9 +31,11 @@ export default function CaregiverMain({ navigation }: Props) {
     }
   }
 
-  useEffect(() => {
-    loadPWIDs()
-  }, [])
+  useFocusEffect(
+    useCallback(() => {
+      loadPWIDs();
+    }, [])
+  );
 
   const onRefresh = () => {
     setRefreshing(true)
@@ -244,4 +247,4 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     paddingHorizontal: 20
   },
-}) 
+})
