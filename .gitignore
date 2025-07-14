@@ -76,3 +76,4 @@ dist/
 # @end expo-cli
 git
 android/app/google-services.json
+android/gradle.properties
