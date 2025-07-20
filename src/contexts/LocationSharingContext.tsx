@@ -21,6 +21,7 @@ export const LocationSharingProvider: React.FC<{ children: React.ReactNode }> = 
   const [destination, setDestinationState] = useState<{ lat: number, lng: number } | null>(null);
   const destinationRef = useRef<{ lat: number, lng: number } | null>(null);
   const arrivalDetectedRef = useRef<boolean>(false);
+  const hasSharedRef = useRef(false);
 
   // Keep destinationRef in sync with destination
   useEffect(() => {
@@ -50,7 +51,10 @@ export const LocationSharingProvider: React.FC<{ children: React.ReactNode }> = 
 
     const stopSharing = async () => {
       cleanup();
-      await sendStopNotificationToCaregiver();
+      if (hasSharedRef.current) {
+        await sendStopNotificationToCaregiver();
+        hasSharedRef.current = false; // reset after sending
+      }
     };
 
     const startSharing = async () => {
@@ -69,6 +73,7 @@ export const LocationSharingProvider: React.FC<{ children: React.ReactNode }> = 
 
       // Send notification when sharing starts (runs once per effect execution)
       await sendShareNotificationToCaregiver();
+      hasSharedRef.current = true; // mark that sharing was started
 
       locationSubscription.current = await Location.watchPositionAsync(
         {

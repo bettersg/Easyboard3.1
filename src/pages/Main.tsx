@@ -2,12 +2,13 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import Constants from 'expo-constants'
 import * as SecureStore from 'expo-secure-store'
 import { useEffect, useState } from 'react'
-import { Text, View, Alert, ScrollView } from 'react-native'
+import { Text, View, TouchableOpacity, Modal } from 'react-native'
+import { MaterialCommunityIcons  } from '@expo/vector-icons'
 
 import EasyboardButton from '../common/components/EasyboardButton'
 import Page from '../common/components/Page'
 import SavedLocationCard from '../common/components/SavedLocationCard'
-import LocationInputButton from '../common/locationSelector/LocationInputButton'
+import GoogleMapView from '../common/locationSelector/GoogleMapView'
 import useCallCaregiver from '../hooks/useCallCaregiver'
 import { RootStackParamList } from '../types/RootStackParamList.type'
 import { useLocationSharing } from '../contexts/LocationSharingContext'
@@ -17,7 +18,8 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Main'>
 export default function Main({ navigation }: Props) {
   const callCareGiver = useCallCaregiver()
   const [userSetting, setUserSetting] = useState<any>(null)
-  const [location, setMarkerLocation] = useState<any>(null)
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false)
+  const [searchLocation, setSearchLocation] = useState<any>(null)
   const { isLocationSharing, setIsLocationSharing } = useLocationSharing();
 
   useEffect(() => {
@@ -48,15 +50,6 @@ export default function Main({ navigation }: Props) {
     return unsubscribe
   }, [navigation])
 
-  useEffect(() => {
-    if (location != null) {
-      navigation.navigate('TransitOptions', {
-        destinationName: location.description,
-        destination: location
-      })
-    }
-  }, [location])
-
   const onShareLocation = () => {
     setIsLocationSharing(!isLocationSharing);
   }
@@ -71,15 +64,32 @@ export default function Main({ navigation }: Props) {
               paddingBottom: 120
             }}>
             {/* Header Section */}
-            <View >
+            <View style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginBottom: 20
+            }}>
               <Text style={{
                 fontSize: 23,
                 fontWeight: '700',
                 color: '#1F2937',
-                marginBottom: 20
+                flex: 1
               }}>
                 Where do you want to go?
               </Text>
+              <TouchableOpacity
+                onPress={() => setIsSearchModalOpen(true)}
+                style={{
+                  padding: 8,
+                  paddingTop:10
+                }}
+              >
+                <MaterialCommunityIcons 
+                  name="map-search-outline" 
+                  size={30} 
+                  color="#1F2937" 
+                />
+              </TouchableOpacity>
             </View>
 
             {/* Saved Locations Section */}
@@ -113,12 +123,6 @@ export default function Main({ navigation }: Props) {
                 iconName='map'
               />
               <View style={{ height: 16 }} />
-
-              <LocationInputButton
-                onLocationSelect={(markerLocation: any) =>
-                  setMarkerLocation(markerLocation)
-                }
-              />
           </View>
 
           {/* Fixed Call Caregiver Button */}
@@ -156,6 +160,53 @@ export default function Main({ navigation }: Props) {
           </View>
         </View>
       )}
+
+      {/* Search Modal */}
+      <Modal
+        presentationStyle='pageSheet'
+        statusBarTranslucent
+        animationType='slide'
+        visible={isSearchModalOpen}
+        onRequestClose={() => {
+          setIsSearchModalOpen(false)
+        }}
+        onDismiss={() => {
+          setIsSearchModalOpen(false)
+        }}
+      >
+        <View style={{
+          flex: 1,
+          backgroundColor: '#fff',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}>
+          <View style={{
+            zIndex: 2,
+            position: 'absolute',
+            bottom: 80,
+            right: 20
+          }}>
+            <EasyboardButton
+              type='bg-white'
+              onPress={() => {
+                setIsSearchModalOpen(false);
+                if (searchLocation) {
+                  navigation.navigate('TransitOptions', {
+                    destinationName: searchLocation.description,
+                    destination: searchLocation
+                  });
+                  setSearchLocation(null);
+                }
+              }}
+              title='Done'
+            />
+          </View>
+          <GoogleMapView
+            onLocationMarkerDrop={(locationMarker: any) => setSearchLocation(locationMarker)}
+            value={null}
+          />
+        </View>
+      </Modal>
     </Page>
   )
 }

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native'
+import { View, Text, StyleSheet, Alert } from 'react-native'
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../types/RootStackParamList.type'
 import { useState } from 'react'
@@ -72,11 +72,6 @@ export default function OTPVerification({ navigation, route }: Props) {
             maxLength={6}
           />
         </View>
-
-        <TouchableOpacity style={styles.resendContainer}>
-          <Text style={styles.resendText}>Didn't receive the code? </Text>
-          <Text style={styles.resendLink}>Resend OTP</Text>
-        </TouchableOpacity>
       </View>
 
       <View style={styles.buttonContainer}>
@@ -126,19 +121,5 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginBottom: 20,
-  },
-  resendContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
-  resendText: {
-    fontSize: 14,
-    color: '#666'
-  },
-  resendLink: {
-    fontSize: 14,
-    color: '#007AFF',
-    fontWeight: '600'
   },
 }) 
