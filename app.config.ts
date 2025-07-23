@@ -11,9 +11,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     settingsStoredKey: 'setting',
     googleMapsAPI: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY,
     cityMapperAPI: '',
-    eas: {
-      projectId: 'f9d59e35-0f83-450d-ad37-273dce41a868'
-    }
+    eas: { projectId: 'f9d59e35-0f83-450d-ad37-273dce41a868' }
   },
   orientation: 'portrait',
   icon: './assets/icon.png',
@@ -39,24 +37,17 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
           targetSdkVersion: 35,
           buildToolsVersion: '34.0.0'
         },
-        ios: {
-          deploymentTarget: '15.1'
-        }
+        ios: { deploymentTarget: '15.1' }
       }
-    ],
-    'react-native-maps'
+    ]
   ],
-  updates: {
-    fallbackToCacheTimeout: 0
-  },
+  updates: { fallbackToCacheTimeout: 0 },
   assetBundlePatterns: ['**/*'],
   ios: {
     supportsTablet: true,
     bundleIdentifier: 'org.engineeringgood.EasyBoard.RN',
     buildNumber: '2.21',
-    config: {
-      googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
-    },
+    config: { googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY },
     splash: {
       image: './assets/splash.png',
       resizeMode: 'contain',
@@ -70,9 +61,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: '#FFFFFF'
     },
     config: {
-      googleMaps: {
-        apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY
-      }
+      googleMaps: { apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY }
     },
     permissions: ['android.permission.RECORD_AUDIO'],
     splash: {
@@ -83,7 +72,5 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     package: 'org.engineeringgood.EasyBoard.RN',
     newArchEnabled: true
   },
-  web: {
-    favicon: './assets/favicon.png'
-  }
+  web: { favicon: './assets/favicon.png' }
 })

@@ -31,9 +31,8 @@ target 'EasyBoardRNBuild' do
     ]
   end
 
-# @generated begin react-native-maps - expo prebuild (DO NOT MODIFY) sync-e998e3efeb335e37f5f7a069abfc6d5ecd4fd33e
-  rn_maps_path = File.dirname(`node --print "require.resolve('react-native-maps/package.json')"`) 
-
+# @generated begin react-native-maps - expo prebuild (DO NOT MODIFY) sync-e9cc66c360abe50bc66d89fffb3c55b034d7d369
+  pod 'react-native-google-maps', path: File.dirname(`node --print "require.resolve('react-native-maps/package.json')"`)
 # @generated end react-native-maps
   config = use_native_modules!(config_command)
 
