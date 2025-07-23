@@ -43,7 +43,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
           deploymentTarget: '15.1'
         }
       }
-    ]
+    ],
+    'react-native-maps'
   ],
   updates: {
     fallbackToCacheTimeout: 0
