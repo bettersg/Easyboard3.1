@@ -2,7 +2,7 @@ import { MaterialIcons, FontAwesome } from '@expo/vector-icons'
 import { decode } from '@googlemaps/polyline-codec'
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useMemo, useRef, useState, useEffect, useCallback } from 'react'
-import { SafeAreaView, View, Dimensions, Text } from 'react-native'
+import { SafeAreaView, View, Dimensions, Alert } from 'react-native'
 import MapView, { Polyline, Marker } from 'react-native-maps'
 import Carousel from 'react-native-reanimated-carousel'
 import type { ICarouselInstance } from 'react-native-reanimated-carousel'
@@ -12,7 +12,8 @@ import EasyboardButton from '../../common/components/EasyboardButton'
 import TransitOptionCard from '../../common/components/TransitOptionCard'
 import { getStepsOverViewFromGoogleRouteLeg } from '../../common/utils/GoogleRouteUtils'
 import LatLong from '../../interfaces/LatLong.interface'
-import RootStackParamList from '../../types/RootStackParamList.type'
+import { RootStackParamList } from '../../types/RootStackParamList.type'
+import { useLocationSharing } from '../../contexts/LocationSharingContext'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'GoogleMapsDirections'>
 
@@ -20,6 +21,7 @@ export default function GoogleMapsDirections({ navigation, route }: Props) {
   const mapViewRef = useRef<MapView>(null)
   const carouselRef = useRef<ICarouselInstance>(null)
   const { googleRoute, destination } = route.params
+  const { setDestination, isLocationSharing, setIsLocationSharing } = useLocationSharing()
 
   const [currentStep, setCurrentStep] = useState<number>(0)
   const [navigationStarted, setNavigationStarted] = useState<boolean>(false)
@@ -136,17 +138,51 @@ export default function GoogleMapsDirections({ navigation, route }: Props) {
    * 3) update 'currentStep' that is used to render pins, routes, etc
    */
   const onStartTripPressed = useCallback(() => {
-    carouselRef.current?.scrollTo({ index: 0, animated: true })
-    setNavigationStarted(true)
-    setCurrentStep(0)
-  }, [currentStep])
+    const proceedTrip = () => {
+      carouselRef.current?.scrollTo({ index: 0, animated: true })
+      setNavigationStarted(true)
+      setCurrentStep(0)
+    }
+    const proceedTripWithSharing = () => {
+      // Set destination for auto stop sharing
+      if (destination?.latlng) {
+        setDestination({
+          lat: destination.latlng.latitude,
+          lng: destination.latlng.longitude
+        });
+      }
+      proceedTrip();
+    };
+    if (isLocationSharing) {
+      proceedTripWithSharing();
+    } else {
+      Alert.alert(
+        'Share Location?',
+        'Do you want to share your location with your caregiver during this trip?',
+        [
+          {
+            text: 'No',
+            style: 'cancel',
+            onPress: () => proceedTrip()
+          },
+          {
+            text: 'Yes',
+            onPress: () => {
+              setIsLocationSharing(true);
+              proceedTripWithSharing();
+            }
+          }
+        ]
+      );
+    }
+  }, [isLocationSharing, setIsLocationSharing, setDestination, destination, carouselRef, setNavigationStarted, setCurrentStep]);
 
   return (
-    <View className='relative flex flex-1 justify-between bg-white'>
+    <View className='relative flex flex-1 justify-between bg-defaultBackground'>
       <MapView
         initialRegion={mapRegion}
         ref={mapViewRef}
-        className='h-full justify-between'
+        className='h-full justify-between px-6 py-4'
         userLocationPriority='high'
         followsUserLocation
       >

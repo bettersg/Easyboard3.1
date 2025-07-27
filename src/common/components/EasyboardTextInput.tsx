@@ -21,7 +21,7 @@ const EasyboardTextInput = ({ iconName, additionalClassName, ...props }: Props) 
         </View>
       )}
       <StyledTextInput
-        className='flex-1 px-4 py-3 text-md text-black'
+        className='flex-1 px-4 py-3 text-md text-black font-medium'
         placeholderTextColor="#6B7280"
         {...props}
       />
