@@ -7,7 +7,7 @@ module.exports = {
         error: '#F50008',
         warning: '#FF7C0A',
         success: '#00E25A',
-        primary: '#D81E5B',
+        primary: '#007AFF',
         secondary: '#F79F1F',
         errorDarker: '#DE0A12',
         warningDarker: '#F1760B',
@@ -17,7 +17,7 @@ module.exports = {
         defaultIOSBlue: '#2a62ff',
 
         textInputBorder: '#706D6D',
-        defaultBackground: '#ECF0F1',
+        defaultBackground: '#F5F5F5',
 
         // MRT Line Colors
         'mrt-NS': '#ff0000',

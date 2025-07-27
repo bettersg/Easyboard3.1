@@ -1,7 +1,7 @@
 import { Route } from './GoogleRoute.type'
 import LatLong from '../interfaces/LatLong.interface'
 
-type RootStackParamList = {
+export type RootStackParamList = {
   Main: undefined
   Introduction: undefined
   CalcTransit: {
@@ -22,5 +22,13 @@ type RootStackParamList = {
   }
   Direction: undefined
   Setting: undefined
+  Authentication: undefined
+  Registration: undefined
+  OTPVerification: {
+    phoneNumber: string
+    userType: 'PWID' | 'CAREGIVER'
+    isRegistration?: boolean
+  }
+  CaregiverMain: undefined
+  TrackPWIDMap: { pwidPhoneNumber: string }
 }
-export default RootStackParamList

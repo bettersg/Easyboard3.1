@@ -42,7 +42,7 @@ const EasyboardButton = ({
   fullWidth,
   onPress,
   title,
-  titleSize = 'text-base',
+  titleSize = 'text-lg',
   iconName,
   iconSize = 20,
   iconAfter
