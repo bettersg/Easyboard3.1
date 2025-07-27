@@ -33,6 +33,12 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
+          <string>com.googleusercontent.apps.334251499398-g9h17tuv2db601t02cr10d0c0t26untf</string>
+        </array>
+      </dict>
+      <dict>
+        <key>CFBundleURLSchemes</key>
+        <array>
           <string>exp+easyboard-rn-build</string>
         </array>
       </dict>

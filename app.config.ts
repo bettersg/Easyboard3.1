@@ -40,7 +40,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         },
         ios: { deploymentTarget: '15.1', useFrameworks: 'static' }
       }
-    ]
+    ],
+    '@react-native-firebase/app'
   ],
   updates: { fallbackToCacheTimeout: 0 },
   assetBundlePatterns: ['**/*'],
@@ -54,7 +55,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       resizeMode: 'contain',
       backgroundColor: '#ffffff'
     },
-    newArchEnabled: true
+    newArchEnabled: true,
+    googleServicesFile: './GoogleService-Info.plist'
   },
   android: {
     adaptiveIcon: {
@@ -71,7 +73,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: '#ffffff'
     },
     package: 'org.engineeringgood.EasyBoard.RN',
-    newArchEnabled: true
+    newArchEnabled: true,
+    googleServicesFile: './google-services.json'
   },
   web: { favicon: './assets/favicon.png' }
 })
