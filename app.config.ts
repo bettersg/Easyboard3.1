@@ -36,7 +36,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         android: {
           compileSdkVersion: 35,
           targetSdkVersion: 35,
-          buildToolsVersion: '34.0.0'
+          buildToolsVersion: '34.0.0',
+          extraMavenRepos: [
+            '../../node_modules/@notifee/react-native/android/libs'
+          ]
         },
         ios: { deploymentTarget: '15.1', useFrameworks: 'static' }
       }
