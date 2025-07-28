@@ -56,8 +56,6 @@ function AppContent() {
       }
     }
 
-    console.log('has authentication:', hasAuthen, 'userType:', userType)
-
     // Only initialize when user is authenticated
     if (hasAuthen) {
       initializeNotifications()
