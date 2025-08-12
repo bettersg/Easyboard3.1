@@ -27,38 +27,14 @@ The main components are:
 
 #### Android
 1.  From your Firebase project settings, download the `google-services.json` file.
-2.  Place it in the `android/app/` directory of your project.
-3.  **Create a Notification Channel**: For Android 8.0 (API level 26) and higher, a notification channel is required. The backend function sends notifications to a channel with the ID `location-share-cn`. You must create this channel in the Android native code. This is typically done in the `MainApplication.java` or `MainActivity.java` file.
-
-    Example for `android/app/src/main/java/org/engineeringgood/EasyBoard/RN/MainApplication.kt`:
-    ```java
-    import android.app.NotificationChannel
-    import android.app.NotificationManager
-    import android.os.Build
-
-    // ... inside the Application class
-
-    override fun onCreate() {
-      super.onCreate()
-      // ... other initializations
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val notificationManager: NotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        val locationChannelId = "location-share-cn"
-        val locationChannelName = "Location Sharing"
-        val locationChannelDescription = "Notifications for when location is shared."
-        val locationChannelImportance = NotificationManager.IMPORTANCE_HIGH
-        val locationChannel = NotificationChannel(locationChannelId, locationChannelName, locationChannelImportance).apply {
-            description = locationChannelDescription
-        }
-        notificationManager.createNotificationChannel(locationChannel)
-      }
-    }
-    ```
+2.  Place it in the `root` directory of your project.
+3.  Run ```npx expo prebuild``` (```npx expo prebuild --clean``` if needed)
 
 #### iOS
 1.  From your Firebase project settings, download the `GoogleService-Info.plist` file.
-2.  Add it to your iOS project in Xcode.
-3.  In Xcode, enable the "Push Notifications" capability for your app target.
+2.  Place it in the `root` directory of your project.
+3.  Run ```npx expo prebuild``` (```npx expo prebuild --clean``` if needed)
+4.  In Xcode, enable the "Push Notifications" capability for your app target. See https://developer.apple.com/documentation/usernotifications/registering-your-app-with-apns
 
 ### 2. Environment Variables
 
