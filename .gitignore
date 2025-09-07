@@ -12,6 +12,8 @@ web-build/
 .env
 google-services.json
 GoogleService-Info.plist
+android/
+ios/
 
 # macOS
 .DS_Store
