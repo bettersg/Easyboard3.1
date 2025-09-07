@@ -44,7 +44,17 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         ios: { deploymentTarget: '15.1', useFrameworks: 'static' }
       }
     ],
-    '@react-native-firebase/app'
+    '@react-native-firebase/app',
+    [
+      'expo-location',
+      {
+        locationAlwaysAndWhenInUsePermission:
+          'Allow Easyboard to use your location.',
+        isIosBackgroundLocationEnabled: true,
+        isAndroidBackgroundLocationEnabled: true,
+        isAndroidForegroundServiceEnabled: true
+      }
+    ]
   ],
   updates: { fallbackToCacheTimeout: 0 },
   assetBundlePatterns: ['**/*'],
