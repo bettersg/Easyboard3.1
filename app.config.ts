@@ -39,9 +39,43 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
           buildToolsVersion: '34.0.0',
           extraMavenRepos: [
             '../../node_modules/@notifee/react-native/android/libs'
-          ]
+          ],
+          // APK optimization
+          enableShrinkResourcesInReleaseBuilds: true,
+          enableProguardInReleaseBuilds: true,
+          enablePngCrunchInReleaseBuilds: true,
+          // Additional optimizations
+          enableR8: true,
+          enableMultiDex: true,
+          // Remove unused resources
+          removeUnusedResources: true,
+          // Optimize native libraries
+          ndk: {
+            abiFilters: ['arm64-v8a', 'armeabi-v7a']
+          }
         },
         ios: { deploymentTarget: '15.1', useFrameworks: 'static' }
+      }
+    ],
+    [
+      'expo-build-properties',
+      {
+        android: {
+          // Bundle analyzer for size optimization
+          bundleAnalyzerEnabled: true,
+          // Additional build optimizations
+          enableHermes: true,
+          enableNewArchitecture: true
+        }
+      }
+    ],
+    [
+      'expo-asset',
+      {
+        // Optimize assets
+        enableAssetOptimization: true,
+        // Remove unused assets
+        removeUnusedAssets: true
       }
     ],
     '@react-native-firebase/app',
@@ -58,6 +92,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ],
   updates: { fallbackToCacheTimeout: 0 },
   assetBundlePatterns: ['**/*'],
+  // Bundle optimization
+  bundleIdentifier: 'org.engineeringgood.EasyBoard.RN',
+  // Remove unused code
+  removeUnusedCode: true,
   ios: {
     supportsTablet: true,
     bundleIdentifier: 'org.engineeringgood.EasyBoard.RN',
@@ -79,7 +117,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     config: {
       googleMaps: { apiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY }
     },
-    permissions: ['android.permission.RECORD_AUDIO'],
+    permissions: [
+      'android.permission.RECORD_AUDIO',
+      'android.permission.POST_NOTIFICATIONS'
+    ],
     splash: {
       image: './assets/splash.png',
       resizeMode: 'contain',

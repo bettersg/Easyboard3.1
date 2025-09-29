@@ -1,20 +1,30 @@
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, RefreshControl, Linking } from 'react-native'
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  RefreshControl,
+  Linking,
+  Alert
+} from 'react-native'
 import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../types/RootStackParamList.type'
 import { MaterialIcons } from '@expo/vector-icons'
 import { useCallback, useState } from 'react'
 import { getPWIDsByCaregiverPhone } from '../services/userService'
-import { getUserStorage } from '../services/storageService'
+import { getUserStorage, completeLogout } from '../services/storageService'
 import LoadingIndicator from '../common/components/LoadingIndicator'
 import { useFocusEffect } from '@react-navigation/native'
+import { useAuth } from '../contexts/AppContext'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CaregiverMain'>
-
 
 export default function CaregiverMain({ navigation }: Props) {
   const [pwids, setPwids] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
+  const { setAuthentication } = useAuth()
 
   const loadPWIDs = async () => {
     try {
@@ -33,16 +43,43 @@ export default function CaregiverMain({ navigation }: Props) {
 
   useFocusEffect(
     useCallback(() => {
-      loadPWIDs();
+      loadPWIDs()
     }, [])
-  );
+  )
 
   const onRefresh = () => {
     setRefreshing(true)
     loadPWIDs()
   }
+
+  const onLogout = async () => {
+    try {
+      // Complete logout - clears all data including Firebase tokens, FCM tokens, reCAPTCHA, etc.
+      await completeLogout()
+
+      // Update authentication state - this will trigger App.tsx to redirect to AuthStack
+      setAuthentication(false, null, false)
+    } catch (error) {
+      console.error('Error during logout:', error)
+      Alert.alert('Error', 'Failed to logout. Please try again.')
+    }
+  }
+
+  const confirmLogout = () => {
+    Alert.alert('Logout', 'Are you sure you want to logout?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Logout',
+        style: 'destructive',
+        onPress: onLogout
+      }
+    ])
+  }
   const handleCall = (pwidPhone: string) => {
-    if (pwidPhone) Linking.openURL(`tel:${pwidPhone}`).catch(err => console.error('Failed to open URL: ', err))
+    if (pwidPhone)
+      Linking.openURL(`tel:${pwidPhone}`).catch((err) =>
+        console.error('Failed to open URL: ', err)
+      )
   }
   const renderPWIDItem = ({ item }: { item: any }) => {
     const isSharing = !!item.location
@@ -53,7 +90,11 @@ export default function CaregiverMain({ navigation }: Props) {
     return (
       <TouchableOpacity
         style={styles.pwidCard}
-        onPress={() => navigation.navigate('TrackPWIDMap', { pwidPhoneNumber: item.pwidPhone })}
+        onPress={() =>
+          navigation.navigate('TrackPWIDMap', {
+            pwidPhoneNumber: item.pwidPhone
+          })
+        }
       >
         <View style={styles.pwidCardHeader}>
           <View style={styles.pwidInfo}>
@@ -62,22 +103,37 @@ export default function CaregiverMain({ navigation }: Props) {
           </View>
           <View style={styles.statusContainer}>
             <MaterialIcons name={statusIcon} size={20} color={statusColor} />
-            <Text style={[styles.statusText, { color: statusColor }]}>{statusText}</Text>
+            <Text style={[styles.statusText, { color: statusColor }]}>
+              {statusText}
+            </Text>
           </View>
         </View>
 
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Updated:</Text>
           <Text style={styles.infoValue}>
-            {item.location ? new Date(item.location.updatedAt).toLocaleTimeString() : 'N/A'}
+            {item.location
+              ? new Date(item.location.updatedAt).toLocaleTimeString()
+              : 'N/A'}
           </Text>
           <TouchableOpacity
             style={styles.inlineCallButton}
             onPress={() => handleCall(item.pwidPhone)}
             disabled={!item.pwidPhone}
           >
-            <MaterialIcons name="call" size={20} color={item.pwidPhone ? "#007AFF" : "#ccc"} />
-            <Text style={[styles.inlineCallText, { color: item.pwidPhone ? "#007AFF" : "#ccc" }]}>Call</Text>
+            <MaterialIcons
+              name='call'
+              size={20}
+              color={item.pwidPhone ? '#007AFF' : '#ccc'}
+            />
+            <Text
+              style={[
+                styles.inlineCallText,
+                { color: item.pwidPhone ? '#007AFF' : '#ccc' }
+              ]}
+            >
+              Call
+            </Text>
           </TouchableOpacity>
         </View>
       </TouchableOpacity>
@@ -86,10 +142,11 @@ export default function CaregiverMain({ navigation }: Props) {
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
-      <MaterialIcons name="people-outline" size={64} color="#ccc" />
+      <MaterialIcons name='people-outline' size={64} color='#ccc' />
       <Text style={styles.emptyStateTitle}>No PWIDs Found</Text>
       <Text style={styles.emptyStateSubtitle}>
-        PWIDs you're assigned to will appear here once they register and link to your phone number.
+        PWIDs you're assigned to will appear here once they register and link to
+        your phone number.
       </Text>
     </View>
   )
@@ -105,8 +162,16 @@ export default function CaregiverMain({ navigation }: Props) {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Dashboard</Text>
-        <Text style={styles.subtitle}>Manage your assigned PWIDs</Text>
+        <View style={styles.headerContent}>
+          <View>
+            <Text style={styles.title}>Dashboard</Text>
+            <Text style={styles.subtitle}>Manage your assigned PWIDs</Text>
+          </View>
+          <TouchableOpacity style={styles.logoutButton} onPress={confirmLogout}>
+            <MaterialIcons name='logout' size={20} color='#DC2626' />
+            <Text style={styles.logoutText}>Logout</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <FlatList
@@ -136,7 +201,7 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 20,
-    paddingTop: 40,
+    paddingTop: 40
   },
   title: {
     fontSize: 32,
@@ -192,26 +257,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#f8f9fa'
   },
   statusText: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '600'
   },
   infoRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 2,
+    marginTop: 2
   },
   infoLabel: {
     fontSize: 16,
     color: '#666',
-    width: 75,
+    width: 75
   },
   infoValue: {
     fontSize: 16,
     color: '#000',
-    flex: 1,
+    flex: 1
   },
   inlineCallButton: {
     flexDirection: 'row',
@@ -226,7 +291,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     fontWeight: 'bold',
     fontSize: 15,
-    opacity: 1,
+    opacity: 1
   },
   emptyState: {
     alignItems: 'center',
@@ -247,4 +312,25 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     paddingHorizontal: 20
   },
+  headerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: '#FEF2F2',
+    borderWidth: 1,
+    borderColor: '#FECACA'
+  },
+  logoutText: {
+    color: '#DC2626',
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 4
+  }
 })

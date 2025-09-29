@@ -25,27 +25,76 @@ const TransitOptions = ({ navigation, route }: Props) => {
       // Request location permissions
       const { status } = await Location.requestForegroundPermissionsAsync()
       if (status !== 'granted') {
-        setErrorMessage("Location permission is required to get directions")
+        setErrorMessage('Location permission is required to get directions')
         return
       }
 
-      // Get current location
-      const currentLocation = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-      })
+      // Check if location services are enabled
+      const isLocationEnabled = await Location.hasServicesEnabledAsync()
+      if (!isLocationEnabled) {
+        setErrorMessage(
+          'Location services are disabled. Please enable GPS in your device settings.'
+        )
+        return
+      }
+
+      // Get current location with enhanced settings and retry logic
+      let currentLocation
+      let retryCount = 0
+      const maxRetries = 3
+
+      while (retryCount < maxRetries) {
+        try {
+          currentLocation = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.BestForNavigation,
+            maximumAge: 10000, // Accept location up to 10 seconds old
+            timeout: 15000, // 15 second timeout
+            enableHighAccuracy: true
+          })
+          break // Success, exit retry loop
+        } catch (error) {
+          retryCount++
+          console.log(`Location attempt ${retryCount} failed:`, error)
+
+          if (retryCount >= maxRetries) {
+            // Try with lower accuracy as fallback
+            try {
+              currentLocation = await Location.getCurrentPositionAsync({
+                accuracy: Location.Accuracy.Balanced,
+                maximumAge: 30000,
+                timeout: 10000,
+                enableHighAccuracy: false
+              })
+              break
+            } catch (fallbackError) {
+              setErrorMessage(
+                'Unable to get your current location. Please:\n• Enable GPS in device settings\n• Check location permissions\n• Try moving to an area with better signal\n• Restart the app'
+              )
+              return
+            }
+          } else {
+            // Wait before retry
+            await new Promise((resolve) => setTimeout(resolve, 2000))
+          }
+        }
+      }
       // Fetch Google route from current location to destination
       const newGoogleRoute = await getGoogleRoute(
         {
           latitude: currentLocation.coords.latitude,
-          longitude: currentLocation.coords.longitude,
+          longitude: currentLocation.coords.longitude
         },
         route.params.destination.latlng
       )
 
-      if (newGoogleRoute && typeof newGoogleRoute === 'object' && newGoogleRoute.routes?.length > 0) {
+      if (
+        newGoogleRoute &&
+        typeof newGoogleRoute === 'object' &&
+        newGoogleRoute.routes?.length > 0
+      ) {
         setGoogleRoutes(newGoogleRoute.routes)
       } else {
-        setErrorMessage("No routes found to your destination")
+        setErrorMessage('No routes found to your destination')
       }
     } catch (e) {
       setErrorMessage("Error - can't get current location or directions")
@@ -58,22 +107,26 @@ const TransitOptions = ({ navigation, route }: Props) => {
     fetchGoogleRoute()
   }, [fetchGoogleRoute])
 
-  const onTransitOptionPressed = useCallback((index: number) => {
-    if (googleRoutes?.[index]) {
-      navigation.navigate('GoogleMapsDirections', {
-        destination: route.params.destination,
-        destinationName: route.params.destinationName,
-        googleRoute: googleRoutes[index] as Route
-      })
-    }
-  }, [googleRoutes, navigation, route.params])
+  const onTransitOptionPressed = useCallback(
+    (index: number) => {
+      if (googleRoutes?.[index]) {
+        navigation.navigate('GoogleMapsDirections', {
+          destination: route.params.destination,
+          destinationName: route.params.destinationName,
+          googleRoute: googleRoutes[index] as Route
+        })
+      }
+    },
+    [googleRoutes, navigation, route.params]
+  )
 
-  const transitOptions = useMemo(() =>
-    googleRoutes?.map((route) =>
-      getStepsOverViewFromGoogleRouteLeg(route.legs[0] as Leg)
-    ) ?? [],
+  const transitOptions = useMemo(
+    () =>
+      googleRoutes?.map((route) =>
+        getStepsOverViewFromGoogleRouteLeg(route.legs[0] as Leg)
+      ) ?? [],
     [googleRoutes]
-  );
+  )
 
   if (isLoading) {
     return (
@@ -94,9 +147,7 @@ const TransitOptions = ({ navigation, route }: Props) => {
               {route.params.destinationName}
             </Text>
           </Text>
-          <Text style={styles.subtitle}>
-            Choose your preferred route
-          </Text>
+          <Text style={styles.subtitle}>Choose your preferred route</Text>
         </View>
 
         {/* Routes List */}
@@ -108,9 +159,7 @@ const TransitOptions = ({ navigation, route }: Props) => {
           {/* Error Message */}
           {errorMessage && (
             <View style={styles.errorCard}>
-              <Text style={styles.errorText}>
-                {errorMessage}
-              </Text>
+              <Text style={styles.errorText}>{errorMessage}</Text>
             </View>
           )}
 
@@ -159,7 +208,7 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     lineHeight: 20,
     fontWeight: '500',
-    paddingBottom: 8,
+    paddingBottom: 8
   },
   scrollView: {
     flex: 1

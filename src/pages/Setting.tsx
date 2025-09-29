@@ -11,7 +11,11 @@ import {
   Merge,
   Form
 } from 'react-hook-form'
-import { Text, View, ScrollView, Alert } from 'react-native'
+import { Text, View, ScrollView, Alert, Pressable } from 'react-native'
+import auth from '@react-native-firebase/auth'
+// SecureStore and Constants already imported above
+import { useAuth } from '../contexts/AppContext'
+import { completeLogout } from '../services/storageService'
 
 import PhotoSelect from '../common/PhotoSelect'
 import EasyboardButton from '../common/components/EasyboardButton'
@@ -22,7 +26,7 @@ import LocationTextInput from '../common/locationSelector/LocationInputText'
 import { RootStackParamList } from '../types/RootStackParamList.type'
 import { SettingKey, SettingValues } from '../types/SettingKey.type'
 import FormLabel from '../common/components/FormLabel'
-import { updatePWIDCaregiver } from '../services/userService'
+import { updatePWIDCaregiver, setUserAppData } from '../services/userService'
 import { getUserStorage } from '../services/storageService'
 type Props = NativeStackScreenProps<RootStackParamList, 'Setting'>
 
@@ -51,6 +55,7 @@ export default function Setting({ navigation }: Props) {
 
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [isNewUser, setIsNewUser] = useState(true)
+  const { setAuthentication } = useAuth()
 
   const setHouseImgUri = (imgUri: string | string[]) => {
     setValue('housePhotoUri', imgUri, {
@@ -91,9 +96,13 @@ export default function Setting({ navigation }: Props) {
         Constants?.expoConfig?.extra?.settingsStoredKey,
         data
       )
-      const userStorage = await getUserStorage();
+      const userStorage = await getUserStorage()
       if (userStorage) {
-        await updatePWIDCaregiver(userStorage.phoneNumber, `65${watch().careGiverPhoneNumber}`);
+        await updatePWIDCaregiver(
+          userStorage.phoneNumber,
+          `65${watch().careGiverPhoneNumber}`
+        )
+        await setUserAppData(userStorage.phoneNumber, watch())
       }
       Alert.alert('Data Saved')
       navigation.reset({
@@ -103,6 +112,25 @@ export default function Setting({ navigation }: Props) {
     } catch (e) {
       console.error(e)
     }
+  }
+
+  const onLogout = async () => {
+    try {
+      // Complete logout - clears all data including Firebase tokens, FCM tokens, reCAPTCHA, etc.
+      await completeLogout()
+
+      // Update auth state and return to auth flow
+      setAuthentication(false, null)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const confirmLogout = () => {
+    Alert.alert('Logout', 'Are you sure you want to logout?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Logout', style: 'destructive', onPress: onLogout }
+    ])
   }
 
   /**
@@ -131,7 +159,7 @@ export default function Setting({ navigation }: Props) {
   }
 
   useEffect(() => {
-    (async () => {
+    ;(async () => {
       try {
         const storedData = await SecureStore.getItemAsync(
           Constants?.expoConfig?.extra?.settingsStoredKey
@@ -161,14 +189,14 @@ export default function Setting({ navigation }: Props) {
 
   return (
     <Page>
-      <ScrollView showsVerticalScrollIndicator={false} showsHorizontalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+      >
         <View>
           {/* Name Input */}
           <View className='py-2'>
-            <FormLabel
-              text='What is your name?'
-              required
-            />
+            <FormLabel text='What is your name?' required />
             <Controller
               control={control}
               rules={{ required: true }}
@@ -188,10 +216,7 @@ export default function Setting({ navigation }: Props) {
           </View>
           {/* Caregiver Phone Number */}
           <View className='py-2'>
-            <FormLabel
-              text="What is your caregiver's phone number?"
-              required
-            />
+            <FormLabel text="What is your caregiver's phone number?" required />
             <Controller
               control={control}
               rules={{
@@ -212,14 +237,14 @@ export default function Setting({ navigation }: Props) {
               )}
               name='careGiverPhoneNumber'
             />
-            {renderError(errors.careGiverPhoneNumber, "Caregiver's Phone Number")}
+            {renderError(
+              errors.careGiverPhoneNumber,
+              "Caregiver's Phone Number"
+            )}
           </View>
           {/* Home Address */}
           <View className='py-2'>
-            <FormLabel
-              text='Where is your home?'
-              required
-            />
+            <FormLabel text='Where is your home?' required />
             <Controller
               control={control}
               rules={{ required: true }}
@@ -240,9 +265,7 @@ export default function Setting({ navigation }: Props) {
           </View>
           {/* Home Address - Photo */}
           <View className='py-2'>
-            <FormLabel
-              text='Upload reference image of home'
-            />
+            <FormLabel text='Upload reference image of home' />
             <Controller
               control={control}
               render={() => (
@@ -279,10 +302,7 @@ export default function Setting({ navigation }: Props) {
           </View>
           {/* Favorite Address - Location */}
           <View className='py-2'>
-            <FormLabel
-              text='Frequent visit location address'
-              required
-            />
+            <FormLabel text='Frequent visit location address' required />
             <Controller
               control={control}
               rules={{ required: true }}
@@ -326,6 +346,13 @@ export default function Setting({ navigation }: Props) {
             titleSize='text-lg'
             iconName='save'
           />
+        </View>
+        <View className='mt-3'>
+          <Pressable onPress={confirmLogout} accessibilityRole='button'>
+            <Text className='text-center text-lg font-semibold text-red-600'>
+              Logout
+            </Text>
+          </Pressable>
         </View>
       </ScrollView>
     </Page>

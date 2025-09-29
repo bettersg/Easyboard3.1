@@ -1,12 +1,15 @@
 import messaging, {
   FirebaseMessagingTypes
 } from '@react-native-firebase/messaging'
-import { Alert, Platform } from 'react-native'
+import { Alert, Platform, PermissionsAndroid, Permission } from 'react-native'
 import { getUserStorage } from './storageService'
 import fcmService from './fcmService'
 import { storeFCMToken, getFCMToken } from './userService'
 import { navigate } from '../navigation/RootNavigation'
-import notifee, { AndroidImportance } from '@notifee/react-native'
+import notifee, {
+  AndroidImportance,
+  AuthorizationStatus
+} from '@notifee/react-native'
 
 export interface NotificationData {
   title: string
@@ -29,11 +32,15 @@ export class NotificationService {
   // Request permissions and get FCM token
   public async initialize(): Promise<string | null> {
     try {
-      // Request permissions for Firebase Messaging
-      const authStatus = await messaging().requestPermission()
-      const enabled =
-        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-        authStatus === messaging.AuthorizationStatus.PROVISIONAL
+      let enabled = true
+
+      // Request permissions for Firebase Messaging (iOS only)
+      if (Platform.OS === 'ios') {
+        const authStatus = await messaging().requestPermission()
+        enabled =
+          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+          authStatus === messaging.AuthorizationStatus.PROVISIONAL
+      }
 
       if (!enabled) {
         console.log('Failed to get permissions for push notifications!')
@@ -53,6 +60,10 @@ export class NotificationService {
       }
 
       const userData = await getUserStorage()
+
+      // Register device for remote messages (required before getToken)
+      await messaging().registerDeviceForRemoteMessages()
+
       // Get FCM token
       const token = await messaging().getToken()
       // Store token in database
@@ -71,6 +82,118 @@ export class NotificationService {
     } catch (error) {
       console.error('Error initializing notifications:', error)
       return null
+    }
+  }
+
+  // Check if notification permissions are granted
+  public async checkPermissions(): Promise<boolean> {
+    try {
+      if (Platform.OS === 'ios') {
+        const authStatus = await messaging().hasPermission()
+        return (
+          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+          authStatus === messaging.AuthorizationStatus.PROVISIONAL
+        )
+      } else {
+        // For Android 13+ (API 33+), check POST_NOTIFICATIONS permission
+        console.log(
+          'Android version check:',
+          Platform.Version,
+          'Parsed:',
+          parseInt(Platform.Version.toString())
+        )
+        if (
+          Platform.OS === 'android' &&
+          parseInt(Platform.Version.toString()) >= 33
+        ) {
+          const granted = await PermissionsAndroid.check(
+            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS as Permission
+          )
+          return granted
+        } else {
+          // For older Android versions, use Notifee to check notification settings
+          const settings = await notifee.getNotificationSettings()
+          return settings.authorizationStatus === AuthorizationStatus.AUTHORIZED
+        }
+      }
+    } catch (error) {
+      console.error('Error checking notification permissions:', error)
+      return false
+    }
+  }
+
+  // Request notification permissions with user-friendly prompt
+  public async requestPermissions(): Promise<boolean> {
+    try {
+      if (Platform.OS === 'ios') {
+        const authStatus = await messaging().requestPermission({
+          alert: true,
+          badge: true,
+          sound: true,
+          announcement: false,
+          carPlay: false,
+          criticalAlert: false,
+          provisional: false
+        })
+
+        const granted =
+          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+          authStatus === messaging.AuthorizationStatus.PROVISIONAL
+
+        if (granted) {
+          // Initialize notifications if permission granted
+          await this.initialize()
+        }
+
+        return granted
+      } else {
+        // For Android 13+ (API 33+), request POST_NOTIFICATIONS permission
+        console.log(
+          'Request permissions - Android version check:',
+          Platform.Version,
+          'Parsed:',
+          parseInt(Platform.Version.toString())
+        )
+        if (
+          Platform.OS === 'android' &&
+          parseInt(Platform.Version.toString()) >= 33
+        ) {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS as Permission,
+            {
+              title: 'Notification Permission',
+              message:
+                'EasyBoard needs notification permissions to alert your caregiver when you share your location.',
+              buttonNeutral: 'Ask Me Later',
+              buttonNegative: 'Cancel',
+              buttonPositive: 'OK'
+            }
+          )
+
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            await this.initialize()
+            return true
+          } else {
+            return false
+          }
+        } else {
+          // For older Android versions, check current permissions and open settings if needed
+          console.log('Using Notifee for older Android version')
+          const settings = await notifee.getNotificationSettings()
+          if (settings.authorizationStatus === AuthorizationStatus.DENIED) {
+            // Open notification settings for user to enable
+            await notifee.openNotificationSettings()
+            return false
+          } else {
+            // Initialize notifications if already authorized
+            await this.initialize()
+            return true
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error requesting notification permissions:', error)
+      return false
     }
   }
 
@@ -167,9 +290,11 @@ export class NotificationService {
         console.log('FCM notification sent successfully through backend')
       } else {
         console.log('Failed to send FCM notification through backend')
+        throw new Error('FCM notification failed - backend returned false')
       }
     } catch (error) {
       console.error('Error sending FCM notification:', error)
+      throw error // Re-throw so parent method knows it failed
     }
   }
 

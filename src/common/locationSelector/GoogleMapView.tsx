@@ -91,7 +91,13 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
   const goToCurrentLocation = async () => {
     try {
       const { coords } =
-        location || (await Location.getCurrentPositionAsync({}))
+        location ||
+        (await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.BestForNavigation,
+          maximumAge: 10000,
+          timeout: 15000,
+          enableHighAccuracy: true
+        }))
       setMarker({
         description: 'Current Location',
         latlng: {

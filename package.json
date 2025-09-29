@@ -6,7 +6,9 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "deploy:ios": "eas build --platform ios && eas submit -p ios --latest",
+    "build:android": "expo run:android --variant release",
+    "build:ios": "expo run:ios --configuration Release",
+    "analyze:bundle": "npx react-native-bundle-visualizer",
     "ts:check": "tsc",
     "lint": "eslint ."
   },
@@ -49,7 +51,8 @@
     "react-native-screens": "~4.4.0",
     "react-native-web": "~0.19.13",
     "react-navigation": "^4.4.4",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "expo-task-manager": "~12.0.6"
   },
   "devDependencies": {
     "@babel/core": "^7.19.3",

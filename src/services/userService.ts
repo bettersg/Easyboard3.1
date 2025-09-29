@@ -1,40 +1,45 @@
-import database from '@react-native-firebase/database';
-import DeviceInfo from 'react-native-device-info';
+import database from '@react-native-firebase/database'
+import DeviceInfo from 'react-native-device-info'
+import type { SettingValues } from '../types/SettingKey.type'
 
-export type UserType = 'PWID' | 'CAREGIVER';
+export type UserType = 'PWID' | 'CAREGIVER'
 
 export interface Location {
-  lat: number;
-  lng: number;
-  updatedAt: number;
+  lat: number
+  lng: number
+  updatedAt: number
 }
 
 export interface PWIDUser {
-  uid: string;  // Firebase Auth UID
-  userType: 'PWID';
-  deviceName: string;
-  caregiverPhone?: string;
-  location?: Location;
-  fcmToken?: string; // FCM token for push notifications
-  createdAt: number;
-  updatedAt: number;
+  uid: string // Firebase Auth UID
+  userType: 'PWID'
+  deviceName: string
+  caregiverPhone?: string
+  location?: Location
+  fcmToken?: string // FCM token for push notifications
+  createdAt: number
+  updatedAt: number
 }
 
 export interface CaregiverUser {
-  uid: string;  // Firebase Auth UID
-  userType: 'CAREGIVER';
-  deviceName: string;
-  fcmToken?: string; // FCM token for push notifications
-  createdAt: number;
-  updatedAt: number;
+  uid: string // Firebase Auth UID
+  userType: 'CAREGIVER'
+  deviceName: string
+  fcmToken?: string // FCM token for push notifications
+  createdAt: number
+  updatedAt: number
 }
 
-export type UserData = PWIDUser | CaregiverUser;
+export type UserData = PWIDUser | CaregiverUser
 
-export async function createUser(phoneNumber: string, userType: UserType, uid: string): Promise<UserData> {
+export async function createUser(
+  phoneNumber: string,
+  userType: UserType,
+  uid: string
+): Promise<UserData> {
   try {
-    const deviceName = await DeviceInfo.getDeviceName();
-    const timestamp = Date.now();
+    const deviceName = await DeviceInfo.getDeviceName()
+    const timestamp = Date.now()
     if (userType === 'PWID') {
       const pwidData: PWIDUser = {
         uid,
@@ -42,9 +47,9 @@ export async function createUser(phoneNumber: string, userType: UserType, uid: s
         deviceName,
         createdAt: timestamp,
         updatedAt: timestamp
-      };
-      await database().ref(`users/${phoneNumber}`).set(pwidData);
-      return pwidData;
+      }
+      await database().ref(`users/${phoneNumber}`).set(pwidData)
+      return pwidData
     } else {
       const caregiverData: CaregiverUser = {
         uid,
@@ -52,99 +57,162 @@ export async function createUser(phoneNumber: string, userType: UserType, uid: s
         deviceName,
         createdAt: timestamp,
         updatedAt: timestamp
-      };
-      await database().ref(`users/${phoneNumber}`).set(caregiverData);
-      return caregiverData;
+      }
+      await database().ref(`users/${phoneNumber}`).set(caregiverData)
+      return caregiverData
     }
   } catch (error) {
-    console.error('Error creating user in database:', error);
-    throw error;
+    console.error('Error creating user in database:', error)
+    throw error
   }
 }
 
-export async function updatePWIDLocation(phoneNumber: string, location: Location): Promise<void> {
+export async function updatePWIDLocation(
+  phoneNumber: string,
+  location: Location
+): Promise<void> {
   try {
-    await database().ref(`users/${phoneNumber}/location`).set(location);
-    await database().ref(`users/${phoneNumber}/updatedAt`).set(Date.now());
+    await database().ref(`users/${phoneNumber}/location`).set(location)
+    await database().ref(`users/${phoneNumber}/updatedAt`).set(Date.now())
   } catch (error) {
-    console.error('Error updating PWID location:', error);
-    throw error;
+    console.error('Error updating PWID location:', error)
+    throw error
   }
 }
 
 export async function clearPWIDLocation(phoneNumber: string): Promise<void> {
   try {
-    await database().ref(`users/${phoneNumber}/location`).remove();
-    await database().ref(`users/${phoneNumber}/updatedAt`).set(Date.now());
+    await database().ref(`users/${phoneNumber}/location`).remove()
+    await database().ref(`users/${phoneNumber}/updatedAt`).set(Date.now())
   } catch (error) {
-    console.error('Error clearing PWID location:', error);
-    throw error;
+    console.error('Error clearing PWID location:', error)
+    throw error
   }
 }
 
-export async function getUserData(phoneNumber: string): Promise<UserData | null> {
+export async function getUserData(
+  phoneNumber: string
+): Promise<UserData | null> {
   try {
-    const snapshot = await database().ref(`users/${phoneNumber}`).once('value');
-    return snapshot.val();
+    const snapshot = await database().ref(`users/${phoneNumber}`).once('value')
+    return snapshot.val()
   } catch (error) {
-    console.error('Error getting user data:', error);
-    throw error;
+    console.error('Error getting user data:', error)
+    throw error
   }
 }
 
-export async function updatePWIDCaregiver(pwidPhone: string, caregiverPhone: string): Promise<void> {
+export async function updatePWIDCaregiver(
+  pwidPhone: string,
+  caregiverPhone: string
+): Promise<void> {
   try {
-    await database().ref(`users/${pwidPhone}/caregiverPhone`).set(caregiverPhone);
-    await database().ref(`users/${pwidPhone}/updatedAt`).set(Date.now());
+    await database()
+      .ref(`users/${pwidPhone}/caregiverPhone`)
+      .set(caregiverPhone)
+    await database().ref(`users/${pwidPhone}/updatedAt`).set(Date.now())
   } catch (error) {
-    console.error('Error updating PWID caregiver:', error);
-    throw error;
+    console.error('Error updating PWID caregiver:', error)
+    throw error
   }
 }
 
 // Store FCM token for a user
-export async function storeFCMToken(phoneNumber: string, fcmToken: string): Promise<void> {
+export async function storeFCMToken(
+  phoneNumber: string,
+  fcmToken: string
+): Promise<void> {
   try {
-    await database().ref(`users/${phoneNumber}/fcmToken`).set(fcmToken);
-    await database().ref(`users/${phoneNumber}/updatedAt`).set(Date.now());
+    await database().ref(`users/${phoneNumber}/fcmToken`).set(fcmToken)
+    await database().ref(`users/${phoneNumber}/updatedAt`).set(Date.now())
   } catch (error) {
-    console.error('Error storing FCM token:', error);
-    throw error;
+    console.error('Error storing FCM token:', error)
+    throw error
   }
 }
 
 // Get FCM token for a user
 export async function getFCMToken(phoneNumber: string): Promise<string | null> {
   try {
-    const snapshot = await database().ref(`users/${phoneNumber}/fcmToken`).once('value');
-    return snapshot.val();
+    const snapshot = await database()
+      .ref(`users/${phoneNumber}/fcmToken`)
+      .once('value')
+    return snapshot.val()
   } catch (error) {
-    console.error('Error getting FCM token for user:', error);
-    throw error;
+    console.error('Error getting FCM token for user:', error)
+    throw error
   }
 }
 
-export function listenToPWIDLocation(phoneNumber: string, callback: (location: Location) => void): () => void {
-  const ref = database().ref(`users/${phoneNumber}/location`);
+export function listenToPWIDLocation(
+  phoneNumber: string,
+  callback: (location: Location) => void
+): () => void {
+  const ref = database().ref(`users/${phoneNumber}/location`)
 
   const listener = (snapshot: any) => {
-    callback(snapshot.val());
-  };
+    callback(snapshot.val())
+  }
 
-  ref.on('value', listener);
+  ref.on('value', listener)
   // Return unsubscribe function
-  return () => ref.off('value', listener);
+  return () => ref.off('value', listener)
 }
 
-export async function getPWIDsByCaregiverPhone(caregiverPhone: string): Promise<any[]> {
-  const snapshot = await database().ref('users').orderByChild('caregiverPhone').equalTo(caregiverPhone).once('value');
+export async function getPWIDsByCaregiverPhone(
+  caregiverPhone: string
+): Promise<any[]> {
+  const snapshot = await database()
+    .ref('users')
+    .orderByChild('caregiverPhone')
+    .equalTo(caregiverPhone)
+    .once('value')
 
-  const pwidUsers: any[] = [];
-  snapshot.forEach(child => {
+  const pwidUsers: any[] = []
+  snapshot.forEach((child) => {
     if (child.val().userType === 'PWID') {
-      pwidUsers.push({ pwidPhone: child.key, ...child.val() });
+      pwidUsers.push({ pwidPhone: child.key, ...child.val() })
     }
-    return undefined;
-  });
-  return pwidUsers;
+    return undefined
+  })
+  return pwidUsers
+}
+
+/**
+ * Store appData in the database
+ */
+export async function setUserAppData(
+  phoneNumber: string,
+  appData: SettingValues
+): Promise<void> {
+  try {
+    const timestamp = Date.now()
+    await database()
+      .ref(`users/${phoneNumber}/appData`)
+      .set({
+        ...appData,
+        updatedAt: timestamp
+      })
+    await database().ref(`users/${phoneNumber}/updatedAt`).set(timestamp)
+  } catch (error) {
+    console.error('Error saving user app data:', error)
+    throw error
+  }
+}
+
+/**
+ * Read appData stored under users/${phoneNumber}/appData
+ */
+export async function getUserAppData(
+  phoneNumber: string
+): Promise<SettingValues | null> {
+  try {
+    const snapshot = await database()
+      .ref(`users/${phoneNumber}/appData`)
+      .once('value')
+    return snapshot.val()
+  } catch (error) {
+    console.error('Error reading user app data:', error)
+    throw error
+  }
 }

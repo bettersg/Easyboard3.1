@@ -2,8 +2,8 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack'
 import Constants from 'expo-constants'
 import * as SecureStore from 'expo-secure-store'
 import { useEffect, useState } from 'react'
-import { Text, View, TouchableOpacity, Modal } from 'react-native'
-import { MaterialCommunityIcons  } from '@expo/vector-icons'
+import { Text, View, TouchableOpacity, Modal, Alert } from 'react-native'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 
 import EasyboardButton from '../common/components/EasyboardButton'
 import Page from '../common/components/Page'
@@ -12,6 +12,7 @@ import GoogleMapView from '../common/locationSelector/GoogleMapView'
 import useCallCaregiver from '../hooks/useCallCaregiver'
 import { RootStackParamList } from '../types/RootStackParamList.type'
 import { useLocationSharing } from '../contexts/LocationSharingContext'
+import notificationService from '../services/notificationService'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Main'>
 
@@ -20,15 +21,21 @@ export default function Main({ navigation }: Props) {
   const [userSetting, setUserSetting] = useState<any>(null)
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false)
   const [searchLocation, setSearchLocation] = useState<any>(null)
-  const { isLocationSharing, setIsLocationSharing } = useLocationSharing();
+  const { isLocationSharing, setIsLocationSharing } = useLocationSharing()
 
   useEffect(() => {
-    ; (async () => {
+    ;(async () => {
       try {
         const storedData = await SecureStore.getItemAsync(
           Constants?.expoConfig?.extra?.settingsStoredKey
         )
         if (storedData) setUserSetting(JSON.parse(storedData))
+
+        // Check and request notification permissions
+        const hasPermissions = await notificationService.checkPermissions()
+        if (!hasPermissions) {
+          await notificationService.requestPermissions()
+        }
       } catch (e) {
         console.error(e)
       }
@@ -51,111 +58,119 @@ export default function Main({ navigation }: Props) {
   }, [navigation])
 
   const onShareLocation = () => {
-    setIsLocationSharing(!isLocationSharing);
+    setIsLocationSharing(!isLocationSharing)
   }
 
   return (
     <Page disableScroll>
       {userSetting && (
         <View style={{ flex: 1, backgroundColor: '#F9FAFB' }}>
-          <View style={{
+          <View
+            style={{
               padding: 16,
               paddingTop: 24,
               paddingBottom: 120
-            }}>
+            }}
+          >
             {/* Header Section */}
-            <View style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              marginBottom: 20
-            }}>
-              <Text style={{
-                fontSize: 23,
-                fontWeight: '700',
-                color: '#1F2937',
-                flex: 1
-              }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: 20
+              }}
+            >
+              <Text
+                style={{
+                  fontSize: 23,
+                  fontWeight: '700',
+                  color: '#1F2937',
+                  flex: 1
+                }}
+              >
                 Where do you want to go?
               </Text>
               <TouchableOpacity
                 onPress={() => setIsSearchModalOpen(true)}
                 style={{
                   padding: 8,
-                  paddingTop:10
+                  paddingTop: 10
                 }}
               >
-                <MaterialCommunityIcons 
-                  name="map-search-outline" 
-                  size={30} 
-                  color="#1F2937" 
+                <MaterialCommunityIcons
+                  name='map-search-outline'
+                  size={30}
+                  color='#1F2937'
                 />
               </TouchableOpacity>
             </View>
 
             {/* Saved Locations Section */}
-              <SavedLocationCard
-                borderColor='border-cyan-800'
-                onPress={() => {
-                  navigation.navigate('TransitOptions', {
-                    destinationName: 'Home',
-                    destination: userSetting.houseAddrs
-                  })
-                }}
-                title='Home'
-                subtitle={userSetting.houseAddrs.description}
-                imageUri={userSetting.housePhotoUri}
-                iconName='home'
-              />
+            <SavedLocationCard
+              borderColor='border-cyan-800'
+              onPress={() => {
+                navigation.navigate('TransitOptions', {
+                  destinationName: 'Home',
+                  destination: userSetting.houseAddrs
+                })
+              }}
+              title='Home'
+              subtitle={userSetting.houseAddrs.description}
+              imageUri={userSetting.housePhotoUri}
+              iconName='home'
+            />
 
-              <View style={{ height: 16 }} />
+            <View style={{ height: 16 }} />
 
-              <SavedLocationCard
-                borderColor='border-secondary'
-                onPress={() => {
-                  navigation.navigate('TransitOptions', {
-                    destination: userSetting.gotoFavAddrs,
-                    destinationName: userSetting.gotoFavAddrsName
-                  })
-                }}
-                title={userSetting.gotoFavAddrsName}
-                subtitle={userSetting.gotoFavAddrs.description}
-                imageUri={userSetting.gotoFavPhotoUri}
-                iconName='map'
-              />
-              <View style={{ height: 16 }} />
+            <SavedLocationCard
+              borderColor='border-secondary'
+              onPress={() => {
+                navigation.navigate('TransitOptions', {
+                  destination: userSetting.gotoFavAddrs,
+                  destinationName: userSetting.gotoFavAddrsName
+                })
+              }}
+              title={userSetting.gotoFavAddrsName}
+              subtitle={userSetting.gotoFavAddrs.description}
+              imageUri={userSetting.gotoFavPhotoUri}
+              iconName='map'
+            />
+            <View style={{ height: 16 }} />
           </View>
 
           {/* Fixed Call Caregiver Button */}
-          <View style={{
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            right: 0,
-            backgroundColor: 'white',
-            padding: 16,
-            borderTopWidth: 1,
-            borderTopColor: '#E5E7EB',
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: -2 },
-            shadowOpacity: 0.05,
-            shadowRadius: 2,
-            elevation: 2,
-            zIndex: 1
-          }}>
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              backgroundColor: 'white',
+              padding: 16,
+              borderTopWidth: 1,
+              borderTopColor: '#E5E7EB',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: -2 },
+              shadowOpacity: 0.05,
+              shadowRadius: 2,
+              elevation: 2,
+              zIndex: 1
+            }}
+          >
             <EasyboardButton
               type='bg-primary'
               onPress={callCareGiver}
               title='CALL CAREGIVER'
               iconName='phone-call'
-              titleSize="text-lg"
+              titleSize='text-lg'
             />
             <View style={{ height: 16 }} />
             <EasyboardButton
-              type="bg-secondary"
+              type='bg-secondary'
               onPress={onShareLocation}
-              title={isLocationSharing ? "STOP SHARING" : "SHARE LOCATION"}
-              iconName="map-pin"
-              titleSize="text-lg"
+              title={isLocationSharing ? 'STOP SHARING' : 'SHARE LOCATION'}
+              iconName='map-pin'
+              titleSize='text-lg'
             />
           </View>
         </View>
@@ -174,35 +189,41 @@ export default function Main({ navigation }: Props) {
           setIsSearchModalOpen(false)
         }}
       >
-        <View style={{
-          flex: 1,
-          backgroundColor: '#fff',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          <View style={{
-            zIndex: 2,
-            position: 'absolute',
-            bottom: 80,
-            right: 20
-          }}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: '#fff',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}
+        >
+          <View
+            style={{
+              zIndex: 2,
+              position: 'absolute',
+              bottom: 80,
+              right: 20
+            }}
+          >
             <EasyboardButton
               type='bg-white'
               onPress={() => {
-                setIsSearchModalOpen(false);
+                setIsSearchModalOpen(false)
                 if (searchLocation) {
                   navigation.navigate('TransitOptions', {
                     destinationName: searchLocation.description,
                     destination: searchLocation
-                  });
-                  setSearchLocation(null);
+                  })
+                  setSearchLocation(null)
                 }
               }}
               title='Done'
             />
           </View>
           <GoogleMapView
-            onLocationMarkerDrop={(locationMarker: any) => setSearchLocation(locationMarker)}
+            onLocationMarkerDrop={(locationMarker: any) =>
+              setSearchLocation(locationMarker)
+            }
             value={null}
           />
         </View>
