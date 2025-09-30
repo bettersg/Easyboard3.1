@@ -128,8 +128,18 @@ const GoogleMapView = ({ onLocationMarkerDrop, value }: Props) => {
   useEffect(() => {
     ;(async () => {
       try {
-        const { status } = await Location.requestForegroundPermissionsAsync()
-        if (status !== 'granted') {
+        const { status: currentStatus } =
+          await Location.getForegroundPermissionsAsync()
+        let finalStatus = currentStatus
+
+        // Only request if we don't already have permission
+        if (currentStatus !== 'granted') {
+          const { status: requestedStatus } =
+            await Location.requestForegroundPermissionsAsync()
+          finalStatus = requestedStatus
+        }
+
+        if (finalStatus !== 'granted') {
           // setErrorMsg("Permission to access location was denied");
           console.error('Permission to access location was denied')
           return

@@ -112,8 +112,18 @@ export const LocationSharingProvider: React.FC<{
         return
       }
 
-      const { status } = await Location.requestForegroundPermissionsAsync()
-      if (status !== 'granted') {
+      const { status: currentStatus } =
+        await Location.getForegroundPermissionsAsync()
+      let finalStatus = currentStatus
+
+      // Only request if we don't already have permission
+      if (currentStatus !== 'granted') {
+        const { status: requestedStatus } =
+          await Location.requestForegroundPermissionsAsync()
+        finalStatus = requestedStatus
+      }
+
+      if (finalStatus !== 'granted') {
         Alert.alert(
           'Permission denied',
           'Location permission is required to share your location.'
@@ -122,9 +132,18 @@ export const LocationSharingProvider: React.FC<{
         return
       }
 
-      const { status: backgroundPermissionStatus } =
-        await Location.requestBackgroundPermissionsAsync()
-      if (backgroundPermissionStatus !== 'granted') {
+      const { status: currentBackgroundStatus } =
+        await Location.getBackgroundPermissionsAsync()
+      let finalBackgroundStatus = currentBackgroundStatus
+
+      // Only request if we don't already have permission
+      if (currentBackgroundStatus !== 'granted') {
+        const { status: requestedBackgroundStatus } =
+          await Location.requestBackgroundPermissionsAsync()
+        finalBackgroundStatus = requestedBackgroundStatus
+      }
+
+      if (finalBackgroundStatus !== 'granted') {
         Alert.alert(
           'Permission denied',
           'Location permission is required to share your location.'
