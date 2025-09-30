@@ -22,6 +22,13 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     backgroundColor: '#ffffff'
   },
   plugins: [
+    // Custom Android build filename plugin
+    [
+      './plugins/androidCustomFilename',
+      {
+        appName: 'EasyBoard'
+      }
+    ],
     [
       'expo-image-picker',
       {
