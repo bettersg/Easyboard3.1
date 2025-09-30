@@ -5,7 +5,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   owner: 'engineeringgood',
   name: 'EasyBoard_RN_Build',
   slug: 'EasyBoard-RN-Build',
-  privacy: 'unlisted',
   version: '1.0.0',
   extra: {
     settingsStoredKey: 'setting',
@@ -40,42 +39,17 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
           extraMavenRepos: [
             '../../node_modules/@notifee/react-native/android/libs'
           ],
-          // APK optimization
-          enableShrinkResourcesInReleaseBuilds: true,
-          enableProguardInReleaseBuilds: true,
+          enableShrinkResourcesInReleaseBuilds: false,
+          enableProguardInReleaseBuilds: false,
           enablePngCrunchInReleaseBuilds: true,
-          // Additional optimizations
-          enableR8: true,
-          enableMultiDex: true,
-          // Remove unused resources
-          removeUnusedResources: true,
-          // Optimize native libraries
-          ndk: {
-            abiFilters: ['arm64-v8a', 'armeabi-v7a']
-          }
+
+          networkInspector: true
         },
-        ios: { deploymentTarget: '15.1', useFrameworks: 'static' }
-      }
-    ],
-    [
-      'expo-build-properties',
-      {
-        android: {
-          // Bundle analyzer for size optimization
-          bundleAnalyzerEnabled: true,
-          // Additional build optimizations
-          enableHermes: true,
-          enableNewArchitecture: true
+        ios: {
+          deploymentTarget: '15.1',
+          useFrameworks: 'static',
+          networkInspector: true
         }
-      }
-    ],
-    [
-      'expo-asset',
-      {
-        // Optimize assets
-        enableAssetOptimization: true,
-        // Remove unused assets
-        removeUnusedAssets: true
       }
     ],
     '@react-native-firebase/app',
@@ -92,10 +66,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ],
   updates: { fallbackToCacheTimeout: 0 },
   assetBundlePatterns: ['**/*'],
-  // Bundle optimization
-  bundleIdentifier: 'org.engineeringgood.EasyBoard.RN',
-  // Remove unused code
-  removeUnusedCode: true,
   ios: {
     supportsTablet: true,
     bundleIdentifier: 'org.engineeringgood.EasyBoard.RN',
@@ -119,7 +89,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     },
     permissions: [
       'android.permission.RECORD_AUDIO',
-      'android.permission.POST_NOTIFICATIONS'
+      'android.permission.POST_NOTIFICATIONS',
+      'android.permission.ACCESS_FINE_LOCATION',
+      'android.permission.ACCESS_COARSE_LOCATION',
+      'android.permission.ACCESS_BACKGROUND_LOCATION',
+      'android.permission.INTERNET',
+      'android.permission.ACCESS_NETWORK_STATE'
     ],
     splash: {
       image: './assets/splash.png',

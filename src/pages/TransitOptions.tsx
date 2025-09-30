@@ -23,61 +23,26 @@ const TransitOptions = ({ navigation, route }: Props) => {
       setIsLoading(true)
       setErrorMessage('')
       // Request location permissions
-      const { status } = await Location.requestForegroundPermissionsAsync()
-      if (status !== 'granted') {
+      const { status: currentStatus } =
+        await Location.getForegroundPermissionsAsync()
+      let finalStatus = currentStatus
+
+      // Only request if we don't already have permission
+      if (currentStatus !== 'granted') {
+        const { status: requestedStatus } =
+          await Location.requestForegroundPermissionsAsync()
+        finalStatus = requestedStatus
+      }
+
+      if (finalStatus !== 'granted') {
         setErrorMessage('Location permission is required to get directions')
         return
       }
 
-      // Check if location services are enabled
-      const isLocationEnabled = await Location.hasServicesEnabledAsync()
-      if (!isLocationEnabled) {
-        setErrorMessage(
-          'Location services are disabled. Please enable GPS in your device settings.'
-        )
-        return
-      }
-
-      // Get current location with enhanced settings and retry logic
-      let currentLocation
-      let retryCount = 0
-      const maxRetries = 3
-
-      while (retryCount < maxRetries) {
-        try {
-          currentLocation = await Location.getCurrentPositionAsync({
-            accuracy: Location.Accuracy.BestForNavigation,
-            maximumAge: 10000, // Accept location up to 10 seconds old
-            timeout: 15000, // 15 second timeout
-            enableHighAccuracy: true
-          })
-          break // Success, exit retry loop
-        } catch (error) {
-          retryCount++
-          console.log(`Location attempt ${retryCount} failed:`, error)
-
-          if (retryCount >= maxRetries) {
-            // Try with lower accuracy as fallback
-            try {
-              currentLocation = await Location.getCurrentPositionAsync({
-                accuracy: Location.Accuracy.Balanced,
-                maximumAge: 30000,
-                timeout: 10000,
-                enableHighAccuracy: false
-              })
-              break
-            } catch (fallbackError) {
-              setErrorMessage(
-                'Unable to get your current location. Please:\n• Enable GPS in device settings\n• Check location permissions\n• Try moving to an area with better signal\n• Restart the app'
-              )
-              return
-            }
-          } else {
-            // Wait before retry
-            await new Promise((resolve) => setTimeout(resolve, 2000))
-          }
-        }
-      }
+      // Get current location
+      const currentLocation = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High
+      })
       // Fetch Google route from current location to destination
       const newGoogleRoute = await getGoogleRoute(
         {
