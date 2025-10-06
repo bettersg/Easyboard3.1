@@ -96,12 +96,6 @@ export class NotificationService {
         )
       } else {
         // For Android 13+ (API 33+), check POST_NOTIFICATIONS permission
-        console.log(
-          'Android version check:',
-          Platform.Version,
-          'Parsed:',
-          parseInt(Platform.Version.toString())
-        )
         if (
           Platform.OS === 'android' &&
           parseInt(Platform.Version.toString()) >= 33
@@ -290,11 +284,10 @@ export class NotificationService {
         console.log('FCM notification sent successfully through backend')
       } else {
         console.log('Failed to send FCM notification through backend')
-        throw new Error('FCM notification failed - backend returned false')
       }
     } catch (error) {
       console.error('Error sending FCM notification:', error)
-      throw error // Re-throw so parent method knows it failed
+      throw error
     }
   }
 
