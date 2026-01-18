@@ -8,7 +8,7 @@ Cross-platform monorepo for EasyBoard, based on Solito, Expo and Next.js
 ├── apps/
 │   ├── web/             # Next.js web application
 │   ├── native/          # Expo/React Native app
-│   └── functions/       # Firebase Cloud Functions (Business Logic)
+│   └── functions/       # Firebase Cloud Functions
 ├── packages/
 │   ├── common/          # Core business logic, shared UI, and services
 │   │   ├── src/
@@ -110,6 +110,21 @@ yarn dev
 
 - **Lint**: `yarn lint`
 - **Format**: `yarn format`
+
+## Troubleshooting
+Many errors (especially Typescript/import errors) an be resolved by deleting `node_modules` and running `yarn install`. There is a convenience script to delete the various `node_modules` folder:
+
+```bash
+yarn clean
+```
+For React Native/Expo specific errors, it might be worth doing the above and then generating a new build
+```bash
+yarn native:prebuild
+
+yarn native:android # For Android
+# and/or
+yarn native:ios     # For iOS (macOS only)
+```
 
 ## Repo conventions
 - Gneneral workflow:
