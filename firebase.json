@@ -1,18 +1,17 @@
 {
   "functions": [
     {
-      "source": "functions",
-      "codebase": "default",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "*.local"
-      ],
-      "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run build"
-      ]
+      "source": "apps/functions",
+      "predeploy": "yarn workspace functions build && yarn turbo prune functions && yarn workspace functions predeploy",
+      "postdeploy": "yarn workspace functions postdeploy",
+      "runtime": "nodejs24"
     }
-  ]
+  ],
+  "hosting": {
+    "source": "./apps/web",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "frameworksBackend": {
+      "region": "asia-east1"
+    }
+  }
 }

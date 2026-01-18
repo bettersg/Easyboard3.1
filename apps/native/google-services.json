@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "334251499398",
+    "firebase_url": "https://easyboard-sg-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "easyboard-sg",
+    "storage_bucket": "easyboard-sg.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:334251499398:android:77509c17bc79bfd24a1607",
+        "android_client_info": {
+          "package_name": "org.engineeringgood.EasyBoard.RN"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "334251499398-k3d2sib899ngqtpqt0fecubkmikkkgqh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.engineeringgood.EasyBoard.RN",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "334251499398-ol074cegdv8eplb25kufq9phf0s3bnv3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.engineeringgood.EasyBoard.RN",
+            "certificate_hash": "821e6079b1dde873f0c95be73f15f29f051c1397"
+          }
+        },
+        {
+          "client_id": "334251499398-vud92lqp3onm7sfv4af5jrsqg5c18htb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.engineeringgood.EasyBoard.RN",
+            "certificate_hash": "4749766e64d4058cc034cb9bd949dce274ec6a2b"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtOKmG9xO0KPzjqCmOvvtiELlManI0HAA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,4 @@
+#!/bin/sh
+yarn lint-staged || { echo "\033[31m❌ linting failed - please run 'yarn lint' from workspace root to fix linting issues\033[0m"; exit 1; }
+yarn typecheck || { echo "\033[31m❌ typecheck failed - please run 'yarn typecheck' from workspace root to view and fix type checking issues\033[0m"; exit 1; }
+yarn format:check || { echo "\033[31m❌ format:check failed - please run 'yarn format' from workspace root to fix formatting issues\033[0m"; exit 1; }

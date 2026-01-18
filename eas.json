@@ -21,10 +21,10 @@
   },
   "submit": {
     "production": {
-      "ios":{
-         "appleId":"easyboard2.0@gmail.com",
-         "ascAppId": "6443443853",
-         "appleTeamId":"AWVQ28VAV7" 
+      "ios": {
+        "appleId": "easyboard2.0@gmail.com",
+        "ascAppId": "6443443853",
+        "appleTeamId": "AWVQ28VAV7"
       }
     }
   }
