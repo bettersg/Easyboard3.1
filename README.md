@@ -31,7 +31,7 @@ Cross-platform monorepo for EasyBoard, based on Solito, Expo and Next.js
 ### Prerequisites
 
 - Node.js >= 20
-- Yarn package manager
+- Yarn 4.11.0
 
 ### Installation
 
