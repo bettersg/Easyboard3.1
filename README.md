@@ -45,6 +45,9 @@ Clone the repository and install dependencies:
     yarn install
     ```
 
+### Add Environment Variables
+Refer to the `.env.example` files and create corresponding `.env` files with the required values.
+
 ### Local Development Setup (Native)
 
 If you are developing for Android or iOS locally, ensure you have the following prerequisites installed (refer to the most updated instructions [here](https://docs.expo.dev/get-started/set-up-your-environment/?mode=development-build&buildEnv=local)):
