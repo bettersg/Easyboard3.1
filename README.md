@@ -33,9 +33,14 @@ Cross-platform monorepo for EasyBoard, based on Solito, Expo and Next.js
 - Node.js >= 20
 - Yarn 4.11.0
 
+```bash
+# this should be sufficient to enable yarn in most Node.js installations
+corepack enable
+```
+
 ### Installation
 
-1.  Clone the repository and install dependencies:
+Clone the repository and install dependencies:
     ```bash
     yarn install
     ```
@@ -44,9 +49,9 @@ Cross-platform monorepo for EasyBoard, based on Solito, Expo and Next.js
 
 If you are developing for Android or iOS locally, ensure you have the following prerequisites installed (refer to the most updated instructions [here](https://docs.expo.dev/get-started/set-up-your-environment/?mode=development-build&buildEnv=local)):
 
-#### 1a. macOS Setup
+#### macOS Setup
 
-**Install Watchman and JDK**
+Install Watchman and JDK
 ```bash
 brew install watchman
 brew install openjdk@17
@@ -58,12 +63,12 @@ export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"
 export JAVA_HOME="/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home"
 ```
 
-**Install Xcode Command Line Tools**
+Install Xcode Command Line Tools
 ```bash
 xcode-select --install
 ```
 
-#### 1b. Windows Setup
+#### Windows Setup
 
 If you are on Windows, follow these steps to set up the Android development environment:
 
@@ -72,7 +77,7 @@ If you are on Windows, follow these steps to set up the Android development envi
 - **Configure SDK**: Ensure "Android SDK Platform" and "Android Virtual Device" are installed.
 - **Environment Variables**: Set `JAVA_HOME` to your JDK path and `ANDROID_HOME` to your Android SDK location. Add the `platform-tools` and `emulator` directories to your `PATH`.
 
-#### 2. Native App Environment
+#### Development Builds
 Run the following to create a development build. Typically you would only need to run these commands once unless you are making changes to the native configs (note that MacOS is required for iOS build/development):
 ```bash
 # in the monorepo root
