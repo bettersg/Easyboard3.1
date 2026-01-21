@@ -99,7 +99,12 @@ export function OnboardingScreen3() {
             </Text>
           </View>
           <View className='gap-4'>
-            <View className='gap-2'>
+            <View
+              className='gap-2'
+              onSubmit={(e: Event) => e.preventDefault()}
+              // @ts-expect-error - web-specific
+              accessibilityRole='form'
+            >
               <Text className='text-base text-[#414852]'>Phone number</Text>
               <Controller
                 control={control}
