@@ -15,7 +15,6 @@ export function HomePage() {
   )
 
   useEffect(() => {
-    console.log('hererere', userType)
     const loadUserType = async () => {
       try {
         const userStorage = await getUserStorage()

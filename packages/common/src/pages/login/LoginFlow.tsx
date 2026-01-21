@@ -104,12 +104,6 @@ export function LoginFlow() {
     }
   }
 
-  const handleSubmit = async () => {
-    if (currentStep === 'phone' && canSendOTP) {
-      await sendOTP()
-    }
-  }
-
   const handleVerifyOTP = async (otp: string) => {
     console.log('[LoginFlow] handleVerifyOTP called')
     try {
@@ -151,7 +145,12 @@ export function LoginFlow() {
             className='justify-start items-center px-6 py-4 h-[calc(100svh-80px)]'
             style={{ width }}
           >
-            <View className='gap-4 w-full'>
+            <View
+              onSubmit={(e: Event) => e.preventDefault()}
+              className='gap-4 w-full'
+              // @ts-expect-error - web-specific
+              accessibilityRole='form'
+            >
               <View className='gap-2'>
                 <Text className='text-2xl font-bold text-[#414852]'>
                   What&apos;s your phone number?
@@ -168,7 +167,7 @@ export function LoginFlow() {
                 }
                 keyboardType='phone-pad'
                 maxLength={14} // Allow for +65 prefix
-                onSubmitEditing={handleSubmit}
+                onSubmitEditing={handleNext}
               />
               {isSendingOTP && (
                 <Text className='text-base text-[#677281] text-center'>
