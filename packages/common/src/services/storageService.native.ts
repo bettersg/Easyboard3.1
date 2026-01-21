@@ -1,10 +1,12 @@
 import auth from '@react-native-firebase/auth'
 import messaging from '@react-native-firebase/messaging'
+import storage from '@react-native-firebase/storage'
 import Constants from 'expo-constants'
 import * as SecureStore from 'expo-secure-store'
 import type { UserType } from '../types'
 
 export interface UserStorage {
+  uid: string | null
   phoneNumber: string
   userType: UserType | null
   loggedAt: number // Unix timestamp when user last logged in
@@ -183,11 +185,55 @@ export const getAppDataStorage = async (): Promise<any | null> => {
 
 /**
  * Uploads a location photo to Firebase Storage (native)
- * For native, file URIs are already persistent, so we can return them as-is
- * In the future, this can be extended to upload to Firebase Storage
+ * @param imageUri - Local file URI (e.g., file:///path/to/image.jpg)
+ * @returns The storage path (file key), NOT the download URL
  */
 export async function uploadLocationPhoto(imageUri: string): Promise<string> {
-  // Native file URIs are already persistent, return as-is
-  // TODO: Implement Firebase Storage upload for native if needed
-  return imageUri
+  try {
+    const userStorage = await getUserStorage()
+    if (!userStorage?.phoneNumber) {
+      throw new Error('No user phone number found')
+    }
+
+    // Generate unique filename
+    const timestamp = Date.now()
+    const filename = `upload_${timestamp}.jpg`
+    const path = `users/${userStorage.uid}/locations/${filename}`
+
+    // Upload file to Firebase Storage
+    const reference = storage().ref(path)
+    await reference.putFile(imageUri)
+
+    // Return the path (file key), not the download URL
+    return path
+  } catch (error) {
+    console.error('Error uploading location photo:', error)
+    throw error
+  }
+}
+
+/**
+ * Converts a file key (storage path) to a download URL
+ * @param fileKey - The storage path/file key (e.g., '/users/{userId}/locations/home_123.jpg')
+ * @returns Download URL for the file
+ */
+export async function getPhotoDownloadUrl(fileKey: string): Promise<string> {
+  try {
+    // If it's already a full URL (legacy data or Google Photos URL), return as-is
+    if (fileKey.startsWith('http://') || fileKey.startsWith('https://')) {
+      return fileKey
+    }
+
+    // If it's a local file URI (legacy native data), return as-is
+    if (fileKey.startsWith('file://')) {
+      return fileKey
+    }
+
+    const reference = storage().ref(fileKey)
+    const downloadURL = await reference.getDownloadURL()
+    return downloadURL
+  } catch (error) {
+    console.error('Error getting photo download URL:', error)
+    throw error
+  }
 }

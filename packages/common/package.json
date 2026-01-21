@@ -34,6 +34,7 @@
     "@react-native-firebase/database": "^23.5.0",
     "@react-native-firebase/functions": "^23.7.0",
     "@react-native-firebase/messaging": "^23.5.0",
+    "@react-native-firebase/storage": "^23.8.3",
     "@storybook/react": "^9",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

@@ -159,6 +159,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Store user data in local storage
       await setUserStorage({
         phoneNumber,
+        uid: userCredential.user.uid,
         userType: authUserType || null,
         loggedAt: Date.now()
       })

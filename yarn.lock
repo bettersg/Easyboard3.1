@@ -5038,6 +5038,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-firebase/storage@npm:^23.8.3":
+  version: 23.8.3
+  resolution: "@react-native-firebase/storage@npm:23.8.3"
+  peerDependencies:
+    "@react-native-firebase/app": 23.8.3
+  checksum: 10c0/2ce43bfa67ec9dc7ad90b1b0a032035c82d61f59c81a237cc5ba0b802b6ff9988017a53969f8897f79d9356a5ec541882d67f0f374eb7a72cd1b027616b9f077
+  languageName: node
+  linkType: hard
+
 "@react-native-masked-view/masked-view@npm:0.3.2":
   version: 0.3.2
   resolution: "@react-native-masked-view/masked-view@npm:0.3.2"
@@ -5774,6 +5783,7 @@ __metadata:
     "@react-native-firebase/database": "npm:^23.5.0"
     "@react-native-firebase/functions": "npm:^23.7.0"
     "@react-native-firebase/messaging": "npm:^23.5.0"
+    "@react-native-firebase/storage": "npm:^23.8.3"
     "@repo/eslint-config": "npm:*"
     "@repo/typescript-config": "npm:*"
     "@storybook/react": "npm:^9"
@@ -17217,6 +17227,7 @@ __metadata:
     "@react-native-firebase/database": "npm:^23.5.0"
     "@react-native-firebase/functions": "npm:^23.7.0"
     "@react-native-firebase/messaging": "npm:^23.5.0"
+    "@react-native-firebase/storage": "npm:^23.8.3"
     "@react-native-masked-view/masked-view": "npm:0.3.2"
     "@repo/common": "npm:*"
     "@types/jest": "npm:^29.5.12"

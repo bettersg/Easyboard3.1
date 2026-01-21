@@ -10,6 +10,7 @@ import { useLocationSharing } from '../../contexts/LocationSharingContext'
 import { useCallCaregiver } from '../../hooks/useCallCaregiver'
 import {
   completeLogout,
+  getPhotoDownloadUrl,
   getUserStorage,
   setUserStorage,
   type UserStorage
@@ -25,6 +26,11 @@ export function PWIDHome() {
   const [loggingOut, setLoggingOut] = useState(false)
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false)
   const [searchLocation, setSearchLocation] = useState<MarkerData | null>(null)
+  const [resolvedPhotoUrls, setResolvedPhotoUrls] = useState<{
+    house?: string
+    work?: string
+    school?: string
+  }>({})
 
   const { top, bottom } = useSafeArea()
   const router = useRouter()
@@ -51,29 +57,52 @@ export function PWIDHome() {
       }
 
       // Then, fetch latest data from Firebase
-      console.log('Fetching latest data from Firebase')
+      console.log('Fetching latest data from Firebase', userStorage.phoneNumber)
       const savedData = await getUserAppData(userStorage.phoneNumber)
 
-      // Add cache busting timestamp to image URIs
+      console.log('latest', savedData)
+
       if (savedData) {
-        const timestamp = Date.now()
-
-        // Add timestamp to photoUri fields to bust cache
-        if (savedData.houseAddrs?.photoUri) {
-          savedData.houseAddrs.photoUri = `${savedData.houseAddrs.photoUri}?t=${timestamp}`
-        }
-        if (savedData.gotoFavAddrs?.photoUri) {
-          savedData.gotoFavAddrs.photoUri = `${savedData.gotoFavAddrs.photoUri}?t=${timestamp}`
-        }
-        if (savedData.schoolAddrs?.photoUri) {
-          savedData.schoolAddrs.photoUri = `${savedData.schoolAddrs.photoUri}?t=${timestamp}`
-        }
-
         // Update state with fresh data
         setAppData(savedData)
 
         // Cache the fresh data for next time
         await setUserStorage(savedData as unknown as UserStorage)
+
+        // Resolve file keys to download URLs in parallel
+        const resolvePhoto = async (
+          photoKeyOrArray: string | string[] | null | undefined
+        ) => {
+          if (!photoKeyOrArray) return undefined
+          const photoKey = Array.isArray(photoKeyOrArray)
+            ? photoKeyOrArray[0]
+            : photoKeyOrArray
+          if (!photoKey) return undefined
+          try {
+            return await getPhotoDownloadUrl(photoKey)
+          } catch (e) {
+            console.error('Error resolving photo URL:', e)
+            return undefined
+          }
+        }
+
+        const [houseUrl, workUrl, schoolUrl] = await Promise.all([
+          resolvePhoto(
+            savedData.houseAddrs?.photoUri || savedData.housePhotoUri
+          ),
+          resolvePhoto(
+            savedData.gotoFavAddrs?.photoUri || savedData.gotoFavPhotoUri
+          ),
+          resolvePhoto(
+            savedData.schoolAddrs?.photoUri || savedData.schoolPhotoUri
+          )
+        ])
+
+        setResolvedPhotoUrls({
+          house: houseUrl,
+          work: workUrl,
+          school: schoolUrl
+        })
       }
     } catch (error) {
       console.error('Error loading saved locations:', error)
@@ -190,23 +219,9 @@ export function PWIDHome() {
   const gotoFavAddrs = (appData?.gotoFavAddrs as MarkerData) || null
   const schoolAddrs = (appData?.schoolAddrs as MarkerData) || null
 
-  const housePhotoUri =
-    houseAddrs?.photoUri ||
-    (Array.isArray(appData?.housePhotoUri)
-      ? appData?.housePhotoUri[0]
-      : appData?.housePhotoUri || undefined)
-
-  const workPhotoUri =
-    gotoFavAddrs?.photoUri ||
-    (Array.isArray(appData?.gotoFavPhotoUri)
-      ? appData?.gotoFavPhotoUri[0]
-      : appData?.gotoFavPhotoUri || undefined)
-
-  const schoolPhotoUri =
-    schoolAddrs?.photoUri ||
-    (Array.isArray(appData?.schoolPhotoUri)
-      ? appData?.schoolPhotoUri[0]
-      : appData?.schoolPhotoUri || undefined)
+  const housePhotoUri = resolvedPhotoUrls.house
+  const workPhotoUri = resolvedPhotoUrls.work
+  const schoolPhotoUri = resolvedPhotoUrls.school
 
   return (
     <>

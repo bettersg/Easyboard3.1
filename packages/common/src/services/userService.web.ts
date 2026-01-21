@@ -257,7 +257,7 @@ export async function getUserAppData(
   try {
     const db = getDatabaseInstance()
     const snapshot = await get(ref(db, `users/${phoneNumber}/appData`))
-    console.log('App data snapshot:', snapshot.val(), phoneNumber)
+    console.log('App data snapshot:', snapshot.val(), phoneNumber, db, snapshot)
 
     return snapshot.exists() ? snapshot.val() : null
   } catch (error) {

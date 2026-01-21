@@ -6,6 +6,7 @@ import { signOut } from './authService.web'
 import { getStorageInstance } from './firebase.web'
 
 export interface UserStorage {
+  uid: string | null
   phoneNumber: string
   userType: UserType | null
   loggedAt: number // Unix timestamp when user last logged in
@@ -188,7 +189,7 @@ async function blobUrlToFile(blobUrl: string): Promise<File> {
  * Uploads an image file to Firebase Storage
  * @param file - File object or blob URL string
  * @param path - Storage path (e.g., 'users/{phoneNumber}/locations/{locationId}.jpg')
- * @returns Download URL
+ * @returns The storage path (file key), NOT the download URL
  */
 export async function uploadImageToStorage(
   file: File | string,
@@ -203,7 +204,8 @@ export async function uploadImageToStorage(
       if (file.startsWith('blob:')) {
         fileObj = await blobUrlToFile(file)
       } else {
-        // If it's already a URL (not a blob), return it
+        // If it's already a URL (not a blob), return it as-is
+        // This handles the case where we're passed an existing URL
         return file
       }
     } else {
@@ -216,10 +218,8 @@ export async function uploadImageToStorage(
     // Upload file
     await uploadBytes(storageRef, fileObj)
 
-    // Get download URL
-    const downloadURL = await getDownloadURL(storageRef)
-
-    return downloadURL
+    // Return the path (file key), not the download URL
+    return path
   } catch (error) {
     console.error('Error uploading image to Firebase Storage:', error)
     throw error
@@ -229,6 +229,7 @@ export async function uploadImageToStorage(
 /**
  * Uploads a location photo to Firebase Storage
  * Automatically generates a path based on user phone number and location type
+ * @returns The storage path (file key), NOT the download URL
  */
 export async function uploadLocationPhoto(
   imageUri: string,
@@ -243,11 +244,33 @@ export async function uploadLocationPhoto(
     // Generate unique filename
     const timestamp = Date.now()
     const filename = `${locationType.toLowerCase()}_${timestamp}.jpg`
-    const path = `users/${userStorage.phoneNumber}/locations/${filename}`
+    const path = `users/${userStorage.uid}/locations/${filename}`
 
     return await uploadImageToStorage(imageUri, path)
   } catch (error) {
     console.error('Error uploading location photo:', error)
+    throw error
+  }
+}
+
+/**
+ * Converts a file key (storage path) to a download URL
+ * @param fileKey - The storage path/file key (e.g., '/users/{userId}/locations/home_123.jpg')
+ * @returns Download URL for the file
+ */
+export async function getPhotoDownloadUrl(fileKey: string): Promise<string> {
+  try {
+    // If it's already a full URL (legacy data or Google Photos URL), return as-is
+    if (fileKey.startsWith('http://') || fileKey.startsWith('https://')) {
+      return fileKey
+    }
+
+    const storage = getStorageInstance()
+    const storageRef = ref(storage, fileKey)
+    const downloadURL = await getDownloadURL(storageRef)
+    return downloadURL
+  } catch (error) {
+    console.error('Error getting photo download URL:', error)
     throw error
   }
 }

@@ -3,5 +3,9 @@
 // We export from .native as the default for TypeScript type checking
 export * from './storageService.native'
 
-// Export upload functions (platform-specific implementations)
-export { type UserStorage, uploadLocationPhoto } from './storageService.native'
+// Export upload and download functions (platform-specific implementations)
+export {
+  getPhotoDownloadUrl,
+  type UserStorage,
+  uploadLocationPhoto
+} from './storageService.native'
