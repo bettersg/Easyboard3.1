@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter } from 'solito/navigation'
 import { Text, View } from '../../components'
 import { useAuth } from '../../contexts'
 import { getUserStorage } from '../../services/storageService'
@@ -9,6 +10,8 @@ import { PWIDHome } from './PWIDHome'
 
 export function HomePage() {
   const { userType } = useAuth()
+  const router = useRouter()
+
   const [isLoading, setIsLoading] = useState(true)
   const [userTypeFromStorage, setUserTypeFromStorage] = useState<string | null>(
     null
@@ -49,10 +52,10 @@ export function HomePage() {
   // Route to appropriate home based on user type
   if (userTypeFromStorage === 'PWID') {
     return <PWIDHome />
-  }
-
-  if (userTypeFromStorage === 'CAREGIVER') {
+  } else if (userTypeFromStorage === 'CAREGIVER') {
     return <CaregiverHome />
+  } else {
+    router.push('/onboarding/1')
   }
 
   // Fallback if user type is unknown
