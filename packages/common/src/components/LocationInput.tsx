@@ -107,8 +107,9 @@ export const LocationInput = forwardRef<LocationInputRef, LocationInputProps>(
           }
 
           setSelectedLocation((prev) => {
+            console.log(result?.assets?.[0]?.uri, prev)
             if (prev) {
-              return { ...prev, photoUri }
+              return { ...prev, photoUri: result?.assets?.[0]?.uri }
             }
             return prev
           })
@@ -231,13 +232,15 @@ export const LocationInput = forwardRef<LocationInputRef, LocationInputProps>(
                       variant='text'
                     >
                       {location?.photoUri ? (
-                        <Image
-                          src={location?.photoUri}
-                          alt={location?.description || 'Location Photo'}
-                          contentPosition='top'
-                          contentFit='cover'
-                          fill
-                        />
+                        <View className='w-full h-[150px] rounded-md overflow-hidden flex items-center justify-center'>
+                          <Image
+                            src={location?.photoUri}
+                            alt={location?.description || 'Location Photo'}
+                            width={550}
+                            height={150}
+                            contentFit='cover'
+                          />
+                        </View>
                       ) : (
                         <View className='flex-row items-center justify-center gap-2'>
                           <Camera
