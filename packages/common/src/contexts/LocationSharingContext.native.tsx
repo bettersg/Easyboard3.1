@@ -16,6 +16,7 @@ import {
   getUserData,
   updatePWIDLocation
 } from '../services/userService'
+import type { PWIDUser } from '../types'
 
 type LocationSharingContextType = {
   isLocationSharing: boolean
@@ -234,16 +235,15 @@ export const LocationSharingProvider: React.FC<{
         if (!pwidPhoneNumber) return
         // Get PWID user data to find caregiver
         const pwidUser = await getUserData(pwidPhoneNumber)
-        if (
-          pwidUser &&
-          pwidUser.userType === 'PWID' &&
-          pwidUser.caregiverPhone
-        ) {
-          // Send notification to caregiver when location sharing starts
-          await notificationService.sendLocationShareNotification(
-            pwidPhoneNumber,
-            pwidUser.caregiverPhone
-          )
+        if (pwidUser && pwidUser.userType === 'PWID') {
+          const pwid = pwidUser as PWIDUser
+          if (pwid.caregiverPhone) {
+            // Send notification to caregiver when location sharing starts
+            await notificationService.sendLocationShareNotification(
+              pwidPhoneNumber,
+              pwid.caregiverPhone
+            )
+          }
         }
       } catch (error) {
         console.error('Error sending notification to caregiver:', error)
@@ -255,21 +255,20 @@ export const LocationSharingProvider: React.FC<{
         if (!pwidPhoneNumber) return
         // Get PWID user data to find caregiver
         const pwidUser = await getUserData(pwidPhoneNumber)
-        if (
-          pwidUser &&
-          pwidUser.userType === 'PWID' &&
-          pwidUser.caregiverPhone
-        ) {
-          const reason = arrivalDetectedRef.current
-            ? 'Arrived at destination'
-            : 'Location sharing stopped manually'
-          arrivalDetectedRef.current = false
-          // Send notification to caregiver when location sharing stops
-          await notificationService.sendLocationStopNotification(
-            pwidPhoneNumber,
-            pwidUser.caregiverPhone,
-            reason
-          )
+        if (pwidUser && pwidUser.userType === 'PWID') {
+          const pwid = pwidUser as PWIDUser
+          if (pwid.caregiverPhone) {
+            const reason = arrivalDetectedRef.current
+              ? 'Arrived at destination'
+              : 'Location sharing stopped manually'
+            arrivalDetectedRef.current = false
+            // Send notification to caregiver when location sharing stops
+            await notificationService.sendLocationStopNotification(
+              pwidPhoneNumber,
+              pwid.caregiverPhone,
+              reason
+            )
+          }
         }
       } catch (error) {
         console.error('Error sending stop notification to caregiver:', error)

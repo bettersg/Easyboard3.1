@@ -1,16 +1,11 @@
 // Web-friendly storage service using localStorage API
 
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
-import type { UserType } from '../types'
+import type { UserStorage } from '../types'
 import { signOut } from './authService.web'
-import { getStorageInstance } from './firebase.web'
+export type { UserStorage }
 
-export interface UserStorage {
-  uid: string | null
-  phoneNumber: string
-  userType: UserType | null
-  loggedAt: number // Unix timestamp when user last logged in
-}
+import { getStorageInstance } from './firebase.web'
 
 // Match the keys from native app config
 const USER_STORAGE_KEY = 'UserStorageData' // From native app.config.ts extra.userStorageKey
@@ -146,29 +141,6 @@ export const isSessionExpired = async (
   } catch (error) {
     console.error('Error checking session expiry:', error)
     return false // Default to not expired if there's an error
-  }
-}
-
-// Store appData in localStorage (web-specific)
-export const setAppDataStorage = async (appData: any): Promise<void> => {
-  try {
-    const storage = getStorage()
-    storage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(appData))
-  } catch (error) {
-    console.error('Error saving app data:', error)
-    throw error
-  }
-}
-
-// Retrieve appData from localStorage (web-specific)
-export const getAppDataStorage = async (): Promise<any | null> => {
-  try {
-    const storage = getStorage()
-    const data = storage.getItem(SETTINGS_STORAGE_KEY)
-    return data ? JSON.parse(data) : null
-  } catch (error) {
-    console.error('Error retrieving app data:', error)
-    return null
   }
 }
 

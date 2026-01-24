@@ -6,6 +6,7 @@ export * from './storageService.native'
 // Export upload and download functions (platform-specific implementations)
 export {
   getPhotoDownloadUrl,
+  type PWIDUser,
   type UserStorage,
   uploadLocationPhoto
 } from './storageService.native'

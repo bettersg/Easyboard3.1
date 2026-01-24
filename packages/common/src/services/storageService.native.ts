@@ -3,14 +3,8 @@ import messaging from '@react-native-firebase/messaging'
 import storage from '@react-native-firebase/storage'
 import Constants from 'expo-constants'
 import * as SecureStore from 'expo-secure-store'
-import type { UserType } from '../types'
-
-export interface UserStorage {
-  uid: string | null
-  phoneNumber: string
-  userType: UserType | null
-  loggedAt: number // Unix timestamp when user last logged in
-}
+import type { PWIDUser, UserStorage } from '../types'
+export type { UserStorage, PWIDUser }
 
 export const setUserStorage = async (
   userStorage: UserStorage
@@ -151,35 +145,6 @@ export const isSessionExpired = async (
   } catch (error) {
     console.error('Error checking session expiry:', error)
     return false // Default to not expired if there's an error
-  }
-}
-
-// Store appData in secure storage (native-specific)
-export const setAppDataStorage = async (appData: any): Promise<void> => {
-  try {
-    await SecureStore.setItemAsync(
-      Constants?.expoConfig?.extra?.settingsStoredKey,
-      JSON.stringify(appData)
-    )
-  } catch (error) {
-    console.error('Error saving app data:', error)
-    throw error
-  }
-}
-
-// Get appData from secure storage (native-specific)
-export const getAppDataStorage = async (): Promise<any | null> => {
-  try {
-    const storedData = await SecureStore.getItemAsync(
-      Constants?.expoConfig?.extra?.settingsStoredKey
-    )
-    if (storedData) {
-      return JSON.parse(storedData)
-    }
-    return null
-  } catch (error) {
-    console.error('Error getting app data:', error)
-    throw error
   }
 }
 

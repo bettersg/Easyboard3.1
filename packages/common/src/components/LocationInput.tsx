@@ -85,7 +85,9 @@ export const LocationInput = forwardRef<LocationInputRef, LocationInputProps>(
         })
 
         if (result && !result.canceled && result.assets[0]) {
-          let photoUri = result.assets[0].uri
+          const photoUri = result.assets[0].uri
+
+          let locationImageKey: string | undefined
 
           // On web, upload blob URLs to Firebase Storage
           if (Platform.OS === 'web' && photoUri.startsWith('blob:')) {
@@ -95,21 +97,26 @@ export const LocationInput = forwardRef<LocationInputRef, LocationInputProps>(
                 imageUri: string,
                 locationType: string
               ) => Promise<string>
-              photoUri = await uploadLocationPhotoWeb(photoUri, locationType)
-              console.log('photoUri', photoUri)
+              locationImageKey = await uploadLocationPhotoWeb(
+                photoUri,
+                locationType
+              )
             } catch (uploadError) {
               console.error(
                 'Error uploading image to Firebase Storage:',
                 uploadError
               )
-              // Continue with blob URL if upload fails
+              // Continue with no key if upload fails
             }
           }
 
           setSelectedLocation((prev) => {
-            console.log(result?.assets?.[0]?.uri, prev)
             if (prev) {
-              return { ...prev, photoUri: result?.assets?.[0]?.uri }
+              return {
+                ...prev,
+                photoUri: result?.assets?.[0]?.uri,
+                locationImageKey
+              }
             }
             return prev
           })

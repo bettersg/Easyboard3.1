@@ -7,19 +7,15 @@ import React, {
   useState
 } from 'react'
 import { signInWithPhoneNumber } from '../services/authService'
-import {
-  getUserStorage,
-  setAppDataStorage,
-  setUserStorage
-} from '../services/storageService'
-import { createUser, getUserAppData } from '../services/userService'
-import type { UserType } from '../types'
+import { getUserStorage, setUserStorage } from '../services/storageService'
+import { getUserData } from '../services/userService'
+import type { UserData, UserType } from '../types'
 
 // Types for different sections of the auth state
 type AuthState = {
   confirmation: FirebaseAuthTypes.ConfirmationResult | null
   hasAuthen: boolean
-  userType: UserType | null
+  userType: UserType | undefined
   firstTimeUser: boolean
   isLoading: boolean
 }
@@ -30,7 +26,7 @@ type AuthActions = {
   ) => void
   setAuthentication: (
     hasAuthen: boolean,
-    userType: UserType | null,
+    userType?: UserType,
     firstTimeUser?: boolean
   ) => void
   sendOTP: (
@@ -39,8 +35,8 @@ type AuthActions = {
   verifyOTP: (
     otp: string,
     phoneNumber: string,
-    userType: UserType | null,
-    isRegistration: boolean
+    isRegistration: boolean,
+    authUserType?: UserType
   ) => Promise<void>
 }
 
@@ -56,14 +52,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [confirmation, setConfirmation] =
     useState<FirebaseAuthTypes.ConfirmationResult | null>(null)
   const [hasAuthen, setHasAuthen] = useState<boolean>(false)
-  const [userType, setUserType] = useState<UserType | null>(null)
+  const [userType, setUserType] = useState<UserType>()
   const [firstTimeUser, setFirstTimeUser] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const setAuthentication = useCallback(
     (
       hasAuthen: boolean,
-      authUserType: UserType | null,
+      authUserType?: UserType,
       firstTimeUser: boolean = false
     ) => {
       setHasAuthen(hasAuthen)
@@ -128,8 +124,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (
       otp: string,
       phoneNumber: string,
-      authUserType: UserType | null,
-      isRegistration: boolean
+      isRegistration: boolean,
+      authUserType?: UserType
     ): Promise<void> => {
       if (!confirmation) {
         throw new Error('No confirmation found. Please try again.')
@@ -154,30 +150,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Update authentication state IMMEDIATELY after confirmation
       setAuthentication(true, authUserType, isRegistration)
 
-      // If this is a registration flow, create new user (userType should be provided)
-      if (isRegistration && authUserType) {
-        await createUser(phoneNumber, authUserType, userCredential.user.uid)
-      }
-
-      // Store user data in local storage
-      await setUserStorage({
-        phoneNumber,
-        uid: userCredential.user.uid,
-        userType: authUserType || null,
-        loggedAt: Date.now()
-      })
-
-      // After successful login/registration, fetch appData and cache locally
+      // Fetch user data to get all the details (skip for registration as it's not created yet)
+      let userData: UserData | null = null
       try {
-        const appData = await getUserAppData(phoneNumber)
-        if (appData) {
-          await setAppDataStorage(appData)
+        if (!isRegistration) {
+          userData = await getUserData(phoneNumber)
         }
       } catch (e) {
-        console.log('App data not found or error fetching:', e)
+        console.log('Error fetching user data during login:', e)
+      }
+
+      if (userData) {
+        // Store only UserStorage fields in local storage
+        const {
+          deviceName: _deviceName,
+          createdAt: _createdAt,
+          updatedAt: _updatedAt,
+          ...storageData
+        } = userData
+        await setUserStorage({
+          ...storageData,
+          loggedAt: Date.now()
+        })
+      } else {
+        await setUserStorage({
+          uid: userCredential.user.uid,
+          name: '',
+          phoneNumber,
+          userType: userType,
+          loggedAt: Date.now()
+        })
       }
     },
-    [confirmation, setAuthentication]
+    [confirmation, setAuthentication, userType]
   )
 
   // Combine all context values

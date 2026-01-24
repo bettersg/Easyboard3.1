@@ -9,6 +9,7 @@ export interface MarkerData {
   description: string
   latlng: LatLong
   photoUri?: string
+  locationImageKey?: string
 }
 
 export interface OnboardingFormData {

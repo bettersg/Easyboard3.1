@@ -8,6 +8,7 @@ import {
   getUserData,
   updatePWIDLocation
 } from '../services/userService'
+import type { PWIDUser } from '../types'
 
 type LocationSharingContextType = {
   isLocationSharing: boolean
@@ -45,11 +46,14 @@ export const LocationSharingProvider: React.FC<{
     try {
       if (!pwidPhoneNumber) return
       const pwidUser = await getUserData(pwidPhoneNumber)
-      if (pwidUser && pwidUser.userType === 'PWID' && pwidUser.caregiverPhone) {
-        await notificationService.sendLocationShareNotification(
-          pwidPhoneNumber,
-          pwidUser.caregiverPhone
-        )
+      if (pwidUser && pwidUser.userType === 'PWID') {
+        const pwid = pwidUser as PWIDUser
+        if (pwid.caregiverPhone) {
+          await notificationService.sendLocationShareNotification(
+            pwidPhoneNumber,
+            pwid.caregiverPhone
+          )
+        }
       }
     } catch (error) {
       console.error('Error sending notification to caregiver:', error)
@@ -61,16 +65,15 @@ export const LocationSharingProvider: React.FC<{
       try {
         if (!pwidPhoneNumber) return
         const pwidUser = await getUserData(pwidPhoneNumber)
-        if (
-          pwidUser &&
-          pwidUser.userType === 'PWID' &&
-          pwidUser.caregiverPhone
-        ) {
-          await notificationService.sendLocationStopNotification(
-            pwidPhoneNumber,
-            pwidUser.caregiverPhone,
-            reason || 'Location sharing stopped manually'
-          )
+        if (pwidUser && pwidUser.userType === 'PWID') {
+          const pwid = pwidUser as PWIDUser
+          if (pwid.caregiverPhone) {
+            await notificationService.sendLocationStopNotification(
+              pwidPhoneNumber,
+              pwid.caregiverPhone,
+              reason || 'Location sharing stopped manually'
+            )
+          }
         }
       } catch (error) {
         console.error('Error sending stop notification to caregiver:', error)

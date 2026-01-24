@@ -13,19 +13,17 @@ import {
 
 import type {
   CaregiverUser,
-  Location,
   PWIDUser,
-  SettingValues,
   UserData,
+  UserLocation,
   UserType
 } from '../types'
 import { getDatabaseInstance as getFirebaseDatabase } from './firebase.web'
 
 // Re-export types for convenience
-export type { UserType, Location, PWIDUser, CaregiverUser, UserData }
+export type { UserType, UserLocation, PWIDUser, CaregiverUser, UserData }
 
 // Get Firebase Database instance
-// Uses lazy initialization from firebase config
 const getDatabaseInstance = () => {
   if (typeof window === 'undefined') {
     throw new Error('Firebase Database can only be used in browser context')
@@ -60,7 +58,8 @@ const getDeviceName = (): string => {
 export async function createUser(
   phoneNumber: string,
   userType: UserType,
-  uid: string
+  uid: string,
+  initialData: Partial<UserData> = {}
 ): Promise<UserData> {
   try {
     const deviceName = getDeviceName()
@@ -70,20 +69,26 @@ export async function createUser(
     if (userType === 'PWID') {
       const pwidData: PWIDUser = {
         uid,
+        name: initialData.name || '',
+        phoneNumber,
         userType: 'PWID',
         deviceName,
         createdAt: timestamp,
-        updatedAt: timestamp
+        updatedAt: timestamp,
+        ...(initialData as Partial<PWIDUser>)
       }
       await set(ref(db, `users/${phoneNumber}`), pwidData)
       return pwidData
     } else {
       const caregiverData: CaregiverUser = {
         uid,
+        name: initialData.name || '',
+        phoneNumber,
         userType: 'CAREGIVER',
         deviceName,
         createdAt: timestamp,
-        updatedAt: timestamp
+        updatedAt: timestamp,
+        ...(initialData as Partial<CaregiverUser>)
       }
       await set(ref(db, `users/${phoneNumber}`), caregiverData)
       return caregiverData
@@ -96,7 +101,7 @@ export async function createUser(
 
 export async function updatePWIDLocation(
   phoneNumber: string,
-  location: Location
+  location: UserLocation
 ): Promise<void> {
   try {
     const db = getDatabaseInstance()
@@ -175,26 +180,29 @@ export async function getFCMToken(phoneNumber: string): Promise<string | null> {
 
 export function listenToPWIDLocation(
   phoneNumber: string,
-  callback: (location: Location) => void
+  callback: (location: UserLocation) => void
 ): () => void {
   const db = getDatabaseInstance()
   const locationRef = ref(db, `users/${phoneNumber}/location`)
 
-  const listener = (snapshot: any) => {
+  const listener = (snapshot: {
+    exists: () => boolean
+    val: () => UserLocation
+  }) => {
     if (snapshot.exists()) {
       callback(snapshot.val())
     }
   }
 
-  onValue(locationRef, listener)
+  onValue(locationRef, (snapshot) => listener(snapshot as any))
 
   // Return unsubscribe function
-  return () => off(locationRef, 'value', listener)
+  return () => off(locationRef, 'value')
 }
 
 export async function getPWIDsByCaregiverPhone(
   caregiverPhone: string
-): Promise<any[]> {
+): Promise<PWIDUser[]> {
   try {
     const db = getDatabaseInstance()
     const usersRef = ref(db, 'users')
@@ -205,13 +213,13 @@ export async function getPWIDsByCaregiverPhone(
     )
 
     const snapshot = await get(q)
-    const pwidUsers: any[] = []
+    const pwidUsers: PWIDUser[] = []
 
     if (snapshot.exists()) {
       snapshot.forEach((child) => {
         const data = child.val()
-        if (data.userType === 'PWID') {
-          pwidUsers.push({ pwidPhone: child.key, ...data })
+        if (data && data.userType === 'PWID') {
+          pwidUsers.push(data as PWIDUser)
         }
         return false // Continue iteration
       })
@@ -225,43 +233,27 @@ export async function getPWIDsByCaregiverPhone(
 }
 
 /**
- * Store appData in the database
- * Saves 'name' at the top level of the user object, not inside appData
+ * Update user data in the database with strict typing (Web)
  */
-export async function setUserAppData(
+export async function updateUserData(
   phoneNumber: string,
-  appData: SettingValues
+  updates: Partial<UserData>
 ): Promise<void> {
   try {
+    const db = getDatabaseInstance()
+    const userRef = ref(db, `users/${phoneNumber}`)
+    const snapshot = await get(userRef)
+
     const timestamp = Date.now()
-    const db = getDatabaseInstance()
-
-    await set(ref(db, `users/${phoneNumber}/appData`), {
-      ...appData,
-      phoneNumber,
+    const updatedData = {
+      ...(snapshot.exists() ? snapshot.val() : {}),
+      ...updates,
       updatedAt: timestamp
-    })
-    await set(ref(db, `users/${phoneNumber}/updatedAt`), timestamp)
-  } catch (error) {
-    console.error('Error saving user app data:', error)
-    throw error
-  }
-}
+    }
 
-/**
- * Read appData stored under users/${phoneNumber}/appData
- */
-export async function getUserAppData(
-  phoneNumber: string
-): Promise<SettingValues | null> {
-  try {
-    const db = getDatabaseInstance()
-    const snapshot = await get(ref(db, `users/${phoneNumber}/appData`))
-    console.log('App data snapshot:', snapshot.val(), phoneNumber, db, snapshot)
-
-    return snapshot.exists() ? snapshot.val() : null
+    await set(userRef, updatedData)
   } catch (error) {
-    console.error('Error reading user app data:', error)
+    console.error('Error updating user data:', error)
     throw error
   }
 }

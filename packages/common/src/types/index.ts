@@ -1,20 +1,5 @@
 // Shared types for the UI package
 
-export type SettingKey =
-  | 'name'
-  | 'careGiverPhoneNumber'
-  | 'houseAddrs'
-  | 'housePhotoUri'
-  | 'gotoFavAddrs'
-  | 'gotoFavAddrsName'
-  | 'gotoFavPhotoUri'
-  | 'schoolAddrs'
-  | 'schoolPhotoUri'
-
-export type SettingValues = {
-  [key in SettingKey]: any | any[]
-}
-
 // Re-export onboarding store types
 export type { LatLong, MarkerData } from '../stores/onboardingStore'
 
@@ -34,10 +19,14 @@ export type {
 } from './googleRoute'
 // Re-export user types
 export type {
+  Address,
   CaregiverUser,
-  Location,
+  LatLng,
   PWIDUser,
+  SavedPlace,
   UserData,
+  UserLocation,
+  UserStorage,
   UserType
 } from './user'
 

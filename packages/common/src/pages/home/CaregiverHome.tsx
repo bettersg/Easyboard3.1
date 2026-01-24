@@ -11,18 +11,7 @@ import { useRouter } from 'solito/navigation'
 import { Button, ScrollView, Text, View } from '../../components'
 import { getUserStorage } from '../../services/storageService'
 import { getPWIDsByCaregiverPhone } from '../../services/userService'
-
-interface PWIDUser {
-  pwidPhone: string
-  deviceName?: string
-  location?: {
-    lat: number
-    lng: number
-    updatedAt: number
-  }
-  userType: string
-  name: string
-}
+import type { PWIDUser } from '../../types'
 
 export function CaregiverHome() {
   const { top } = useSafeArea()
@@ -78,7 +67,7 @@ export function CaregiverHome() {
 
     return (
       <View
-        key={item.pwidPhone}
+        key={item.phoneNumber}
         className='bg-white rounded-xl p-4 mb-4 w-full flex-1'
       >
         <View className='flex-row justify-between items-start mb-3'>
@@ -110,17 +99,17 @@ export function CaregiverHome() {
         <View className='flex-row items-center mt-0.5 w-full gap-2'>
           <Button
             className='flex-row items-center flex-1 p-1.5 h-[3rem] justify-center gap-1 border-[#007AFF]'
-            onPress={() => handleCall(item.pwidPhone)}
+            onPress={() => handleCall(item.phoneNumber)}
             variant='outline'
-            disabled={!item.pwidPhone}
+            disabled={!item.phoneNumber}
           >
             <Phone width={30} height={30} color='#007AFF' />
             <Text className='font-bold text-base text-[#007AFF]'>Call</Text>
           </Button>
           <Button
             className='flex-row items-center flex-1 p-1.5 h-[3rem] justify-center gap-1'
-            onPress={() => handleTrackPWID(item.pwidPhone, item.name)}
-            disabled={!item.pwidPhone}
+            onPress={() => handleTrackPWID(item.phoneNumber, item.name)}
+            disabled={!item.phoneNumber}
           >
             <Pin width={30} height={30} color='#F4F5F6' />
             <Text className='font-bold text-base text-[#F4F5F6]'>Locate</Text>
@@ -137,7 +126,7 @@ export function CaregiverHome() {
         No PWIDs Found
       </Text>
       <Text className='text-base text-[#677281] text-center mt-2 px-4'>
-        PWIDs you`&apos;re assigned to will appear here once they register and
+        PWIDs you&apos;re assigned to will appear here once they register and
         link to your phone number.
       </Text>
     </View>

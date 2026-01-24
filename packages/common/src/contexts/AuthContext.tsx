@@ -11,19 +11,15 @@ import {
   type ConfirmationResult,
   signInWithPhoneNumber
 } from '../services/authService'
-import {
-  getUserStorage,
-  setAppDataStorage,
-  setUserStorage
-} from '../services/storageService'
-import { createUser, getUserAppData } from '../services/userService'
-import type { UserType } from '../types'
+import { getUserStorage, setUserStorage } from '../services/storageService'
+import { getUserData } from '../services/userService'
+import type { UserData, UserType } from '../types'
 
 // Types for different sections of the auth state
 type AuthState = {
   confirmation: ConfirmationResult | null
   hasAuthen: boolean
-  userType: UserType | null
+  userType: UserType | undefined
   firstTimeUser: boolean
   isLoading: boolean
 }
@@ -32,15 +28,15 @@ type AuthActions = {
   setConfirmation: (confirmation: ConfirmationResult | null) => void
   setAuthentication: (
     hasAuthen: boolean,
-    userType: UserType | null,
+    userType?: UserType,
     firstTimeUser?: boolean
   ) => void
   sendOTP: (phoneNumber: string) => Promise<ConfirmationResult>
   verifyOTP: (
     otp: string,
     phoneNumber: string,
-    userType: UserType | null,
-    isRegistration: boolean
+    isRegistration: boolean,
+    authUserType?: UserType
   ) => Promise<void>
 }
 
@@ -57,18 +53,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     null
   )
   const [hasAuthen, setHasAuthen] = useState<boolean>(false)
-  const [userType, setUserType] = useState<UserType | null>(null)
+  const [userType, setUserType] = useState<UserType>()
   const [firstTimeUser, setFirstTimeUser] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   const setAuthentication = useCallback(
     (
       hasAuthen: boolean,
-      userType: UserType | null,
+      authUserType?: UserType,
       firstTimeUser: boolean = false
     ) => {
       setHasAuthen(hasAuthen)
-      setUserType(userType)
+      setUserType(authUserType)
       setFirstTimeUser(firstTimeUser)
     },
     []
@@ -125,8 +121,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     async (
       otp: string,
       phoneNumber: string,
-      userType: UserType | null,
-      isRegistration: boolean
+      isRegistration: boolean,
+      authUserType?: UserType
     ): Promise<void> => {
       if (!confirmation) {
         throw new Error('No confirmation found. Please try again.')
@@ -137,7 +133,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       // For login (existing users), userType must be set
-      if (!isRegistration && !userType) {
+      if (!isRegistration && !authUserType) {
         throw new Error('User type is required for login')
       }
 
@@ -149,36 +145,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       // Update authentication state IMMEDIATELY after confirmation
-      // For registration without userType, set hasAuthen to true but userType to null
-      // User will complete registration in onboarding
-      setAuthentication(true, userType, isRegistration)
+      setAuthentication(true, authUserType, isRegistration)
 
-      // If this is a registration flow, create new user (userType should be provided)
-      // For registration, if userType is null, we'll create user later in onboarding
-      if (isRegistration && userType) {
-        await createUser(phoneNumber, userType, userCredential.user.uid)
-      }
-
-      // Store user data in local storage (use provided userType or null for registration)
-      await setUserStorage({
-        uid: userCredential.user.uid,
-        phoneNumber,
-        userType: userType || null,
-        loggedAt: Date.now()
-      })
-
-      // After successful login/registration, fetch appData and cache locally
+      // Fetch or create user data to get all the details
+      let userData: UserData | null = null
       try {
-        const appData = await getUserAppData(phoneNumber)
-        if (appData) {
-          await setAppDataStorage(appData)
+        if (!isRegistration) {
+          userData = await getUserData(phoneNumber)
         }
       } catch (e) {
-        // Non-fatal if appData missing; continue to app
-        console.log('App data not found or error fetching:', e)
+        console.log('Error fetching user data during login:', e)
+      }
+
+      if (userData) {
+        // Store only UserStorage fields in local storage
+        const {
+          deviceName: _deviceName,
+          createdAt: _createdAt,
+          updatedAt: _updatedAt,
+          ...storageData
+        } = userData
+        await setUserStorage({
+          ...storageData,
+          loggedAt: Date.now()
+        })
+      } else {
+        await setUserStorage({
+          uid: userCredential.user.uid,
+          name: '',
+          phoneNumber,
+          userType: userType,
+          loggedAt: Date.now()
+        })
       }
     },
-    [confirmation, setAuthentication]
+    [confirmation, setAuthentication, userType]
   )
 
   // Combine all context values
