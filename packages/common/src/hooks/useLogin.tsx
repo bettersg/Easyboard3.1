@@ -25,7 +25,7 @@ interface LoginContextType {
   setUserType: (type: UserType | null) => void
   sendOTP: () => Promise<void>
   verifyOTP: (otp: string) => Promise<boolean>
-  reset: () => void
+  reset: (soft: boolean) => void
 
   // Computed values
   formattedPhoneNumber: string
@@ -186,7 +186,7 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
     ]
   )
 
-  const reset = useCallback(() => {
+  const reset = useCallback((soft = false) => {
     setPhoneNumberState('')
     setUserTypeState(null)
     setIsRegistration(false)
@@ -195,7 +195,7 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
     setIsVerifyingOTP(false)
     setError(null)
     // Clean up reCAPTCHA when resetting (e.g., navigating back to login)
-    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+    if (Platform.OS === 'web' && typeof window !== 'undefined' && !soft) {
       // Dynamically import and call cleanup only on web
       import('../services/authService.web')
         .then((module) => {

@@ -28,7 +28,8 @@ export function LoginFlow() {
     otpSent,
     displayPhoneNumber,
     verifyOTP,
-    isVerifyingOTP
+    isVerifyingOTP,
+    reset
   } = useLogin()
 
   // Use ref to always access latest values
@@ -98,6 +99,7 @@ export function LoginFlow() {
 
   const handleBack = () => {
     if (currentStep === 'otp') {
+      reset(true)
       setCurrentStep('phone')
     } else {
       router.push('/')
