@@ -151,6 +151,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error('Failed to verify OTP')
       }
 
+      // Update authentication state IMMEDIATELY after confirmation
+      setAuthentication(true, authUserType, isRegistration)
+
       // If this is a registration flow, create new user (userType should be provided)
       if (isRegistration && authUserType) {
         await createUser(phoneNumber, authUserType, userCredential.user.uid)
@@ -173,9 +176,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch (e) {
         console.log('App data not found or error fetching:', e)
       }
-
-      // Update authentication state
-      setAuthentication(true, authUserType, isRegistration)
     },
     [confirmation, setAuthentication]
   )

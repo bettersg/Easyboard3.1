@@ -12,7 +12,7 @@ import {
   signInWithPhoneNumber
 } from '../services/authService'
 import {
-  getAppDataStorage,
+  getUserStorage,
   setAppDataStorage,
   setUserStorage
 } from '../services/storageService'
@@ -80,7 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const loadUserFromStorage = async () => {
       try {
-        const storedUser = await getAppDataStorage()
+        const storedUser = await getUserStorage()
 
         if (!isMounted) return
 
@@ -148,6 +148,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error('Failed to verify OTP')
       }
 
+      // Update authentication state IMMEDIATELY after confirmation
+      // For registration without userType, set hasAuthen to true but userType to null
+      // User will complete registration in onboarding
+      setAuthentication(true, userType, isRegistration)
+
       // If this is a registration flow, create new user (userType should be provided)
       // For registration, if userType is null, we'll create user later in onboarding
       if (isRegistration && userType) {
@@ -172,11 +177,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Non-fatal if appData missing; continue to app
         console.log('App data not found or error fetching:', e)
       }
-
-      // Update authentication state
-      // For registration without userType, set hasAuthen to true but userType to null
-      // User will complete registration in onboarding
-      setAuthentication(true, userType, isRegistration)
     },
     [confirmation, setAuthentication]
   )

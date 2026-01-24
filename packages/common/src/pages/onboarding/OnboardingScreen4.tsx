@@ -7,8 +7,10 @@ import {
   type LocationInputRef
 } from '../../components/LocationInput'
 import { SavedPlaceCard } from '../../components/SavedPlaceCard'
-import { getUserStorage } from '../../services/storageService'
-import { setUserAppData } from '../../services/userService'
+import { useAuth } from '../../contexts'
+import { useLogin } from '../../hooks'
+import { getUserStorage, setUserStorage } from '../../services/storageService'
+import { createUser, setUserAppData } from '../../services/userService'
 import type { MarkerData } from '../../stores/onboardingStore'
 import { useOnboardingStore } from '../../stores/onboardingStore'
 import { OnboardingLayout } from './OnboardingLayout'
@@ -196,6 +198,8 @@ interface FormData {
 
 export function OnboardingScreen4() {
   const { formData, updateFormData } = useOnboardingStore()
+  const { setAuthentication } = useAuth()
+  const { userType: selectedUserType } = useLogin()
   const router = useRouter()
   const [isSaving, setIsSaving] = useState(false)
   const homeLocationInputRef = useRef<LocationInputRef>(null)
@@ -305,6 +309,25 @@ export function OnboardingScreen4() {
 
         // Save to Firebase
         await setUserAppData(userStorage.phoneNumber, appData)
+
+        // Ensure user record is created in Firebase with correct userType
+        // And update local storage and global auth state
+        if (selectedUserType && userStorage.uid) {
+          await createUser(
+            userStorage.phoneNumber,
+            selectedUserType,
+            userStorage.uid
+          )
+
+          await setUserStorage({
+            ...userStorage,
+            userType: selectedUserType,
+            loggedAt: Date.now()
+          })
+
+          // Update global authentication state to allow access to /home
+          setAuthentication(true, selectedUserType, false)
+        }
 
         console.log('[OnboardingScreen4] Onboarding data saved successfully')
         savingCompleteRef.current = true
