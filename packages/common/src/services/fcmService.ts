@@ -1,5 +1,18 @@
+export interface FCMNotificationPayload {
+  to: string
+  notification: {
+    title: string
+    body: string
+  }
+  data?: Record<string, any>
+  priority: 'high' | 'normal'
+}
+
+export interface IFCMService {
+  sendNotification(payload: FCMNotificationPayload): Promise<boolean>
+  getInstance(): IFCMService
+}
+
 // Platform-agnostic re-exports
-// TypeScript will use this file, but the bundler will resolve to .native.ts or .web.ts at runtime
-// We export from .native as the default for TypeScript type checking
 export * from './fcmService.native'
 export { default } from './fcmService.native'

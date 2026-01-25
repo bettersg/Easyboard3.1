@@ -82,7 +82,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (storedUser && storedUser.phoneNumber) {
           // We found a user in storage, set them as authenticated
-          // Note: We might want to verify the token validity here if available
           setHasAuthen(true)
           setUserType(storedUser.userType)
         }
@@ -110,8 +109,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         ? phoneNumber
         : `+${phoneNumber}`
       const confirmationResult = await signInWithPhoneNumber(formattedPhone)
-      setConfirmation(confirmationResult)
-      return confirmationResult
+      setConfirmation(confirmationResult as ConfirmationResult)
+      return confirmationResult as ConfirmationResult
     },
     []
   )
@@ -147,7 +146,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Update authentication state IMMEDIATELY after confirmation
       setAuthentication(true, authUserType, isRegistration)
 
-      // Fetch or create user data to get all the details
+      // Fetch user data to get all the details (skip for registration as it's not created yet)
       let userData: UserData | null = null
       try {
         if (!isRegistration) {
@@ -174,12 +173,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           uid: userCredential.user.uid,
           name: '',
           phoneNumber,
-          userType: userType,
+          userType: authUserType,
           loggedAt: Date.now()
         })
       }
     },
-    [confirmation, setAuthentication, userType]
+    [confirmation, setAuthentication]
   )
 
   // Combine all context values

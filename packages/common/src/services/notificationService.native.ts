@@ -5,381 +5,219 @@ import notifee, {
 import messaging, {
   type FirebaseMessagingTypes
 } from '@react-native-firebase/messaging'
-import {
-  Alert,
-  type Permission,
-  PermissionsAndroid,
-  Platform
-} from 'react-native'
+import { PermissionsAndroid, Platform } from 'react-native'
 import fcmService from './fcmService'
+import type {
+  INotificationService,
+  NavigationCallback,
+  NotificationData
+} from './notificationService'
 import { getUserStorage } from './storageService'
 import { getFCMToken, storeFCMToken } from './userService'
 
-export interface NotificationData {
-  title: string
-  body: string
-  data?: Record<string, any>
-}
-
-// Navigation callback type - apps should provide their own navigation function
-export type NavigationCallback = (...args: any[]) => void
-
-// Store navigation callback - apps should set this during initialization
 let navigationCallback: NavigationCallback | null = null
 
-export function setNavigationCallback(callback: NavigationCallback): void {
-  navigationCallback = callback
-}
-
-function navigate(screen: string, params?: any): void {
+const navigate = (screen: string, params?: any): void => {
   if (navigationCallback) {
     navigationCallback(screen, params)
   } else {
-    console.warn(
-      'Navigation callback not set. Call setNavigationCallback() during app initialization.'
-    )
+    console.warn('Navigation callback not set in NotificationService')
   }
 }
 
-export class NotificationService {
-  private static instance: NotificationService
-
-  private constructor() {}
-
-  public static getInstance(): NotificationService {
-    if (!NotificationService.instance) {
-      NotificationService.instance = new NotificationService()
-    }
-    return NotificationService.instance
-  }
-
-  // Request permissions and get FCM token
-  public async initialize(): Promise<string | null> {
-    try {
-      let enabled = true
-
-      // Request permissions for Firebase Messaging (iOS only)
-      if (Platform.OS === 'ios') {
-        const authStatus = await messaging().requestPermission()
-        enabled =
-          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-          authStatus === messaging.AuthorizationStatus.PROVISIONAL
+const handleNotification = async (
+  remoteMessage: FirebaseMessagingTypes.RemoteMessage
+) => {
+  const { notification, data } = remoteMessage
+  if (notification) {
+    await notifee.displayNotification({
+      title: notification.title,
+      body: notification.body,
+      data: data,
+      android: {
+        channelId: 'default',
+        pressAction: {
+          id: 'default'
+        }
       }
+    })
+  }
+}
+
+export const notificationService: INotificationService = {
+  setNavigationCallback: (callback: NavigationCallback): void => {
+    navigationCallback = callback
+  },
+
+  initialize: async (): Promise<string | null> => {
+    try {
+      const authStatus = await messaging().requestPermission()
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL
 
       if (!enabled) {
-        console.log('Failed to get permissions for push notifications!')
+        console.warn('User declined notification permissions')
         return null
       }
 
-      // Create channel for Android (if needed)
       if (Platform.OS === 'android') {
         await notifee.createChannel({
-          id: 'location-share-cn',
-          name: 'Location Sharing',
-          description: 'Notifications for when location is shared.',
-          importance: AndroidImportance.HIGH,
-          vibration: true,
-          sound: 'default'
+          id: 'default',
+          name: 'Default Channel',
+          importance: AndroidImportance.HIGH
         })
       }
 
-      const userData = await getUserStorage()
-
-      // Register device for remote messages (required before getToken)
-      await messaging().registerDeviceForRemoteMessages()
-
-      // Get FCM token
-      const token = await messaging().getToken()
-      // Store token in database
-      if (userData) {
-        await storeFCMToken(userData.phoneNumber, token)
-      }
-
-      // Listen for token refresh
-      messaging().onTokenRefresh(async (new_token) => {
-        if (userData) {
-          await storeFCMToken(userData.phoneNumber, new_token)
+      const fcmToken = await messaging().getToken()
+      if (fcmToken) {
+        const userData = await getUserStorage()
+        if (userData?.phoneNumber) {
+          await storeFCMToken(userData.phoneNumber, fcmToken)
         }
-      })
-
-      return token
+      }
+      return fcmToken
     } catch (error) {
-      console.error('Error initializing notifications:', error)
+      console.error('Error initializing notification service:', error)
       return null
     }
-  }
+  },
 
-  // Check if notification permissions are granted
-  public async checkPermissions(): Promise<boolean> {
+  checkPermissions: async (): Promise<boolean> => {
     try {
-      if (Platform.OS === 'ios') {
-        const authStatus = await messaging().hasPermission()
-        return (
-          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-          authStatus === messaging.AuthorizationStatus.PROVISIONAL
-        )
-      } else {
-        // For Android 13+ (API 33+), check POST_NOTIFICATIONS permission
-        if (
-          Platform.OS === 'android' &&
-          parseInt(Platform.Version.toString()) >= 33
-        ) {
-          const granted = await PermissionsAndroid.check(
-            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS as Permission
-          )
-          return granted
-        } else {
-          // For older Android versions, use Notifee to check notification settings
-          const settings = await notifee.getNotificationSettings()
-          return settings.authorizationStatus === AuthorizationStatus.AUTHORIZED
-        }
-      }
+      const settings = await notifee.getNotificationSettings()
+      return settings.authorizationStatus === AuthorizationStatus.AUTHORIZED
     } catch (error) {
-      console.error('Error checking notification permissions:', error)
+      console.error('Error checking permissions:', error)
       return false
     }
-  }
+  },
 
-  // Request notification permissions with user-friendly prompt
-  public async requestPermissions(): Promise<boolean> {
+  requestPermissions: async (): Promise<boolean> => {
     try {
-      if (Platform.OS === 'ios') {
-        const authStatus = await messaging().requestPermission({
-          alert: true,
-          badge: true,
-          sound: true,
-          announcement: false,
-          carPlay: false,
-          criticalAlert: false,
-          provisional: false
-        })
-
-        const granted =
-          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-          authStatus === messaging.AuthorizationStatus.PROVISIONAL
-
-        if (granted) {
-          // Initialize notifications if permission granted
-          await this.initialize()
-        }
-
-        return granted
-      } else {
-        // For Android 13+ (API 33+), request POST_NOTIFICATIONS permission
-        console.log(
-          'Request permissions - Android version check:',
-          Platform.Version,
-          'Parsed:',
-          parseInt(Platform.Version.toString())
+      if (Platform.OS === 'android' && Platform.Version >= 33) {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS as any
         )
-        if (
-          Platform.OS === 'android' &&
-          parseInt(Platform.Version.toString()) >= 33
-        ) {
-          const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS as Permission,
-            {
-              title: 'Notification Permission',
-              message:
-                'EasyBoard needs notification permissions to alert your caregiver when you share your location.',
-              buttonNeutral: 'Ask Me Later',
-              buttonNegative: 'Cancel',
-              buttonPositive: 'OK'
-            }
-          )
-
-          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            await this.initialize()
-            return true
-          } else {
-            return false
-          }
-        } else {
-          // For older Android versions, check current permissions and open settings if needed
-          console.log('Using Notifee for older Android version')
-          const settings = await notifee.getNotificationSettings()
-          if (settings.authorizationStatus === AuthorizationStatus.DENIED) {
-            // Open notification settings for user to enable
-            await notifee.openNotificationSettings()
-            return false
-          } else {
-            // Initialize notifications if already authorized
-            await this.initialize()
-            return true
-          }
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          return false
         }
       }
+      const settings = await notifee.requestPermission()
+      return settings.authorizationStatus === AuthorizationStatus.AUTHORIZED
     } catch (error) {
-      console.error('Error requesting notification permissions:', error)
+      console.error('Error requesting permissions:', error)
       return false
     }
-  }
+  },
 
-  // Send notification to caregiver when PWID shares location
-  public async sendLocationShareNotification(
+  sendLocationShareNotification: async (
     pwidPhoneNumber: string,
     caregiverPhoneNumber: string
-  ): Promise<void> {
+  ): Promise<void> => {
     try {
-      // Get caregiver's FCM token
       const caregiverToken = await getFCMToken(caregiverPhoneNumber)
-      if (!caregiverToken) {
-        console.log('Caregiver FCM token not found')
-        Alert.alert(
-          'Information',
-          'Caregiver is not available for notifications'
-        )
-        return
-      }
+      if (!caregiverToken) return
 
-      const notificationData: NotificationData = {
-        title: 'Location Share',
-        body: `${pwidPhoneNumber} has shared their location.`,
+      await notificationService.sendFCMNotification(caregiverToken, {
+        title: 'Location Sharing',
+        body: `User ${pwidPhoneNumber} has started sharing their location with you.`,
         data: {
-          type: 'location-share',
-          pwidPhoneNumber,
-          timestamp: Date.now().toString()
+          type: 'location_sharing_start',
+          pwidPhoneNumber
         }
-      }
-
-      // Send notification via Firebase Cloud Messaging
-      await this.sendFCMNotification(caregiverToken, notificationData)
-
-      console.log('Location share notification sent successfully')
+      })
     } catch (error) {
       console.error('Error sending location share notification:', error)
     }
-  }
+  },
 
-  // Send notification to caregiver when PWID stops sharing location
-  public async sendLocationStopNotification(
+  sendLocationStopNotification: async (
     pwidPhoneNumber: string,
     caregiverPhoneNumber: string,
     reason?: string
-  ): Promise<void> {
+  ): Promise<void> => {
     try {
-      // Get caregiver's FCM token
       const caregiverToken = await getFCMToken(caregiverPhoneNumber)
-      if (!caregiverToken) {
-        console.log('Caregiver FCM token not found')
-        Alert.alert(
-          'Information',
-          'Caregiver is not available for notifications'
-        )
-        return
-      }
+      if (!caregiverToken) return
 
-      const stopReason = reason || 'Location sharing stopped'
-      const notificationData: NotificationData = {
-        title: 'Location Share Stopped',
-        body: `${pwidPhoneNumber} has stopped sharing their location. ${stopReason}`,
+      await notificationService.sendFCMNotification(caregiverToken, {
+        title: 'Location Stopped',
+        body: `User ${pwidPhoneNumber} has stopped sharing their location. ${reason || ''}`,
         data: {
-          type: 'location-stop',
-          pwidPhoneNumber,
-          reason: stopReason,
-          timestamp: Date.now().toString()
+          type: 'location_sharing_stop',
+          pwidPhoneNumber
         }
-      }
-
-      // Send notification via Firebase Cloud Messaging
-      await this.sendFCMNotification(caregiverToken, notificationData)
-
-      console.log('Location stop notification sent successfully')
+      })
     } catch (error) {
       console.error('Error sending location stop notification:', error)
     }
-  }
+  },
 
-  // Send FCM notification
-  private async sendFCMNotification(
+  sendFCMNotification: async (
     token: string,
     notification: NotificationData
-  ): Promise<void> {
+  ): Promise<void> => {
     try {
-      // Use FCM service to send notification through backend
-      const success = await fcmService.sendNotification({
+      await fcmService.sendNotification({
         to: token,
-        notification: { title: notification.title, body: notification.body },
+        notification: {
+          title: notification.title,
+          body: notification.body
+        },
         data: notification.data,
         priority: 'high'
       })
-
-      if (success) {
-        console.log('FCM notification sent successfully through backend')
-      } else {
-        console.log('Failed to send FCM notification through backend')
-      }
     } catch (error) {
       console.error('Error sending FCM notification:', error)
-      throw error
     }
-  }
+  },
 
-  // Set up notification listeners
-  public setupNotificationListeners(): (() => void) | undefined {
-    // Handle notification when app is in foreground
-    const unsubscribeForeground = messaging().onMessage(
+  setupNotificationListeners: (): (() => void) | undefined => {
+    const unsubscribeOnMessage = messaging().onMessage(
       async (remoteMessage) => {
-        const userData = await getUserStorage()
-        if (userData?.userType === 'CAREGIVER') {
-          Alert.alert(
-            remoteMessage.notification?.title || 'New Message',
-            remoteMessage.notification?.body || '',
-            [
-              {
-                text: 'OK',
-                onPress: async () =>
-                  await this.handleNotification(remoteMessage)
-              }
-            ]
-          )
-        }
+        handleNotification(remoteMessage)
       }
     )
 
-    // Handle notification when app is opened from background
-    messaging().onNotificationOpenedApp((remoteMessage) => {
-      if (remoteMessage) this.handleNotification(remoteMessage)
-    })
+    const unsubscribeOnNotificationOpenedApp =
+      messaging().onNotificationOpenedApp((remoteMessage) => {
+        if (remoteMessage.data?.type === 'location_sharing_start') {
+          navigate('/home', {
+            pwidPhoneNumber: remoteMessage.data.pwidPhoneNumber
+          })
+        }
+      })
 
-    // Handle notification when app is opened from quit state (cold start)
     messaging()
       .getInitialNotification()
       .then((remoteMessage) => {
-        if (remoteMessage) this.handleNotification(remoteMessage)
+        if (remoteMessage) {
+          if (remoteMessage.data?.type === 'location_sharing_start') {
+            navigate('/home', {
+              pwidPhoneNumber: remoteMessage.data.pwidPhoneNumber
+            })
+          }
+        }
       })
 
-    return unsubscribeForeground
-  }
-
-  private async handleNotification(
-    remoteMessage: FirebaseMessagingTypes.RemoteMessage
-  ) {
-    const type = remoteMessage.data?.type
-    const userData = await getUserStorage()
-
-    if (!type || !userData) return
-
-    switch (type) {
-      case 'location-share':
-        if (userData.userType === 'CAREGIVER') {
-          const pwidPhoneNumber =
-            remoteMessage.data?.pwidPhoneNumber?.toString()
-          if (pwidPhoneNumber) navigate('TrackPWIDMap', { pwidPhoneNumber })
-        }
-        break
-      case 'location-stop':
-        if (userData.userType === 'CAREGIVER') {
-          const pwidPhoneNumber =
-            remoteMessage.data?.pwidPhoneNumber?.toString()
-          if (pwidPhoneNumber) navigate('TrackPWIDMap', { pwidPhoneNumber })
-        }
-        break
-      // 👉 Add more notification types below if needed
-      default:
-        console.log('Unhandled notification type:', type)
+    return () => {
+      unsubscribeOnMessage()
+      unsubscribeOnNotificationOpenedApp()
     }
   }
-}
+} satisfies INotificationService
 
-export default NotificationService.getInstance()
+export default notificationService
+
+// Re-export methods individually for backward compatibility
+export const {
+  initialize,
+  checkPermissions,
+  requestPermissions,
+  sendLocationShareNotification,
+  sendLocationStopNotification,
+  sendFCMNotification,
+  setupNotificationListeners,
+  setNavigationCallback
+} = notificationService
