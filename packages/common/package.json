@@ -1,0 +1,63 @@
+{
+  "name": "@repo/common",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./components": "./src/components/index.ts",
+    "./pages": "./src/pages/index.ts",
+    "./provider": "./src/provider/index.tsx",
+    "./contexts": "./src/contexts/index.ts",
+    "./services": "./src/services/index.ts",
+    "./types": "./src/types/index.ts",
+    "./hooks": "./src/hooks/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "generate:component": "turbo gen react-component",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
+    "@turbo/gen": "^2.4.0",
+    "@types/node": "^22.13.0",
+    "eslint": "^9.19.0",
+    "tailwindcss": "^3.4.1",
+    "typescript": "5.7.3"
+  },
+  "dependencies": {
+    "@gorhom/bottom-sheet": "^5",
+    "@nandorojo/iconic": "0.0.1",
+    "@react-native-firebase/app": "^23.5.0",
+    "@react-native-firebase/auth": "^23.5.0",
+    "@react-native-firebase/database": "^23.5.0",
+    "@react-native-firebase/functions": "^23.7.0",
+    "@react-native-firebase/messaging": "^23.5.0",
+    "@react-native-firebase/storage": "^23.8.3",
+    "@storybook/react": "^9",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "expo-image": "^3.0.11",
+    "expo-image-picker": "^17.0.9",
+    "expo-linear-gradient": "^14.0.2",
+    "expo-location": "^19.0.7",
+    "firebase": "^12.6.0",
+    "nativewind": "4.1.23",
+    "next": "15",
+    "react-hook-form": "^7.66.1",
+    "react-native-actions-sheet": "^10.1.0",
+    "react-native-device-info": "^15.0.1",
+    "react-native-dots-pagination": "^0.3.1",
+    "react-native-gesture-handler": "^2.25",
+    "react-native-maps": "^1.26.18",
+    "react-native-reanimated": "3.18",
+    "react-native-safe-area-context": "^5.6.2",
+    "react-native-svg": "^15.15.1",
+    "react-responsive": "^10.0.0",
+    "solito": "^5.0.0",
+    "tailwind-merge": "^3.0.1",
+    "use-debounce": "^10.0.6",
+    "zustand": "^5.0.8"
+  }
+}

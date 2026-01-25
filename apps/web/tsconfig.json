@@ -1,0 +1,27 @@
+{
+  "extends": "@repo/typescript-config/nextjs.json",
+  "compilerOptions": {
+    "jsxImportSource": "nativewind",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "next-env.d.ts",
+    "next.config.js",
+    ".next/types/**/*.ts",
+    "../../packages/ui/**/*.tsx",
+    "../../packages/ui/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "../../packages/ui/**/*.native.tsx",
+    "../../packages/ui/**/*.native.ts",
+    "../../packages/ui/src/contexts/LocationSharingContext.native.tsx",
+    "../../packages/ui/src/hooks/useCallCaregiver.native.ts"
+  ]
+}

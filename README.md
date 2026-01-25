@@ -1,236 +1,150 @@
-<a name="readme-top"></a>
+# EasyBoard Monorepo
 
-<!--
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![LinkedIn][linkedin-shield]][linkedin-url]
-[![MIT License][license-shield]][license-url] -->
+Cross-platform monorepo for EasyBoard, based on Solito, Expo and Next.js
 
-<!-- PROJECT LOGO -->
-<br />
-<div align="center">
-  <a href="https://github.com/Engineering-Good/Easyboard3">
-    <img src="https://play-lh.googleusercontent.com/Qpku2nQB-f9pZQ7escFp6dBeJ99gpO4SKEk4quAPSH-sjQTG10pyxs-TBgDgvj32DbY=w240-h480-rw" alt="Logo" width="120" height="120">
-  </a>
+## Repository Structure
 
-<h3 align="center">EasyBoard</h3>
-
-  <p>
-    A product to empower <i>Persons with Intellectual Disabilities (PWIDs)</i> navigate to <br/>and from work and school with greater independence
-    <br />
-    <br />
-    <a href="https://github.com/Engineering-Good/Easyboard3"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://www.figma.com/file/CVEilo3F5uMhcf54ZosAx9/EasyBird-3.0?type=design&node-id=228-2&mode=design&t=NBYwOBYCNSKb0QSW-0">View Figma Wires</a>
-    ·
-    <a href="https://github.com/Engineering-Good/Easyboard3/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/Engineering-Good/Easyboard3/issues">Request Feature</a>
-  </p>
-</div>
-
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#deployment">Deployment</a></li>
-      </ul>
-    </li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#additional-links">Additional Links</a></li>
-<!--     <li><a href="#acknowledgments">Acknowledgments</a></li> -->
-  </ol>
-</details>
-
-<!-- ABOUT THE PROJECT -->
-
-## About The Project
-
-<div align="center">
-  <img src="https://github.com/Engineering-Good/Easyboard3/assets/3391733/b29520ad-6fc4-4000-866f-43ca7eb88951" />
-</div>
-
-### No solution comes with product first in mind. Here, we present our findings and thought processes that lead us to our solution.
-
-<div align="center">
-  <img width="100%" src="https://github.com/Engineering-Good/Easyboard3/assets/3391733/4d7044eb-e1c1-4006-ba3a-e042628d89b4" />
-</div>
-
-- Current products (e.g. Google Maps, Apple Maps):
-  - Too complicated, typically cluttered with too many features
-  - Offer too many options for routes
-  - Do not tailor routes according to common challenges faced by PWIDs
-  - Do not have step-by-step guides in commute
-- The app should provide clear and concise instructions, and use visual aids to supplement audio instructions.
-- The app should also have safety features built-in, such as the ability to share the user's location with their caregiver or call their caregiver in an emergency.
-- As each person is unique, the app should be developed in collaboration with neurodivergent individuals to ensure accessibility and usability.
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-### Built With
-
-[![React][React-native]][React-native-url]
-[![Expo][Expo]][Expo-url]
-[![Typescript][Typescript]][Typescript-url]
-[![Tailwind]][Tailwind-url]
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-<!-- GETTING STARTED -->
+```text
+├── apps/
+│   ├── web/             # Next.js web application
+│   ├── native/          # Expo/React Native app
+│   └── functions/       # Firebase Cloud Functions
+├── packages/
+│   ├── common/          # Core business logic, shared UI, and services
+│   │   ├── src/
+│   │   │   ├── components/ # Core UI components (NativeWind)
+│   │   │   ├── contexts/   # React Contexts for global state
+│   │   │   ├── helpers/    # Utility functions
+│   │   │   ├── hooks/      # Shared React Hooks
+│   │   │   ├── pages/      # Shared pages (platform agnostic)
+│   │   │   ├── provider/   # App level providers (Theme, Auth, etc.)
+│   │   │   ├── services/   # Firebase and Google API abstractions
+│   │   │   ├── stores/     # State management stores
+│   │   │   └── types/      # Shared TypeScript interfaces
+│   ├── eslint-config/   # Shared ESLint configuration
+│   └── typescript-config/ # Shared TypeScript configuration
+└── package.json         # Root package.json with workspaces
+```
 
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
-
 ### Prerequisites
 
-To use Expo, you need to have the following tools installed on your machine:
+- Node.js >= 20
+- Yarn 4.11.0
 
-- Node.js LTS release - Only Node.js LTS releases (even-numbered) are recommended.
-- Git for source control.
-- Watchman (for Linux or macOS users).
+```bash
+# this should be sufficient to enable yarn in most Node.js installations
+corepack enable
+```
 
-- npm
+### Installation
 
-  ```sh
-  npm install
+Clone the repository and install dependencies:
+    ```bash
+    yarn install
+    ```
 
-  # first time only - create a development build 
-  # https://docs.expo.dev/guides/local-app-development/#local-app-compilation
-  npx expo run:android # for android, requires android studio to be installed
-  npx expo run:ios # for ios, requires a mac with xcode installed
+### Add Environment Variables
+Refer to the `.env.example` files and create corresponding `.env` files with the required values.
 
-  # subsequently to start the dev server (not needed to be run with the above commands)
-  npx expo start # or "npm run start"
-  ```
+### Local Development Setup (Native)
 
--  iOS
-  - To run it there 2 methods, through simulator or IOS device.
-  - To run iOS simulator, please download [XCode](https://developer.apple.com/xcode/) first
-    - Make sure you have command line tools active - [See Thread](https://developer.apple.com/forums/thread/680490)
-  - For more information, see -> [How to run or debug iOS build](https://github.com/Engineering-Good/Easyboard3/blob/develop/wiki/How-to-run-or-debug-IOS-build.md)
-- Android
-  - Can also be run on either the emulator or a physical device
-  - For emulator, follow https://developer.android.com/studio/run/managing-avds
-  - To run on a device, ensure Android Studio is installed with Android command line tools installed and follow https://developer.android.com/studio/run/device
+If you are developing for Android or iOS locally, ensure you have the following prerequisites installed (refer to the most updated instructions [here](https://docs.expo.dev/get-started/set-up-your-environment/?mode=development-build&buildEnv=local)):
 
-- Troubleshooting
-  ```sh
-  # if you encounter any issues while creating a development build, try deleting the ios and/or android folders and running
-  npx expo prebuild
+#### macOS Setup
 
-  # if there still are issues, then it is likely an issue with one of the dependencies or incompatible ios/android build tools
-  ```
+Install Watchman and JDK
+```bash
+brew install watchman
+brew install openjdk@17
+```
 
-### Deployment
+For `openjdk@17`, you may need to add it to your `PATH` and `JAVA_HOME`. Add the following to your shell config file (e.g., `~/.zshrc` or `~/.bash_profile`):
+```bash
+export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"
+export JAVA_HOME="/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home"
+```
 
-Read - [How to Deploy](https://github.com/Engineering-Good/Easyboard3/blob/develop/wiki/How-to-Deploy.md)
+Install Xcode Command Line Tools
+```bash
+xcode-select --install
+```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+#### Windows Setup
 
-<!-- ROADMAP -->
+If you are on Windows, follow these steps to set up the Android development environment:
 
-## Roadmap
+- **Install OpenJDK 17**: You can use [Chocolatey](https://chocolatey.org/): `choco install openjdk17`.
+- **Install Android Studio**: Download and install from [official site](https://developer.android.com/studio).
+- **Configure SDK**: Ensure "Android SDK Platform" and "Android Virtual Device" are installed.
+- **Environment Variables**: Set `JAVA_HOME` to your JDK path and `ANDROID_HOME` to your Android SDK location. Add the `platform-tools` and `emulator` directories to your `PATH`.
 
-See - [Easy Board 3.0 User story](https://docs.google.com/spreadsheets/d/1vOaOzBdL_A_mHRzqN2DGIG9LDEJUQBOyW4n07hkDQpw/edit#gid=0)
+#### Development Builds
+Run the following to create a development build. Typically you would only need to run these commands once unless you are making changes to the native configs (note that MacOS is required for iOS build/development):
+```bash
+# in the monorepo root
+yarn native:prebuild
 
-See the [open issues](https://github.com/Engineering-Good/Easyboard3/issues) for a full list of proposed features (and known issues).
+yarn native:android # For Android
+# and/or
+yarn native:ios     # For iOS (macOS only)
+```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+If you are running the above commands for the first time, the dev server will automatically start after the build is completed. For subsequent runs, you can simply run `yarn dev`
 
-<!-- CONTRIBUTING -->
+For more detailed instructions (Android Studio, iOS Simulator, etc.), refer to the official [Expo Environment Setup Guide](https://docs.expo.dev/get-started/set-up-your-environment/?mode=development-build&buildEnv=local).
 
-## Contributing
+### Development
 
-Contributions are what make the community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+To run all services (Functions, Native dev server, and Web dev server):
+```bash
+yarn dev
+```
 
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
+#### Running specific applications (from the monorepo root)
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+- **Web only**: `yarn web:dev`
+- **Native iOS**: `yarn native:ios`
+- **Native Android**: `yarn native:android`
+- **Native Dev Server**: `yarn native:dev`
 
-Feel free to reach out to [Richard](https://github.com/kooijmanrc) or [JR](https://github.com/jjingrong) if you need any help, or would like to be added as an active member
+### Building
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+- **Build all**: `yarn build`
+- **Build specific**: `yarn turbo build --filter=<app-name>`
 
-<!-- CONTACT -->
+### Linting and Formatting
 
-## Additional Links
+- **Lint**: `yarn lint`
+- **Format**: `yarn format`
 
-Github Project Link: [https://github.com/Engineering-Good/Easyboard3](https://github.com/Engineering-Good/Easyboard3)
+## Troubleshooting
+Many errors (especially Typescript/import errors) an be resolved by deleting `node_modules` and running `yarn install`. There is a convenience script to delete the various `node_modules` folder:
 
-#### Documentation & Tutorials
+```bash
+yarn clean
+```
+For React Native/Expo specific errors, it might be worth doing the above and then generating a new build
+```bash
+yarn native:prebuild
 
-| Source                                             | Link                                                                                                                    |
-| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| From engineering good1                             | [Notion Link](https://engineeringgood.notion.site/Easyboard-React-Tutorials-b8c16faa2b4d481db50e6342503e23ef)           |
-| From engineering good2                             | [Notion Link](https://www.notion.so/engineeringgood/Review-of-EasyBoard-2-0-497f8a96cb794f20b1516f663a4fa8c0)           |
-| From better sg                                     | [Notion Link](https://www.notion.so/better/Team-Members-Dashboard-40b604433fda413a895d5514e907aafc)                     |
-| Knowledge Transfer, Feb 2023                       | [Video](https://drive.google.com/file/d/1BaVut7JaEv9o9DL-SgqqNA5_UwMtmYVC/view)                                         |
-| Google-Routes API Reference                        | [Documentation (General)](https://developers.google.com/maps/documentation/routes)                                      |
-| Google-Routes API Reference                        | [Documentation - Compute Routes](https://developers.google.com/maps/documentation/routes/compute_route_directions)      |
-| (Tutorial) Online react course                     | [Udemy Course](https://nlbsg.udemy.com/course/react-native-the-practical-guide/learn/lecture/31197688?start=0#overview) |
-| (Tutorial) React Native getting started page       | [React-Native Docs](https://reactnative.dev/docs/environment-setup)                                                     |
-| (Tutorial) Official TypeScript Handbook            | [Typescript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)                                          |
-| (Tutorial) Overview on using React with Typescript | [React + TypeScript Cheatsheet](https://github.com/typescript-cheatsheets/react#reacttypescript-cheatsheets)            |
+yarn native:android # For Android
+# and/or
+yarn native:ios     # For iOS (macOS only)
+```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+## Repo conventions
+- Gneneral workflow:
+    1. Create primitive UI in `packages/common/src/components`.
+    2. Compose pages in `packages/common/src/pages`.
+    3. Register routes in `apps/native/app` and `apps/web/app` (Next.js App Router).
+- Business logic should reside in `packages/common/src/services`.
+- Use **NativeWind** for styling across both platforms.
 
-<!-- ACKNOWLEDGMENTS -->
+## Key Features
 
-<!--
-## Acknowledgments
-
-- []()
-- []()
-- []()
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
- -->
-
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-
-[contributors-shield]: https://img.shields.io/github/contributors/Engineering-Good/Easyboard3.svg?style=for-the-badge
-[contributors-url]: https://github.com/Engineering-Good/Easyboard3/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/Engineering-Good/Easyboard3.svg?style=for-the-badge
-[forks-url]: https://github.com/Engineering-Good/Easyboard3/network/members
-[stars-shield]: https://img.shields.io/github/stars/Engineering-Good/Easyboard3.svg?style=for-the-badge
-[stars-url]: https://github.com/Engineering-Good/Easyboard3/stargazers
-[issues-shield]: https://img.shields.io/github/issues/Engineering-Good/Easyboard3.svg?style=for-the-badge
-[issues-url]: https://github.com/Engineering-Good/Easyboard3/issues
-[license-shield]: https://img.shields.io/github/license/Engineering-Good/Easyboard3.svg?style=for-the-badge
-[license-url]: https://github.com/Engineering-Good/Easyboard3/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://www.linkedin.com/company/engineeringgood/
-[product-screenshot]: images/screenshot.png
-[React.js]: https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB
-[React-url]: https://reactjs.org/
-[React-Native]: https://img.shields.io/badge/react_native-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB
-[React-native-url]: https://reactnative.dev/
-[Expo]: https://img.shields.io/badge/expo-1C1E24?style=for-the-badge&logo=expo&logoColor=#D04A37
-[Expo-url]: https://expo.dev/
-[Typescript]: https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white
-[Typescript-url]: https://www.typescriptlang.org/
-[Typescript-url]: https://www.typescriptlang.org/
-[Tailwind]: https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white
-[Tailwind-url]: https://www.nativewind.dev/overview/
+- **Shared UI/UX**: Over 90% code sharing between Web and Native using Solito.
+- **NativeWind**: Tailwind CSS for universal styling.
+- **Firebase Integration**: Unified services for Auth, Database, and Functions.
+- **Type Safety**: Full-stack TypeScript support.
