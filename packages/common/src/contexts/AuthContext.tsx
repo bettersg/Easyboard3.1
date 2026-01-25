@@ -157,15 +157,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (userData) {
-        // Store only UserStorage fields in local storage
-        const {
-          deviceName: _deviceName,
-          createdAt: _createdAt,
-          updatedAt: _updatedAt,
-          ...storageData
-        } = userData
         await setUserStorage({
-          ...storageData,
+          ...userData,
+          uid: userCredential.user.uid,
+          name: '',
+          phoneNumber,
+          userType: authUserType,
           loggedAt: Date.now()
         })
       } else {
