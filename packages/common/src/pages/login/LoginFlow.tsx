@@ -110,10 +110,7 @@ export function LoginFlow() {
     console.log('[LoginFlow] handleVerifyOTP called')
     try {
       await verifyOTP(otp)
-      // If verifyOTP completes without error, check if user has existing data
-      console.log(
-        '[LoginFlow] OTP verification successful, checking for existing data'
-      )
+
       verificationCompleteRef.current = true
       // New user or no existing data - go to onboarding
       console.log(
