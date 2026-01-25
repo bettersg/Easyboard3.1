@@ -121,8 +121,8 @@ export function LoginFlow() {
       )
       router.push('/onboarding/1')
     } catch (err) {
-      // Errors are handled internally by verifyOTP via alerts
       console.error('[LoginFlow] OTP verification failed:', err)
+      alert('Invalid OTP')
     }
   }
 

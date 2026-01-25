@@ -142,12 +142,12 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
 
       // For existing users (login), userType should already be set from getUserData
       // For new users (registration), userType will be null - they'll select it in onboarding
-      if (!userType && !isRegistration) {
-        const errorMsg = 'User type is required. Please try logging in again.'
-        setError(errorMsg)
-        Alert.alert('Error', errorMsg)
-        return false
-      }
+      // if (!userType && !isRegistration) {
+      //   const errorMsg = 'User type is required. Please try logging in again.'
+      //   setError(errorMsg)
+      //   Alert.alert('Error', errorMsg)
+      //   return false
+      // }
 
       setIsVerifyingOTP(true)
       setError(null)
@@ -170,9 +170,7 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
             ? err.message
             : 'Failed to verify OTP. Please try again.'
         setError(errorMsg)
-        console.error('Error verifying OTP:', err)
-        Alert.alert('Error', errorMsg)
-        return false
+        throw err
       } finally {
         setIsVerifyingOTP(false)
       }

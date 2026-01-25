@@ -132,9 +132,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       // For login (existing users), userType must be set
-      if (!isRegistration && !authUserType) {
-        throw new Error('User type is required for login')
-      }
+      // if (!isRegistration && !authUserType) {
+      //   throw new Error('User type is required for login')
+      // }
 
       // Confirm the OTP
       const userCredential = await confirmation.confirm(otp)
