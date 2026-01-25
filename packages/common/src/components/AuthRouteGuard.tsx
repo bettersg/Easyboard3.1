@@ -58,6 +58,8 @@ export function AuthRouteGuard({ children }: AuthRouteGuardProps) {
         return
       }
 
+      console.log('hasAuthen', hasAuthen)
+
       // Scenario 2: User is accessing a protected route
       if (!hasAuthen) {
         router.replace('/login')
