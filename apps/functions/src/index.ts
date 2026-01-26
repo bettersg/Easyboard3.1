@@ -78,7 +78,7 @@ interface GoogleRouteRequest {
  * Enables CORS to be called from the client app.
  */
 export const sendNotification = onRequest(
-  { cors: ['https://easyboard-sg.web.app', 'http://localhost:3001'] },
+  { cors: ['https://easyboard-sg.web.app', 'http://localhost:3001', 'https://easyboard3.vercel.app'] },
   async (req, res) => {
     if (req.method !== 'POST') {
       res.status(405).json({ error: 'Method Not Allowed' })
@@ -147,7 +147,7 @@ export const sendNotification = onRequest(
  */
 export const getGoogleRoute = onCall(
   {
-    cors: ['https://easyboard-sg.web.app', 'localhost']
+    cors: ['https://easyboard-sg.web.app', 'http://localhost:3001', 'https://easyboard3.vercel.app']
   },
   async (request) => {
     // For callable functions, authentication is automatically verified
