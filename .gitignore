@@ -128,7 +128,8 @@ ios
 *storybook.log
 storybook-static
 
-.yarn
+.yarn/*
+!.yarn/releases
 .firebase
 .cursor
 firebase-debug.log

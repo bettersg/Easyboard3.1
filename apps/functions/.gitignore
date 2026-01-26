@@ -8,6 +8,3 @@ typings/
 # Node.js dependency directory
 node_modules/
 *.local
-
-index.js
-index.js.map
