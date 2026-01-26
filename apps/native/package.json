@@ -27,6 +27,7 @@
     "@react-native-firebase/database": "^23.5.0",
     "@react-native-firebase/functions": "^23.7.0",
     "@react-native-firebase/messaging": "^23.5.0",
+    "@react-native-firebase/storage": "^23.8.3",
     "@react-native-masked-view/masked-view": "0.3.2",
     "@repo/common": "*",
     "@types/react-native-web": "^0.19.0",

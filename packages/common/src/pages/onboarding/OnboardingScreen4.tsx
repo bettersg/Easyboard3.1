@@ -7,10 +7,13 @@ import {
   type LocationInputRef
 } from '../../components/LocationInput'
 import { SavedPlaceCard } from '../../components/SavedPlaceCard'
-import { getUserStorage } from '../../services/storageService'
-import { setUserAppData } from '../../services/userService'
+import { useAuth } from '../../contexts'
+import { useLogin } from '../../hooks'
+import { getUserStorage, setUserStorage } from '../../services/storageService'
+import { createUser } from '../../services/userService'
 import type { MarkerData } from '../../stores/onboardingStore'
 import { useOnboardingStore } from '../../stores/onboardingStore'
+import type { SavedPlace } from '../../types'
 import { OnboardingLayout } from './OnboardingLayout'
 
 const GOOGLE_MAPS_API_BASE_URL = 'https://maps.googleapis.com/maps/api'
@@ -22,7 +25,6 @@ const apiKey =
 
 /**
  * Gets photo URL from photo reference (similar to native implementation)
- * Note: Photo URLs don't have CORS restrictions, so this endpoint works fine
  */
 function getGooglePlacePhotoUrl(
   photoReference: string,
@@ -33,10 +35,7 @@ function getGooglePlacePhotoUrl(
 }
 
 /**
- * Fetches a photo for a location using Google Maps JavaScript API (avoids CORS issues)
- * Uses JavaScript API to get place details, then constructs photo URL like native
- * @param location - The location marker data with latlng coordinates
- * @param callback - Callback function to be called with the location (with photoUri if available)
+ * Fetches a photo for a location using Google Maps JavaScript API
  */
 function fetchLocationPhoto(
   location: MarkerData,
@@ -53,7 +52,6 @@ function fetchLocationPhoto(
   }
 
   try {
-    console.log('Starting photo fetch for location:', location)
     const geocoder = new google.maps.Geocoder()
     geocoder.geocode(
       {
@@ -63,12 +61,6 @@ function fetchLocationPhoto(
         }
       },
       (results, status) => {
-        if (status === google.maps.GeocoderStatus.OVER_QUERY_LIMIT) {
-          console.warn('Google Geocoder API rate limit exceeded')
-          callback(location)
-          return
-        }
-
         if (
           status === google.maps.GeocoderStatus.OK &&
           results &&
@@ -76,8 +68,6 @@ function fetchLocationPhoto(
           results[0]?.place_id
         ) {
           const placeId = results[0].place_id
-
-          // Create a div element and attach it to the document body for PlacesService
           const div = document.createElement('div')
           document.body.appendChild(div)
           const placesService = new google.maps.places.PlacesService(div)
@@ -88,42 +78,13 @@ function fetchLocationPhoto(
               fields: ['photos', 'name', 'formatted_address']
             },
             (place, placeStatus) => {
-              // Clean up the div element
               try {
                 if (div.parentNode) {
                   document.body.removeChild(div)
                 }
               } catch (_) {
-                // Ignore cleanup errors
+                // Ignore
               }
-
-              if (
-                placeStatus ===
-                google.maps.places.PlacesServiceStatus.OVER_QUERY_LIMIT
-              ) {
-                console.warn('Google Places API rate limit exceeded')
-                callback(location)
-                return
-              }
-
-              if (
-                placeStatus ===
-                google.maps.places.PlacesServiceStatus.REQUEST_DENIED
-              ) {
-                console.error(
-                  'Google Places API request denied - check API key permissions'
-                )
-                callback(location)
-                return
-              }
-
-              console.log('PlacesService.getDetails response:', {
-                placeStatus,
-                hasPlace: !!place,
-                photosCount: place?.photos?.length,
-                placeKeys: place ? Object.keys(place) : [],
-                firstPhoto: place?.photos?.[0]
-              })
 
               if (
                 placeStatus === google.maps.places.PlacesServiceStatus.OK &&
@@ -131,59 +92,37 @@ function fetchLocationPhoto(
                 place.photos.length > 0
               ) {
                 const firstPhoto = place.photos[0]
-                console.log('First photo object details:', {
-                  photo: firstPhoto,
-                  photoType: typeof firstPhoto,
-                  photoKeys: firstPhoto ? Object.keys(firstPhoto) : [],
-                  hasGetUrl: typeof firstPhoto?.getUrl === 'function',
-                  photoReference: (firstPhoto as any)?.photo_reference
-                })
-
                 let photoUri: string | null = null
 
-                // Try getUrl() first (JavaScript API method)
                 if (typeof firstPhoto?.getUrl === 'function') {
                   try {
                     photoUri = firstPhoto.getUrl({ maxWidth: 400 })
-                    console.log('Got photo URI from getUrl():', photoUri)
-                  } catch (e) {
-                    console.error('Error calling getUrl():', e)
+                  } catch (_) {
+                    // Ignore
                   }
                 }
 
-                // Try photo_reference if getUrl() didn't work
                 if (!photoUri && (firstPhoto as any)?.photo_reference) {
-                  const photoRef = (firstPhoto as any).photo_reference
-                  photoUri = getGooglePlacePhotoUrl(photoRef, 400)
-                  console.log('Got photo URI from photo_reference:', photoUri)
+                  photoUri = getGooglePlacePhotoUrl(
+                    (firstPhoto as any).photo_reference,
+                    400
+                  )
                 }
 
                 if (photoUri) {
-                  console.log('Photo URI fetched successfully:', photoUri)
                   callback({ ...location, photoUri })
                   return
-                } else {
-                  console.log('Failed to get photo URI from both methods')
                 }
               }
-
-              console.log('No photos found:', {
-                placeStatus,
-                hasPhotos: !!place?.photos,
-                photosLength: place?.photos?.length,
-                placeStatusString: placeStatus
-              })
               callback(location)
             }
           )
         } else {
-          console.log('Geocoder failed or no place_id:', { status })
           callback(location)
         }
       }
     )
-  } catch (e) {
-    console.error('Error fetching photo:', e)
+  } catch (_) {
     callback(location)
   }
 }
@@ -196,6 +135,8 @@ interface FormData {
 
 export function OnboardingScreen4() {
   const { formData, updateFormData } = useOnboardingStore()
+  const { setAuthentication } = useAuth()
+  const { userType: selectedUserType } = useLogin()
   const router = useRouter()
   const [isSaving, setIsSaving] = useState(false)
   const homeLocationInputRef = useRef<LocationInputRef>(null)
@@ -221,7 +162,6 @@ export function OnboardingScreen4() {
   const gotoFavAddrs = watch('gotoFavAddrs')
   const schoolAddrs = watch('schoolAddrs')
 
-  // Use refs to always access latest values in handler
   const formValuesRef = useRef({
     houseAddrs,
     gotoFavAddrs,
@@ -252,33 +192,19 @@ export function OnboardingScreen4() {
       isSaving: currentIsSaving
     } = formValuesRef.current
 
-    // If saving already completed, skip
-    if (savingCompleteRef.current) {
-      return
-    }
+    if (savingCompleteRef.current || currentIsSaving) return
 
-    // If already saving, skip
-    if (currentIsSaving) {
-      return
-    }
-
-    // Validate that required fields are filled before proceeding
-    // Home address is required
     if (!currentErrors.houseAddrs && currentHouseAddrs) {
       try {
         setIsSaving(true)
         formValuesRef.current.isSaving = true
 
-        // Save form data to store before saving to Firebase
         updateFormData({
           houseAddrs: currentHouseAddrs || null,
           gotoFavAddrs: currentGotoFavAddrs || null,
           schoolAddrs: currentSchoolAddrs || null
         })
 
-        console.log('[OnboardingScreen4] Saving onboarding data...')
-
-        // Get user phone number from storage
         const userStorage = await getUserStorage()
         if (!userStorage?.phoneNumber) {
           console.error('[OnboardingScreen4] No user phone number found')
@@ -287,24 +213,82 @@ export function OnboardingScreen4() {
           return
         }
 
-        // Prepare appData to save (matching SettingValues structure)
-        const appData = {
-          name: currentFormData.name,
-          careGiverPhoneNumber: currentFormData.careGiverPhoneNumber,
-          houseAddrs: currentHouseAddrs,
-          housePhotoUri:
-            currentHouseAddrs?.photoUri || currentFormData.housePhotoUri,
-          gotoFavAddrs: currentGotoFavAddrs,
-          gotoFavAddrsName: currentFormData.gotoFavAddrsName,
-          gotoFavPhotoUri:
-            currentGotoFavAddrs?.photoUri || currentFormData.gotoFavPhotoUri,
-          schoolAddrs: currentSchoolAddrs,
-          schoolPhotoUri:
-            currentSchoolAddrs?.photoUri || currentFormData.schoolPhotoUri
+        // Map to SavedPlace structure
+        const savedPlaces: SavedPlace[] = []
+
+        const getPhotoKey = (
+          marker: MarkerData,
+          fallback: string | string[] | null
+        ) => {
+          return (
+            marker.locationImageKey ||
+            marker.photoUri ||
+            (Array.isArray(fallback) ? fallback[0] : fallback) ||
+            ''
+          )
         }
 
-        // Save to Firebase
-        await setUserAppData(userStorage.phoneNumber, appData)
+        if (currentHouseAddrs) {
+          savedPlaces.push({
+            locationName: 'Home',
+            locationImageKey: getPhotoKey(
+              currentHouseAddrs,
+              currentFormData.housePhotoUri
+            ),
+            address: {
+              description: currentHouseAddrs.description,
+              latlng: currentHouseAddrs.latlng
+            }
+          })
+        }
+
+        if (currentGotoFavAddrs) {
+          savedPlaces.push({
+            locationName: currentFormData.gotoFavAddrsName || 'Work',
+            locationImageKey: getPhotoKey(
+              currentGotoFavAddrs,
+              currentFormData.gotoFavPhotoUri
+            ),
+            address: {
+              description: currentGotoFavAddrs.description,
+              latlng: currentGotoFavAddrs.latlng
+            }
+          })
+        }
+
+        if (currentSchoolAddrs) {
+          savedPlaces.push({
+            locationName: 'School',
+            locationImageKey: getPhotoKey(
+              currentSchoolAddrs,
+              currentFormData.schoolPhotoUri
+            ),
+            address: {
+              description: currentSchoolAddrs.description,
+              latlng: currentSchoolAddrs.latlng
+            }
+          })
+        }
+
+        if (selectedUserType && userStorage.uid) {
+          const newUserData = await createUser(
+            userStorage.phoneNumber,
+            selectedUserType,
+            userStorage.uid,
+            {
+              name: currentFormData.name || '',
+              caregiverPhone: currentFormData.careGiverPhoneNumber,
+              savedPlaces
+            }
+          )
+
+          await setUserStorage({
+            ...newUserData,
+            loggedAt: Date.now()
+          })
+
+          setAuthentication(true, selectedUserType, false)
+        }
 
         console.log('[OnboardingScreen4] Onboarding data saved successfully')
         savingCompleteRef.current = true
@@ -382,7 +366,6 @@ export function OnboardingScreen4() {
                 onPress={handleHomePress}
                 location={houseAddrs}
                 imageUri={
-                  // Use photoUri from location if available, otherwise use manually uploaded photo
                   houseAddrs?.photoUri ||
                   (Array.isArray(formData.housePhotoUri)
                     ? formData.housePhotoUri[0]
@@ -405,12 +388,7 @@ export function OnboardingScreen4() {
                       value={houseAddrs}
                       locationType='Home'
                       onLocationSelect={(location: MarkerData) => {
-                        console.log('Home location selected:', location)
                         fetchLocationPhoto(location, (locationWithPhoto) => {
-                          console.log(
-                            'Home location with photo:',
-                            locationWithPhoto
-                          )
                           setValue('houseAddrs', locationWithPhoto, {
                             shouldValidate: true
                           })
@@ -431,7 +409,6 @@ export function OnboardingScreen4() {
                 onPress={handleWorkPress}
                 location={gotoFavAddrs}
                 imageUri={
-                  // Use photoUri from location if available, otherwise use manually uploaded photo
                   gotoFavAddrs?.photoUri ||
                   (Array.isArray(formData.gotoFavPhotoUri)
                     ? formData.gotoFavPhotoUri[0]
@@ -453,12 +430,7 @@ export function OnboardingScreen4() {
                       value={gotoFavAddrs}
                       locationType='Work'
                       onLocationSelect={(location: MarkerData) => {
-                        console.log('Work location selected:', location)
                         fetchLocationPhoto(location, (locationWithPhoto) => {
-                          console.log(
-                            'Work location with photo:',
-                            locationWithPhoto
-                          )
                           setValue('gotoFavAddrs', locationWithPhoto, {
                             shouldValidate: true
                           })
@@ -478,7 +450,6 @@ export function OnboardingScreen4() {
                 onPress={handleSchoolPress}
                 location={schoolAddrs}
                 imageUri={
-                  // Use photoUri from location if available, otherwise use manually uploaded photo
                   schoolAddrs?.photoUri ||
                   (Array.isArray(formData.schoolPhotoUri)
                     ? formData.schoolPhotoUri[0]
@@ -500,12 +471,7 @@ export function OnboardingScreen4() {
                       value={schoolAddrs}
                       locationType='School'
                       onLocationSelect={(location: MarkerData) => {
-                        console.log('School location selected:', location)
                         fetchLocationPhoto(location, (locationWithPhoto) => {
-                          console.log(
-                            'School location with photo:',
-                            locationWithPhoto
-                          )
                           setValue('schoolAddrs', locationWithPhoto, {
                             shouldValidate: true
                           })

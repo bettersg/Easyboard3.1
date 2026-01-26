@@ -10,13 +10,13 @@ interface AuthRouteGuardProps {
 }
 
 // Combined routes from both platforms to ensuring coverage
-const PUBLIC_ROUTES = ['/', '/login', '/onboarding', '/index']
-const AUTH_REDIRECT_ROUTES = ['/login', '/onboarding', '/index', '/']
+const PUBLIC_ROUTES = ['/', '/login', '/index']
+const AUTH_REDIRECT_ROUTES = ['/login', '/index', '/']
 
 export function AuthRouteGuard({ children }: AuthRouteGuardProps) {
   const router = useRouter()
   const pathname = usePathname()
-  const { hasAuthen, isLoading } = useAuth()
+  const { hasAuthen, userType, isLoading } = useAuth()
   const [isChecking, setIsChecking] = useState(true)
 
   useEffect(() => {
@@ -33,15 +33,24 @@ export function AuthRouteGuard({ children }: AuthRouteGuardProps) {
 
       // Scenario 1: User is accessing a public route
       if (isPublicRoute) {
-        // If authenticated and accessing a redirect route (like login), send to home
-        const shouldRedirectToHome = AUTH_REDIRECT_ROUTES.some(
-          (route) =>
-            currentPath === route || currentPath.startsWith(`${route}/`)
-        )
+        // If authenticated, decide where to redirect
+        if (hasAuthen) {
+          // If they haven't picked a userType, they MUST go to onboarding
+          if (!userType) {
+            router.replace('/onboarding/1')
+            return
+          }
 
-        if (hasAuthen && shouldRedirectToHome) {
-          router.replace('/home')
-          return
+          // If they have a userType and are on a route that should redirect to home
+          const shouldRedirectToHome = AUTH_REDIRECT_ROUTES.some(
+            (route) =>
+              currentPath === route || currentPath.startsWith(`${route}/`)
+          )
+
+          if (shouldRedirectToHome) {
+            router.replace('/home')
+            return
+          }
         }
 
         // Otherwise allow access to public route
@@ -49,16 +58,25 @@ export function AuthRouteGuard({ children }: AuthRouteGuardProps) {
         return
       }
 
+      console.log('hasAuthen', hasAuthen)
+
       // Scenario 2: User is accessing a protected route
       if (!hasAuthen) {
         router.replace('/login')
-      } else {
-        setIsChecking(false)
+        return
       }
+
+      // If authenticated and on onboarding, but already has userType, go home
+      if (currentPath.startsWith('/onboarding') && userType) {
+        router.replace('/home')
+        return
+      }
+
+      setIsChecking(false)
     }
 
     checkAuth()
-  }, [hasAuthen, isLoading, pathname, router])
+  }, [hasAuthen, userType, isLoading, pathname, router])
 
   if (isLoading || isChecking) {
     return (

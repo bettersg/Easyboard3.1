@@ -1,7 +1,8 @@
 import { useCallback } from 'react'
 import call from 'react-native-phone-call'
 import { getUserStorage } from '../services/storageService'
-import { getUserAppData } from '../services/userService'
+import { getUserData } from '../services/userService'
+import type { PWIDUser } from '../types'
 
 async function callCaregiver(phoneNumber: string) {
   try {
@@ -28,8 +29,11 @@ export function useCallCaregiver() {
         return
       }
 
-      const appData = await getUserAppData(userStorage.phoneNumber)
-      const caregiverPhone = appData?.careGiverPhoneNumber
+      const userData = await getUserData(userStorage.phoneNumber)
+      const caregiverPhone =
+        userData?.userType === 'PWID'
+          ? (userData as PWIDUser).caregiverPhone
+          : undefined
 
       if (!caregiverPhone) {
         console.error('Caregiver phone number not found')

@@ -28,7 +28,8 @@ export function LoginFlow() {
     otpSent,
     displayPhoneNumber,
     verifyOTP,
-    isVerifyingOTP
+    isVerifyingOTP,
+    reset
   } = useLogin()
 
   // Use ref to always access latest values
@@ -98,15 +99,10 @@ export function LoginFlow() {
 
   const handleBack = () => {
     if (currentStep === 'otp') {
+      reset(true)
       setCurrentStep('phone')
     } else {
       router.push('/')
-    }
-  }
-
-  const handleSubmit = async () => {
-    if (currentStep === 'phone' && canSendOTP) {
-      await sendOTP()
     }
   }
 
@@ -114,10 +110,7 @@ export function LoginFlow() {
     console.log('[LoginFlow] handleVerifyOTP called')
     try {
       await verifyOTP(otp)
-      // If verifyOTP completes without error, check if user has existing data
-      console.log(
-        '[LoginFlow] OTP verification successful, checking for existing data'
-      )
+
       verificationCompleteRef.current = true
       // New user or no existing data - go to onboarding
       console.log(
@@ -125,8 +118,8 @@ export function LoginFlow() {
       )
       router.push('/onboarding/1')
     } catch (err) {
-      // Errors are handled internally by verifyOTP via alerts
       console.error('[LoginFlow] OTP verification failed:', err)
+      alert('Invalid OTP')
     }
   }
 
@@ -151,7 +144,12 @@ export function LoginFlow() {
             className='justify-start items-center px-6 py-4 h-[calc(100svh-80px)]'
             style={{ width }}
           >
-            <View className='gap-4 w-full'>
+            <View
+              onSubmit={(e: Event) => e.preventDefault()}
+              className='gap-4 w-full'
+              // @ts-expect-error - web-specific
+              accessibilityRole='form'
+            >
               <View className='gap-2'>
                 <Text className='text-2xl font-bold text-[#414852]'>
                   What&apos;s your phone number?
@@ -168,7 +166,7 @@ export function LoginFlow() {
                 }
                 keyboardType='phone-pad'
                 maxLength={14} // Allow for +65 prefix
-                onSubmitEditing={handleSubmit}
+                onSubmitEditing={handleNext}
               />
               {isSendingOTP && (
                 <Text className='text-base text-[#677281] text-center'>

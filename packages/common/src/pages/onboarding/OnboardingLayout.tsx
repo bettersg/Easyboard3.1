@@ -66,7 +66,14 @@ export function OnboardingLayout({
           textClassName='text-[40px] mb-1'
         />
       </View>
-      <View className='flex-1'>{children}</View>
+      <View
+        className='flex-1'
+        onSubmit={(e: Event) => e.preventDefault()}
+        // @ts-expect-error - web-specific
+        accessibilityRole='form'
+      >
+        {children}
+      </View>
       <View
         className='h-20 w-screen justify-between items-center align-middle flex-row px-6'
         style={{ paddingBottom: bottom * 2 }}

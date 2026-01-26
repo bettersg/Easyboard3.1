@@ -1,7 +1,7 @@
 {
   "functions": [
     {
-      "source": "apps/functions",
+      "source": "out",
       "predeploy": "yarn workspace functions build && yarn turbo prune functions && yarn workspace functions predeploy",
       "postdeploy": "yarn workspace functions postdeploy",
       "runtime": "nodejs24"

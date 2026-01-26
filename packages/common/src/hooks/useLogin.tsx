@@ -13,7 +13,7 @@ import type { UserType } from '../types'
 interface LoginContextType {
   // State
   phoneNumber: string
-  userType: UserType | null
+  userType: UserType | undefined
   isRegistration: boolean
   otpSent: boolean
   isSendingOTP: boolean
@@ -22,10 +22,10 @@ interface LoginContextType {
 
   // Actions
   setPhoneNumber: (phone: string) => void
-  setUserType: (type: UserType | null) => void
+  setUserType: (type: UserType | undefined) => void
   sendOTP: () => Promise<void>
   verifyOTP: (otp: string) => Promise<boolean>
-  reset: () => void
+  reset: (soft: boolean) => void
 
   // Computed values
   formattedPhoneNumber: string
@@ -43,7 +43,7 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
 
   // State
   const [phoneNumber, setPhoneNumberState] = useState<string>('')
-  const [userType, setUserTypeState] = useState<UserType | null>(null)
+  const [userType, setUserTypeState] = useState<UserType>()
   const [isRegistration, setIsRegistration] = useState<boolean>(false)
   const [otpSent, setOtpSent] = useState<boolean>(false)
   const [isSendingOTP, setIsSendingOTP] = useState<boolean>(false)
@@ -76,7 +76,7 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
   const displayPhoneNumber = formatPhoneForDisplay(phoneNumber)
   const isValidPhoneNumber = cleanPhoneNumber(phoneNumber).length === 8
   const canSendOTP = isValidPhoneNumber && !isSendingOTP && !otpSent
-  const canVerifyOTP = otpSent && !isVerifyingOTP && userType !== null
+  const canVerifyOTP = otpSent && !isVerifyingOTP && userType !== undefined
 
   // Actions
   const setPhoneNumber = useCallback((phone: string) => {
@@ -84,7 +84,7 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
     setError(null)
   }, [])
 
-  const setUserType = useCallback((type: UserType | null) => {
+  const setUserType = useCallback((type: UserType | undefined) => {
     setUserTypeState(type)
     setError(null)
   }, [])
@@ -142,12 +142,12 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
 
       // For existing users (login), userType should already be set from getUserData
       // For new users (registration), userType will be null - they'll select it in onboarding
-      if (!userType && !isRegistration) {
-        const errorMsg = 'User type is required. Please try logging in again.'
-        setError(errorMsg)
-        Alert.alert('Error', errorMsg)
-        return false
-      }
+      // if (!userType && !isRegistration) {
+      //   const errorMsg = 'User type is required. Please try logging in again.'
+      //   setError(errorMsg)
+      //   Alert.alert('Error', errorMsg)
+      //   return false
+      // }
 
       setIsVerifyingOTP(true)
       setError(null)
@@ -160,8 +160,8 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
         await verifyOTPWithFirebase(
           otp,
           formattedPhone,
-          userType, // Can be null for registration
-          isRegistration
+          isRegistration,
+          userType // Pass as last argument to match new signature
         )
         return true
       } catch (err) {
@@ -170,9 +170,7 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
             ? err.message
             : 'Failed to verify OTP. Please try again.'
         setError(errorMsg)
-        console.error('Error verifying OTP:', err)
-        Alert.alert('Error', errorMsg)
-        return false
+        throw err
       } finally {
         setIsVerifyingOTP(false)
       }
@@ -186,16 +184,16 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
     ]
   )
 
-  const reset = useCallback(() => {
+  const reset = useCallback((soft = false) => {
     setPhoneNumberState('')
-    setUserTypeState(null)
+    setUserTypeState(undefined)
     setIsRegistration(false)
     setOtpSent(false)
     setIsSendingOTP(false)
     setIsVerifyingOTP(false)
     setError(null)
     // Clean up reCAPTCHA when resetting (e.g., navigating back to login)
-    if (Platform.OS === 'web' && typeof window !== 'undefined') {
+    if (Platform.OS === 'web' && typeof window !== 'undefined' && !soft) {
       // Dynamically import and call cleanup only on web
       import('../services/authService.web')
         .then((module) => {

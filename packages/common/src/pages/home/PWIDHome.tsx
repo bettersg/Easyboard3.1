@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Modal, RefreshControl } from 'react-native'
 import { useSafeArea } from 'react-native-safe-area-context'
 import { useRouter } from 'solito/navigation'
@@ -10,21 +10,27 @@ import { useLocationSharing } from '../../contexts/LocationSharingContext'
 import { useCallCaregiver } from '../../hooks/useCallCaregiver'
 import {
   completeLogout,
+  getPhotoDownloadUrl,
   getUserStorage,
   setUserStorage,
   type UserStorage
 } from '../../services/storageService'
-import { getUserAppData } from '../../services/userService'
+import { getUserData } from '../../services/userService'
 import type { MarkerData } from '../../stores/onboardingStore'
-import type { SettingValues } from '../../types'
+import type { PWIDUser, SavedPlace } from '../../types'
 
 export function PWIDHome() {
-  const [appData, setAppData] = useState<SettingValues | null>(null)
+  const [userData, setUserData] = useState<UserStorage | null>(null)
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [loggingOut, setLoggingOut] = useState(false)
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false)
   const [searchLocation, setSearchLocation] = useState<MarkerData | null>(null)
+  const [resolvedPhotoUrls, setResolvedPhotoUrls] = useState<{
+    house?: string
+    work?: string
+    school?: string
+  }>({})
 
   const { top, bottom } = useSafeArea()
   const router = useRouter()
@@ -32,53 +38,97 @@ export function PWIDHome() {
   const { isLocationSharing, setIsLocationSharing } = useLocationSharing()
   const callCaregiver = useCallCaregiver()
 
+  // Helper to resolve photo keys to URLs
+  const resolvePhoto = useCallback(
+    async (photoKeyOrArray: string | string[] | null | undefined) => {
+      if (!photoKeyOrArray) return undefined
+      const photoKey = Array.isArray(photoKeyOrArray)
+        ? photoKeyOrArray[0]
+        : photoKeyOrArray
+      if (!photoKey) return undefined
+      try {
+        return await getPhotoDownloadUrl(photoKey)
+      } catch (e) {
+        console.error('Error resolving photo URL:', e)
+        return undefined
+      }
+    },
+    []
+  )
+
+  const loadPhotos = useCallback(
+    async (pwid: Partial<PWIDUser>) => {
+      if (!pwid.savedPlaces) return
+
+      const housePlace = pwid.savedPlaces.find((p) => p.locationName === 'Home')
+      const schoolPlace = pwid.savedPlaces.find(
+        (p) => p.locationName === 'School'
+      )
+      const workPlace = pwid.savedPlaces.find(
+        (p) => p.locationName !== 'Home' && p.locationName !== 'School'
+      )
+
+      const [houseUrl, workUrl, schoolUrl] = await Promise.all([
+        resolvePhoto(housePlace?.locationImageKey),
+        resolvePhoto(workPlace?.locationImageKey),
+        resolvePhoto(schoolPlace?.locationImageKey)
+      ])
+
+      setResolvedPhotoUrls({
+        house: houseUrl,
+        work: workUrl,
+        school: schoolUrl
+      })
+    },
+    [resolvePhoto]
+  )
+
   // Extract loadSavedLocations as a separate function for reuse
-  const loadSavedLocations = useCallback(async (forceRefresh = false) => {
-    try {
-      const userStorage = await getUserStorage()
-      if (!userStorage?.phoneNumber) {
-        console.error('No user phone number found')
-        return
+  const loadSavedLocations = useCallback(
+    async (forceRefresh = false) => {
+      try {
+        const cachedUser = await getUserStorage()
+
+        // First, load from storage for instant display
+        if (cachedUser) {
+          setUserData(cachedUser)
+          if (cachedUser.userType === 'PWID') {
+            loadPhotos(cachedUser as unknown as PWIDUser)
+          }
+        }
+
+        if (!cachedUser?.phoneNumber) {
+          console.error('No user phone number found')
+          return
+        }
+
+        // Then, fetch latest data from Firebase if needed or forced
+        if (forceRefresh || !cachedUser) {
+          console.log(
+            'Fetching latest data from Firebase',
+            cachedUser.phoneNumber
+          )
+          const freshData = await getUserData(cachedUser.phoneNumber)
+
+          if (freshData) {
+            const updatedStorage: UserStorage = {
+              ...freshData,
+              loggedAt: cachedUser?.loggedAt || Date.now()
+            }
+            setUserData(updatedStorage)
+            await setUserStorage(updatedStorage)
+
+            if (freshData.userType === 'PWID') {
+              loadPhotos(freshData as PWIDUser)
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Error loading saved locations:', error)
       }
-
-      // First, load cached data for instant display (skip if force refresh)
-      if (!forceRefresh) {
-        const cachedData = (await getUserStorage()) as SettingValues | null
-        if (cachedData) {
-          console.log('Loading cached data')
-          setAppData(cachedData)
-        }
-      }
-
-      // Then, fetch latest data from Firebase
-      console.log('Fetching latest data from Firebase')
-      const savedData = await getUserAppData(userStorage.phoneNumber)
-
-      // Add cache busting timestamp to image URIs
-      if (savedData) {
-        const timestamp = Date.now()
-
-        // Add timestamp to photoUri fields to bust cache
-        if (savedData.houseAddrs?.photoUri) {
-          savedData.houseAddrs.photoUri = `${savedData.houseAddrs.photoUri}?t=${timestamp}`
-        }
-        if (savedData.gotoFavAddrs?.photoUri) {
-          savedData.gotoFavAddrs.photoUri = `${savedData.gotoFavAddrs.photoUri}?t=${timestamp}`
-        }
-        if (savedData.schoolAddrs?.photoUri) {
-          savedData.schoolAddrs.photoUri = `${savedData.schoolAddrs.photoUri}?t=${timestamp}`
-        }
-
-        // Update state with fresh data
-        setAppData(savedData)
-
-        // Cache the fresh data for next time
-        await setUserStorage(savedData as unknown as UserStorage)
-      }
-    } catch (error) {
-      console.error('Error loading saved locations:', error)
-    }
-  }, [])
+    },
+    [loadPhotos]
+  )
 
   // Initial load
   useEffect(() => {
@@ -92,18 +142,15 @@ export function PWIDHome() {
   // Pull to refresh handler
   const onRefresh = useCallback(async () => {
     setRefreshing(true)
-    await loadSavedLocations(true) // Force refresh - skip cache
+    await loadSavedLocations(true)
     setRefreshing(false)
   }, [loadSavedLocations])
 
   const handleLogout = async () => {
     try {
       setLoggingOut(true)
-      // Complete logout - clears all data including Firebase tokens
       await completeLogout()
-      // Update authentication state
-      setAuthentication(false, null)
-      // Navigate to landing page
+      setAuthentication(false, undefined)
       router.push('/')
     } catch (error) {
       console.error('Error during logout:', error)
@@ -111,12 +158,48 @@ export function PWIDHome() {
     }
   }
 
-  // Navigate to transit options with query params (Next.js idiomatic way)
+  // Extract saved places using useMemo
+  const savedPlaces = useMemo(() => {
+    if (userData?.userType !== 'PWID') return {}
+
+    const pwid = userData as unknown as PWIDUser
+    if (!pwid.savedPlaces) return {}
+
+    const findPlace = (name: string) =>
+      pwid.savedPlaces?.find((p) => p.locationName === name)
+    const findWorkPlace = () =>
+      pwid.savedPlaces?.find(
+        (p) => p.locationName !== 'Home' && p.locationName !== 'School'
+      )
+
+    const mapToMarker = (place?: SavedPlace): MarkerData | null => {
+      if (!place) return null
+      return {
+        description: place.address.description,
+        latlng: {
+          latitude: place.address.latlng.latitude,
+          longitude: place.address.latlng.longitude
+        }
+      }
+    }
+
+    const home = findPlace('Home')
+    const school = findPlace('School')
+    const work = findWorkPlace()
+
+    return {
+      home: mapToMarker(home),
+      school: mapToMarker(school),
+      work: mapToMarker(work),
+      workName: work?.locationName || 'Work'
+    }
+  }, [userData])
+
+  // Navigate to transit options
   const navigateToTransitOptions = useCallback(
     (destination: MarkerData, destinationName: string) => {
       if (!destination?.latlng) return
 
-      // Encode destination data as query params
       const params = new URLSearchParams({
         lat: destination.latlng.latitude.toString(),
         lng: destination.latlng.longitude.toString(),
@@ -124,7 +207,6 @@ export function PWIDHome() {
         description: destination.description || ''
       })
 
-      // Optionally include photoUri if available
       if (destination.photoUri) {
         params.set('photoUri', destination.photoUri)
       }
@@ -134,50 +216,6 @@ export function PWIDHome() {
     [router]
   )
 
-  // Create navigation handlers for each saved place
-  const handleHomePress = useCallback(() => {
-    const houseAddrs = (appData?.houseAddrs as MarkerData) || null
-    if (houseAddrs) {
-      navigateToTransitOptions(houseAddrs, 'Home')
-    }
-  }, [appData?.houseAddrs, navigateToTransitOptions])
-
-  const handleWorkPress = useCallback(() => {
-    const gotoFavAddrs = (appData?.gotoFavAddrs as MarkerData) || null
-    if (gotoFavAddrs) {
-      navigateToTransitOptions(
-        gotoFavAddrs,
-        (appData?.gotoFavAddrsName as string) || 'Work'
-      )
-    }
-  }, [
-    appData?.gotoFavAddrs,
-    appData?.gotoFavAddrsName,
-    navigateToTransitOptions
-  ])
-
-  const handleSchoolPress = useCallback(() => {
-    const schoolAddrs = (appData?.schoolAddrs as MarkerData) || null
-    if (schoolAddrs) {
-      navigateToTransitOptions(schoolAddrs, 'School')
-    }
-  }, [appData?.schoolAddrs, navigateToTransitOptions])
-
-  const handleSearchLocationSelect = useCallback((location: MarkerData) => {
-    setSearchLocation(location)
-  }, [])
-
-  const handleSearchDone = useCallback(() => {
-    setIsSearchModalOpen(false)
-    if (searchLocation) {
-      // Get a short name from the description (first part before comma)
-      const shortName =
-        searchLocation.description.split(',')[0] || 'Destination'
-      navigateToTransitOptions(searchLocation, shortName)
-      setSearchLocation(null)
-    }
-  }, [searchLocation, navigateToTransitOptions])
-
   if (loading) {
     return (
       <View className='flex-1 items-center justify-center'>
@@ -186,28 +224,6 @@ export function PWIDHome() {
     )
   }
 
-  const houseAddrs = (appData?.houseAddrs as MarkerData) || null
-  const gotoFavAddrs = (appData?.gotoFavAddrs as MarkerData) || null
-  const schoolAddrs = (appData?.schoolAddrs as MarkerData) || null
-
-  const housePhotoUri =
-    houseAddrs?.photoUri ||
-    (Array.isArray(appData?.housePhotoUri)
-      ? appData?.housePhotoUri[0]
-      : appData?.housePhotoUri || undefined)
-
-  const workPhotoUri =
-    gotoFavAddrs?.photoUri ||
-    (Array.isArray(appData?.gotoFavPhotoUri)
-      ? appData?.gotoFavPhotoUri[0]
-      : appData?.gotoFavPhotoUri || undefined)
-
-  const schoolPhotoUri =
-    schoolAddrs?.photoUri ||
-    (Array.isArray(appData?.schoolPhotoUri)
-      ? appData?.schoolPhotoUri[0]
-      : appData?.schoolPhotoUri || undefined)
-
   return (
     <>
       <View
@@ -215,7 +231,6 @@ export function PWIDHome() {
         style={{ paddingTop: top + 16 }}
       >
         <View className='gap-6 w-full'>
-          {/* Header with Search */}
           <View className='flex-row items-center justify-between'>
             <Text className='text-2xl font-bold text-[#414852]'>
               Where do you want to go?
@@ -240,39 +255,45 @@ export function PWIDHome() {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
           >
-            {/* Home Card */}
-            {houseAddrs && (
+            {savedPlaces.home && (
               <View className='gap-2'>
                 <SavedPlaceCard
                   title='Home'
                   required={true}
-                  onPress={handleHomePress}
-                  location={houseAddrs}
-                  imageUri={housePhotoUri}
+                  onPress={() =>
+                    navigateToTransitOptions(savedPlaces.home!, 'Home')
+                  }
+                  location={savedPlaces.home}
+                  imageUri={resolvedPhotoUrls.house}
                 />
               </View>
             )}
 
-            {/* Work Card */}
-            {gotoFavAddrs && (
+            {savedPlaces.work && (
               <View className='gap-2'>
                 <SavedPlaceCard
-                  title='Work'
-                  onPress={handleWorkPress}
-                  location={gotoFavAddrs}
-                  imageUri={workPhotoUri}
+                  title={savedPlaces.workName}
+                  onPress={() =>
+                    navigateToTransitOptions(
+                      savedPlaces.work!,
+                      savedPlaces.workName
+                    )
+                  }
+                  location={savedPlaces.work}
+                  imageUri={resolvedPhotoUrls.work}
                 />
               </View>
             )}
 
-            {/* School Card */}
-            {schoolAddrs && (
+            {savedPlaces.school && (
               <View className='gap-2'>
                 <SavedPlaceCard
                   title='School'
-                  onPress={handleSchoolPress}
-                  location={schoolAddrs}
-                  imageUri={schoolPhotoUri}
+                  onPress={() =>
+                    navigateToTransitOptions(savedPlaces.school!, 'School')
+                  }
+                  location={savedPlaces.school}
+                  imageUri={resolvedPhotoUrls.school}
                 />
               </View>
             )}
@@ -284,7 +305,7 @@ export function PWIDHome() {
               text='Other location'
             />
 
-            {!houseAddrs && !gotoFavAddrs && !schoolAddrs && (
+            {!savedPlaces.home && !savedPlaces.work && !savedPlaces.school && (
               <View className='flex-1 items-center justify-center py-12'>
                 <Text className='text-base text-[#677281]'>
                   No saved locations yet.
@@ -294,7 +315,6 @@ export function PWIDHome() {
           </ScrollView>
         </View>
 
-        {/* Fixed Bottom Buttons */}
         <View
           className='absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-6 py-4'
           style={{ paddingBottom: bottom + 16 }}
@@ -323,7 +343,6 @@ export function PWIDHome() {
         </View>
       </View>
 
-      {/* Search Location Modal */}
       <Modal
         presentationStyle='pageSheet'
         statusBarTranslucent
@@ -333,7 +352,6 @@ export function PWIDHome() {
         onDismiss={() => setIsSearchModalOpen(false)}
       >
         <View className='flex-1 bg-white'>
-          {/* Header */}
           <View className='flex-row items-center justify-start px-6 py-4 gap-4'>
             <BackButton
               onPress={() => setIsSearchModalOpen(false)}
@@ -344,10 +362,9 @@ export function PWIDHome() {
             </Text>
           </View>
 
-          {/* Map */}
           <View className='flex-1'>
             <GoogleMapView
-              onLocationMarkerDrop={handleSearchLocationSelect}
+              onLocationMarkerDrop={(location) => setSearchLocation(location)}
               value={searchLocation}
               initialCenter={{
                 latitude: 1.3521,
@@ -356,7 +373,6 @@ export function PWIDHome() {
             />
           </View>
 
-          {/* Bottom Action */}
           <View
             className='px-6 py-4 bg-white border-t border-gray-200'
             style={{ paddingBottom: bottom + 12 }}
@@ -370,7 +386,15 @@ export function PWIDHome() {
             )}
             <Button
               text='Get Directions'
-              onPress={handleSearchDone}
+              onPress={() => {
+                setIsSearchModalOpen(false)
+                if (searchLocation) {
+                  const shortName =
+                    searchLocation.description.split(',')[0] || 'Destination'
+                  navigateToTransitOptions(searchLocation, shortName)
+                  setSearchLocation(null)
+                }
+              }}
               disabled={!searchLocation}
               variant='primary'
             />

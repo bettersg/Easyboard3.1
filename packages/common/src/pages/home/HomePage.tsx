@@ -9,13 +9,13 @@ import { PWIDHome } from './PWIDHome'
 
 export function HomePage() {
   const { userType } = useAuth()
+
   const [isLoading, setIsLoading] = useState(true)
   const [userTypeFromStorage, setUserTypeFromStorage] = useState<string | null>(
     null
   )
 
   useEffect(() => {
-    console.log('hererere', userType)
     const loadUserType = async () => {
       try {
         const userStorage = await getUserStorage()
@@ -48,11 +48,9 @@ export function HomePage() {
   }
 
   // Route to appropriate home based on user type
-  if (userTypeFromStorage === 'PWID') {
+  else if (userTypeFromStorage === 'PWID') {
     return <PWIDHome />
-  }
-
-  if (userTypeFromStorage === 'CAREGIVER') {
+  } else if (userTypeFromStorage === 'CAREGIVER') {
     return <CaregiverHome />
   }
 

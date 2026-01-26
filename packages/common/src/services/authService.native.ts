@@ -1,5 +1,6 @@
 import firebaseApp from '@react-native-firebase/app'
 import auth, { type FirebaseAuthTypes } from '@react-native-firebase/auth'
+import type { IAuthService } from './authService'
 
 // Platform-specific type for native
 export type ConfirmationResult = FirebaseAuthTypes.ConfirmationResult
@@ -23,70 +24,60 @@ function ensureFirebaseInitialized(): void {
   }
 }
 
-export async function signInWithPhoneNumber(
-  phoneNumber: string
-): Promise<ConfirmationResult> {
-  // Ensure Firebase is initialized before using Auth
-  ensureFirebaseInitialized()
-
-  try {
-    if (process.env.NODE_ENV === 'development') {
-      const settings = auth().settings
-      settings.appVerificationDisabledForTesting = true
-      auth().settings = settings
-      return await auth().signInWithPhoneNumber(phoneNumber)
-    }
-    return await auth().signInWithPhoneNumber(phoneNumber)
-  } catch (error) {
-    console.error('Firebase Auth signInWithPhoneNumber error:', error)
-    throw error
-  }
-}
-
-// Alias for consistency with web API
-export const signIn = signInWithPhoneNumber
-
-/**
- * Sign out from Firebase Auth
- */
-export async function signOut(): Promise<void> {
-  try {
-    await auth().signOut()
-    console.log('Firebase Auth signed out')
-  } catch (error) {
-    console.log('Firebase Auth sign out failed (non-fatal):', error)
-  }
-}
-
-/**
- * Get the current user's ID token
- * @returns ID token string if user is authenticated, null otherwise
- */
-export async function getIdToken(): Promise<string | null> {
-  try {
+export const authService: IAuthService = {
+  signInWithPhoneNumber: async (phoneNumber: string) => {
     ensureFirebaseInitialized()
-    const currentUser = auth().currentUser
-    if (!currentUser) {
+    try {
+      if (process.env.NODE_ENV === 'development') {
+        const settings = auth().settings
+        settings.appVerificationDisabledForTesting = true
+        auth().settings = settings
+      }
+      return await auth().signInWithPhoneNumber(phoneNumber)
+    } catch (error) {
+      console.error('Firebase Auth signInWithPhoneNumber error:', error)
+      throw error
+    }
+  },
+
+  signOut: async () => {
+    try {
+      await auth().signOut()
+      console.log('Firebase Auth signed out')
+    } catch (error) {
+      console.log('Firebase Auth sign out failed (non-fatal):', error)
+    }
+  },
+
+  getIdToken: async () => {
+    try {
+      ensureFirebaseInitialized()
+      const currentUser = auth().currentUser
+      if (!currentUser) {
+        return null
+      }
+      return await currentUser.getIdToken()
+    } catch (error) {
+      console.error('Error getting ID token:', error)
       return null
     }
-    const token = await currentUser.getIdToken()
-    return token
-  } catch (error) {
-    console.error('Error getting ID token:', error)
-    return null
+  },
+
+  verifyOtp: async (confirmationResult, otp) => {
+    return await confirmationResult.confirm(otp)
+  },
+
+  cleanupRecaptcha: () => {
+    // No-op on native
   }
-}
+} satisfies IAuthService
 
-// Re-add helper functions for consistency
-export function onAuthStateChanged(
-  callback: (user: FirebaseAuthTypes.User | null) => void
-): () => void {
-  return auth().onAuthStateChanged(callback)
-}
-
-export async function verifyOtp(
-  confirmationResult: FirebaseAuthTypes.ConfirmationResult,
-  otp: string
-): Promise<FirebaseAuthTypes.UserCredential | null> {
-  return await confirmationResult.confirm(otp)
-}
+// Export individual functions for backward compatibility if needed,
+// but encourage use of authService object
+export const {
+  signInWithPhoneNumber,
+  signOut,
+  getIdToken,
+  verifyOtp,
+  cleanupRecaptcha
+} = authService

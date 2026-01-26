@@ -106,7 +106,7 @@ const nextConfig = {
     'expo-image-loader',
     'expo-modules-core'
   ],
-  output: 'export',
+
   compiler: {
     define: {
       __DEV__: JSON.stringify(process.env.NODE_ENV !== 'production')

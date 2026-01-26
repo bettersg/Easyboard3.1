@@ -1,7 +1,15 @@
-// Platform-agnostic re-exports
-// TypeScript will use this file, but the bundler will resolve to .native.ts or .web.ts at runtime
-// We export from .native as the default for TypeScript type checking
-export * from './storageService.native'
+import type { UserStorage } from '../types'
 
-// Export upload functions (platform-specific implementations)
-export { type UserStorage, uploadLocationPhoto } from './storageService.native'
+export interface IStorageService {
+  setUserStorage(userStorage: UserStorage): Promise<void>
+  getUserStorage(): Promise<UserStorage | null>
+  clearUserStorage(): Promise<void>
+  clearFirebaseData(): Promise<void>
+  completeLogout(): Promise<void>
+  isSessionExpired(expiryDays?: number): Promise<boolean>
+  uploadLocationPhoto(imageUri: string, locationType: string): Promise<string>
+  getPhotoDownloadUrl(fileKey: string): Promise<string>
+}
+
+// Platform-agnostic re-exports
+export * from './storageService.native'
