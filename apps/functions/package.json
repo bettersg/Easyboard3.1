@@ -2,8 +2,9 @@
   "name": "functions",
   "scripts": {
     "build": "tsc",
+    "build:emulators": "tsc --outDir lib",
     "build:watch": "tsc --watch",
-    "dev": "yarn build && firebase emulators:start --only functions",
+    "dev": "yarn build:emulators && firebase emulators:start --only functions",
     "shell": "yarn build && firebase functions:shell",
     "start": "yarn shell",
     "deploy": "firebase deploy --only functions",

@@ -277,7 +277,7 @@ export function OnboardingScreen4() {
             userStorage.uid,
             {
               name: currentFormData.name || '',
-              caregiverPhone: currentFormData.careGiverPhoneNumber,
+              caregiverPhone: `65${currentFormData.careGiverPhoneNumber}`,
               savedPlaces
             }
           )
