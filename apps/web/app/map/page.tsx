@@ -1,24 +1,26 @@
-'use client'
+// deprecated, uncomment for testing if needed
 
-import { GoogleMapView } from '@repo/common/components'
-import type { MarkerData } from '@repo/common/types'
-import { useState } from 'react'
+// 'use client'
 
-export default function MapPage() {
-  const [_location, setSelectedLocation] = useState<MarkerData | null>(null)
+// import { GoogleMapView } from '@repo/common/components'
+// import type { MarkerData } from '@repo/common/types'
+// import { useState } from 'react'
 
-  const onLocationMarkerDrop = function (locationMarker: MarkerData) {
-    setSelectedLocation(locationMarker)
-  }
+// export default function MapPage() {
+//   const [_location, setSelectedLocation] = useState<MarkerData | null>(null)
 
-  return (
-    <GoogleMapView
-      initialCenter={{
-        latitude: 1.3521,
-        longitude: 103.8198
-      }}
-      onLocationMarkerDrop={onLocationMarkerDrop}
-      value={null}
-    />
-  )
-}
+//   const onLocationMarkerDrop = function (locationMarker: MarkerData) {
+//     setSelectedLocation(locationMarker)
+//   }
+
+//   return (
+//     <GoogleMapView
+//       initialCenter={{
+//         latitude: 1.3521,
+//         longitude: 103.8198
+//       }}
+//       onLocationMarkerDrop={onLocationMarkerDrop}
+//       value={null}
+//     />
+//   )
+// }
