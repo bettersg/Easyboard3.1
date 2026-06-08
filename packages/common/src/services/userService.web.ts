@@ -7,8 +7,8 @@ import {
   orderByChild,
   query,
   ref,
-  remove,
-  set
+  set,
+  update
 } from 'firebase/database'
 import type {
   CaregiverUser,
@@ -94,7 +94,10 @@ export const userService: IUserService = {
   updatePWIDLocation: async (phoneNumber: string, location: UserLocation) => {
     try {
       const db = getDatabaseInstance()
-      await set(ref(db, `users/${phoneNumber}/location`), location)
+      await set(ref(db, `users/${phoneNumber}/location`), {
+        ...location,
+        isSharing: true
+      })
       await set(ref(db, `users/${phoneNumber}/updatedAt`), Date.now())
     } catch (error) {
       console.error('Error updating PWID location:', error)
@@ -102,13 +105,16 @@ export const userService: IUserService = {
     }
   },
 
-  clearPWIDLocation: async (phoneNumber: string) => {
+  stopPWIDLocationSharing: async (phoneNumber: string) => {
     try {
       const db = getDatabaseInstance()
-      await remove(ref(db, `users/${phoneNumber}/location`))
+      await update(ref(db, `users/${phoneNumber}/location`), {
+        isSharing: false,
+        updatedAt: Date.now()
+      })
       await set(ref(db, `users/${phoneNumber}/updatedAt`), Date.now())
     } catch (error) {
-      console.error('Error clearing PWID location:', error)
+      console.error('Error stopping PWID location sharing:', error)
       throw error
     }
   },
@@ -219,7 +225,7 @@ export const userService: IUserService = {
 export const {
   createUser,
   updatePWIDLocation,
-  clearPWIDLocation,
+  stopPWIDLocationSharing,
   getUserData,
   updatePWIDCaregiver,
   storeFCMToken,

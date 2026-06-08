@@ -73,7 +73,9 @@ export const userService: IUserService = {
 
   updatePWIDLocation: async (phoneNumber: string, location: UserLocation) => {
     try {
-      await database().ref(`users/${phoneNumber}/location`).set(location)
+      await database()
+        .ref(`users/${phoneNumber}/location`)
+        .set({ ...location, isSharing: true })
       await database().ref(`users/${phoneNumber}/updatedAt`).set(Date.now())
     } catch (error) {
       console.error('Error updating PWID location:', error)
@@ -81,12 +83,14 @@ export const userService: IUserService = {
     }
   },
 
-  clearPWIDLocation: async (phoneNumber: string) => {
+  stopPWIDLocationSharing: async (phoneNumber: string) => {
     try {
-      await database().ref(`users/${phoneNumber}/location`).remove()
+      await database()
+        .ref(`users/${phoneNumber}/location`)
+        .update({ isSharing: false, updatedAt: Date.now() })
       await database().ref(`users/${phoneNumber}/updatedAt`).set(Date.now())
     } catch (error) {
-      console.error('Error clearing PWID location:', error)
+      console.error('Error stopping PWID location sharing:', error)
       throw error
     }
   },
@@ -184,7 +188,7 @@ export const userService: IUserService = {
 export const {
   createUser,
   updatePWIDLocation,
-  clearPWIDLocation,
+  stopPWIDLocationSharing,
   getUserData,
   updatePWIDCaregiver,
   storeFCMToken,

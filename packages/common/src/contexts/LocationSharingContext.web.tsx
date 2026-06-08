@@ -4,8 +4,8 @@ import React, { createContext, useCallback, useContext, useState } from 'react'
 import notificationService from '../services/notificationService'
 import { getUserStorage } from '../services/storageService'
 import {
-  clearPWIDLocation,
   getUserData,
+  stopPWIDLocationSharing,
   updatePWIDLocation
 } from '../services/userService'
 import type { PWIDUser } from '../types'
@@ -90,7 +90,7 @@ export const LocationSharingProvider: React.FC<{
         watchIdRef.current = null
       }
       if (pwidPhoneNumber) {
-        clearPWIDLocation(pwidPhoneNumber).catch(() => {})
+        stopPWIDLocationSharing(pwidPhoneNumber).catch(() => {})
       }
       return
     }
@@ -150,7 +150,7 @@ export const LocationSharingProvider: React.FC<{
         watchIdRef.current = null
       }
       if (pwidPhoneNumber) {
-        clearPWIDLocation(pwidPhoneNumber).catch(() => {})
+        stopPWIDLocationSharing(pwidPhoneNumber).catch(() => {})
         sendStopNotificationToCaregiver().catch(() => {})
       }
     }

@@ -13,6 +13,7 @@ interface Location {
   lat: number
   lng: number
   updatedAt: number
+  isSharing?: boolean
 }
 
 interface TrackPWIDPageProps {
@@ -65,7 +66,7 @@ export function TrackPWIDPage({
     }
   }
 
-  const isSharing = !!location
+  const isSharing = !!location?.isSharing
   const statusColor = isSharing ? '#CBF4DF' : '#F7CBC8'
   const statusTextColor = isSharing ? '#209D5E' : '#E13F33'
   const statusText = isSharing ? 'Online' : 'Offline'
