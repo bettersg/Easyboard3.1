@@ -85,11 +85,12 @@ export const LocationSharingProvider: React.FC<{
   React.useEffect(() => {
     if (!isLocationSharing || !pwidPhoneNumber) {
       // Stop sharing
+      const wasSharing = watchIdRef.current !== null
       if (watchIdRef.current !== null) {
         navigator.geolocation.clearWatch(watchIdRef.current)
         watchIdRef.current = null
       }
-      if (pwidPhoneNumber) {
+      if (pwidPhoneNumber && wasSharing) {
         stopPWIDLocationSharing(pwidPhoneNumber).catch(() => {})
       }
       return
@@ -145,11 +146,12 @@ export const LocationSharingProvider: React.FC<{
     )
 
     return () => {
+      const wasSharing = watchIdRef.current !== null
       if (watchIdRef.current !== null) {
         navigator.geolocation.clearWatch(watchIdRef.current)
         watchIdRef.current = null
       }
-      if (pwidPhoneNumber) {
+      if (pwidPhoneNumber && wasSharing) {
         stopPWIDLocationSharing(pwidPhoneNumber).catch(() => {})
         sendStopNotificationToCaregiver().catch(() => {})
       }

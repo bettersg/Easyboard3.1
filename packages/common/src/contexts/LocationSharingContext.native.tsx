@@ -69,8 +69,8 @@ export const LocationSharingProvider: React.FC<{
         locationSubscription.current = null
       }
       setDestinationState(null)
-      // Clear PWID location from database
-      if (pwidPhoneNumber)
+      // Update database to reflect that location sharing ended
+      if (pwidPhoneNumber && hasSharedRef.current)
         stopPWIDLocationSharing(pwidPhoneNumber).catch((_err) => {})
     }
 
