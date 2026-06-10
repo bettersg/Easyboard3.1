@@ -94,10 +94,7 @@ export const userService: IUserService = {
   updatePWIDLocation: async (phoneNumber: string, location: UserLocation) => {
     try {
       const db = getDatabaseInstance()
-      await set(ref(db, `users/${phoneNumber}/location`), {
-        ...location,
-        isSharing: true
-      })
+      await set(ref(db, `users/${phoneNumber}/location`), location)
       await set(ref(db, `users/${phoneNumber}/updatedAt`), Date.now())
     } catch (error) {
       console.error('Error updating PWID location:', error)

@@ -22,7 +22,7 @@ export interface UserLocation {
   lat: number
   lng: number
   updatedAt: number
-  isSharing?: boolean
+  isSharing: boolean
 }
 
 interface BaseUser {

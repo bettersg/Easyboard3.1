@@ -182,7 +182,8 @@ export const LocationSharingProvider: React.FC<{
               await updatePWIDLocation(pwidPhoneNumber, {
                 lat: loc.coords.latitude,
                 lng: loc.coords.longitude,
-                updatedAt: Date.now()
+                updatedAt: Date.now(),
+                isSharing: true
               })
 
               // Use the ref for the latest destination

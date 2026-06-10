@@ -112,7 +112,8 @@ export const LocationSharingProvider: React.FC<{
           await updatePWIDLocation(pwidPhoneNumber!, {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
-            updatedAt: Date.now()
+            updatedAt: Date.now(),
+            isSharing: true
           })
 
           // Check if arrived at destination

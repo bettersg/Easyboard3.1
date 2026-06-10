@@ -75,7 +75,7 @@ export const userService: IUserService = {
     try {
       await database()
         .ref(`users/${phoneNumber}/location`)
-        .set({ ...location, isSharing: true })
+        .set(location)
       await database().ref(`users/${phoneNumber}/updatedAt`).set(Date.now())
     } catch (error) {
       console.error('Error updating PWID location:', error)
