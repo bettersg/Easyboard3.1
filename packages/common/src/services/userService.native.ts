@@ -87,7 +87,7 @@ export const userService: IUserService = {
     try {
       await database()
         .ref(`users/${phoneNumber}/location`)
-        .update({ isSharing: false, updatedAt: Date.now() })
+        .update({ isSharing: false })
       await database().ref(`users/${phoneNumber}/updatedAt`).set(Date.now())
     } catch (error) {
       console.error('Error stopping PWID location sharing:', error)

@@ -106,8 +106,7 @@ export const userService: IUserService = {
     try {
       const db = getDatabaseInstance()
       await update(ref(db, `users/${phoneNumber}/location`), {
-        isSharing: false,
-        updatedAt: Date.now()
+        isSharing: false
       })
       await set(ref(db, `users/${phoneNumber}/updatedAt`), Date.now())
     } catch (error) {
