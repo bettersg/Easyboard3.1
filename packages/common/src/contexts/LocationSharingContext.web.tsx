@@ -4,8 +4,8 @@ import React, { createContext, useCallback, useContext, useState } from 'react'
 import notificationService from '../services/notificationService'
 import { getUserStorage } from '../services/storageService'
 import {
-  clearPWIDLocation,
   getUserData,
+  stopPWIDLocationSharing,
   updatePWIDLocation
 } from '../services/userService'
 import type { PWIDUser } from '../types'
@@ -85,12 +85,13 @@ export const LocationSharingProvider: React.FC<{
   React.useEffect(() => {
     if (!isLocationSharing || !pwidPhoneNumber) {
       // Stop sharing
+      const wasSharing = watchIdRef.current !== null
       if (watchIdRef.current !== null) {
         navigator.geolocation.clearWatch(watchIdRef.current)
         watchIdRef.current = null
       }
-      if (pwidPhoneNumber) {
-        clearPWIDLocation(pwidPhoneNumber).catch(() => {})
+      if (pwidPhoneNumber && wasSharing) {
+        stopPWIDLocationSharing(pwidPhoneNumber).catch(() => {})
       }
       return
     }
@@ -111,7 +112,8 @@ export const LocationSharingProvider: React.FC<{
           await updatePWIDLocation(pwidPhoneNumber!, {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
-            updatedAt: Date.now()
+            updatedAt: Date.now(),
+            isSharing: true
           })
 
           // Check if arrived at destination
@@ -145,12 +147,13 @@ export const LocationSharingProvider: React.FC<{
     )
 
     return () => {
+      const wasSharing = watchIdRef.current !== null
       if (watchIdRef.current !== null) {
         navigator.geolocation.clearWatch(watchIdRef.current)
         watchIdRef.current = null
       }
-      if (pwidPhoneNumber) {
-        clearPWIDLocation(pwidPhoneNumber).catch(() => {})
+      if (pwidPhoneNumber && wasSharing) {
+        stopPWIDLocationSharing(pwidPhoneNumber).catch(() => {})
         sendStopNotificationToCaregiver().catch(() => {})
       }
     }

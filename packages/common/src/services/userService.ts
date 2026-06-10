@@ -8,7 +8,7 @@ export interface IUserService {
     initialData?: Partial<UserData>
   ): Promise<UserData>
   updatePWIDLocation(phoneNumber: string, location: UserLocation): Promise<void>
-  clearPWIDLocation(phoneNumber: string): Promise<void>
+  stopPWIDLocationSharing(phoneNumber: string): Promise<void>
   getUserData(phoneNumber: string): Promise<UserData | null>
   updatePWIDCaregiver(pwidPhone: string, caregiverPhone: string): Promise<void>
   storeFCMToken(phoneNumber: string, fcmToken: string): Promise<void>
