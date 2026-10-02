@@ -216,15 +216,13 @@ export const userService: IUserService = {
 } satisfies IUserService
 
 // Export individual functions for backward compatibility
-export const {
-  createUser,
-  updatePWIDLocation,
-  clearPWIDLocation,
-  getUserData,
-  updatePWIDCaregiver,
-  storeFCMToken,
-  getFCMToken,
-  listenToPWIDLocation,
-  getPWIDsByCaregiverPhone,
-  updateUserData
-} = userService
+export const createUser = userService.createUser
+export const updatePWIDLocation = userService.updatePWIDLocation
+export const clearPWIDLocation = userService.clearPWIDLocation
+export const getUserData = userService.getUserData
+export const updatePWIDCaregiver = userService.updatePWIDCaregiver
+export const storeFCMToken = userService.storeFCMToken
+export const getFCMToken = userService.getFCMToken
+export const listenToPWIDLocation = userService.listenToPWIDLocation
+export const getPWIDsByCaregiverPhone = userService.getPWIDsByCaregiverPhone
+export const updateUserData = userService.updateUserData

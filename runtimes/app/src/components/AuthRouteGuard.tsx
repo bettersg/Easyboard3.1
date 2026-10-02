@@ -2,8 +2,10 @@
 
 import { usePathname, useRouter } from 'expo-router'
 import React, { useEffect, useState } from 'react'
-import { LoadingIndicator, Text, View } from '../components'
 import { useAuth } from '../contexts'
+import { LoadingIndicator } from './LoadingIndicator'
+import { Text } from './Text'
+import { View } from './View'
 
 interface AuthRouteGuardProps {
   children: React.ReactNode

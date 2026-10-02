@@ -18,8 +18,14 @@ import ActionSheet, { type ActionSheetRef } from 'react-native-actions-sheet'
 import { useSafeArea } from '../provider'
 import { uploadLocationPhoto } from '../services/storageService'
 import type { MarkerData } from '../stores/onboardingStore'
-import { Animated, BackButton, Button, Image, InputField, Text, View } from '.'
+import { Animated } from './Animated'
+import { BackButton } from './BackButton'
+import { Button } from './Button'
+import { Image } from './Image'
+import { InputField } from './InputField'
 import GoogleMapView from './mapView/GoogleMapView'
+import { Text } from './Text'
+import { View } from './View'
 
 interface LocationInputProps {
   onLocationSelect: (location: MarkerData) => void

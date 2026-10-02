@@ -1,4 +1,5 @@
-import { Text, View } from './index'
+import { Text } from './Text'
+import { View } from './View'
 
 export interface OnboardingScreenProps {
   title: string

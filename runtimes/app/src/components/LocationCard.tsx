@@ -1,4 +1,6 @@
-import { Button, Text, View } from './index'
+import { Button } from './Button'
+import { Text } from './Text'
+import { View } from './View'
 
 export interface LocationCardProps {
   title: string

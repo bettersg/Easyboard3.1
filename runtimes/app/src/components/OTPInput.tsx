@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import type { TextInputInstance } from 'react-native'
-import { TextInput, View } from './index'
+import { TextInput } from './TextInput'
+import { View } from './View'
 
 export interface OTPInputProps {
   length?: number

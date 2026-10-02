@@ -1,8 +1,9 @@
 import { Fragment, useMemo } from 'react'
 import { Pressable } from 'react-native'
 import type { GoogleRouteStepsOverview } from '../types/googleRoute'
-import { Text, View } from '.'
+import { Text } from './Text'
 import { TransitTypePill } from './TransitTypePill'
+import { View } from './View'
 
 interface TransitOptionCardProps {
   onPress?: () => void

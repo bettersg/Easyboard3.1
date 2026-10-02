@@ -10,7 +10,8 @@ import {
 import { useEffect, useMemo, useRef } from 'react'
 import type { MarkerData } from '../../stores/onboardingStore'
 import type { Route } from '../../types/googleRoute'
-import { Text, View } from '../index'
+import { Text } from '../Text'
+import { View } from '../View'
 
 export interface DirectionsMapViewProps {
   googleRoute: Route

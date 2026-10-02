@@ -32,9 +32,10 @@ export const googlePlacesService: IGooglePlacesService = {
   }
 } satisfies IGooglePlacesService
 
-export const {
-  queryGooglePlacesAsync,
-  getGooglePlacesLocationAsync,
-  getGooglePlacePhotoAsync,
-  getGoogleReverseGeoCodingAsync
-} = googlePlacesService
+export const queryGooglePlacesAsync = googlePlacesService.queryGooglePlacesAsync
+export const getGooglePlacesLocationAsync =
+  googlePlacesService.getGooglePlacesLocationAsync
+export const getGooglePlacePhotoAsync =
+  googlePlacesService.getGooglePlacePhotoAsync
+export const getGoogleReverseGeoCodingAsync =
+  googlePlacesService.getGoogleReverseGeoCodingAsync

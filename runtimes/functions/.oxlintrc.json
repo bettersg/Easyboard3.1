@@ -9,7 +9,12 @@
     "es2024": true,
     "node": true
   },
-  "ignorePatterns": ["**/dist/**", "**/node_modules/**", "**/lib/**"],
+  "ignorePatterns": [
+    "**/dist/**",
+    "**/node_modules/**",
+    "**/lib/**",
+    "src/**/*.js"
+  ],
   "rules": {
     "constructor-super": "error",
     "for-direction": "error",

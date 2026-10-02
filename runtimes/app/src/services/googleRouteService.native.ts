@@ -86,8 +86,7 @@ export const googleRouteService: IGoogleRouteService = {
 } satisfies IGoogleRouteService
 
 // Export individual functions for backward compatibility
-export const {
-  getGoogleRoute,
-  getStepsOverViewFromGoogleRouteLeg,
-  getCurrentPosition
-} = googleRouteService
+export const getGoogleRoute = googleRouteService.getGoogleRoute
+export const getStepsOverViewFromGoogleRouteLeg =
+  googleRouteService.getStepsOverViewFromGoogleRouteLeg
+export const getCurrentPosition = googleRouteService.getCurrentPosition

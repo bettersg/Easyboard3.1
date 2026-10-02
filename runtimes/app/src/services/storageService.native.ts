@@ -162,15 +162,13 @@ export const storageService: IStorageService = {
 } satisfies IStorageService
 
 // Export individual functions for backward compatibility
-export const {
-  setUserStorage,
-  getUserStorage,
-  clearUserStorage,
-  clearFirebaseData,
-  completeLogout,
-  isSessionExpired,
-  uploadLocationPhoto,
-  getPhotoDownloadUrl
-} = storageService
+export const setUserStorage = storageService.setUserStorage
+export const getUserStorage = storageService.getUserStorage
+export const clearUserStorage = storageService.clearUserStorage
+export const clearFirebaseData = storageService.clearFirebaseData
+export const completeLogout = storageService.completeLogout
+export const isSessionExpired = storageService.isSessionExpired
+export const uploadLocationPhoto = storageService.uploadLocationPhoto
+export const getPhotoDownloadUrl = storageService.getPhotoDownloadUrl
 
 export type { UserStorage, PWIDUser }

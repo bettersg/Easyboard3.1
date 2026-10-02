@@ -1,5 +1,6 @@
 import { ActivityIndicator } from 'react-native'
-import { Text, View } from '.'
+import { Text } from './Text'
+import { View } from './View'
 
 export const LoadingIndicator = () => (
   <View className='flex flex-1 items-center justify-center'>

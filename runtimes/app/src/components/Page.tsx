@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { ScrollView, View } from '.'
+import { ScrollView } from './ScrollView'
+import { View } from './View'
 
 interface Props {
   children: ReactNode

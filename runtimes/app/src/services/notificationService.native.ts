@@ -225,13 +225,14 @@ export const notificationService: INotificationService = {
 export default notificationService
 
 // Re-export methods individually for backward compatibility
-export const {
-  initialize,
-  checkPermissions,
-  requestPermissions,
-  sendLocationShareNotification,
-  sendLocationStopNotification,
-  sendFCMNotification,
-  setupNotificationListeners,
-  setNavigationCallback
-} = notificationService
+export const initialize = notificationService.initialize
+export const checkPermissions = notificationService.checkPermissions
+export const requestPermissions = notificationService.requestPermissions
+export const sendLocationShareNotification =
+  notificationService.sendLocationShareNotification
+export const sendLocationStopNotification =
+  notificationService.sendLocationStopNotification
+export const sendFCMNotification = notificationService.sendFCMNotification
+export const setupNotificationListeners =
+  notificationService.setupNotificationListeners
+export const setNavigationCallback = notificationService.setNavigationCallback

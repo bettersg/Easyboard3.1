@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "expo start --web",
     "start": "expo start",
-    "build": "expo export --platform web",
+    "build": "EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH=1 EXPO_UNSTABLE_TREE_SHAKING=1 expo export --platform web",
     "prebuild": "expo prebuild",
     "android": "expo run:android",
     "ios": "expo run:ios",

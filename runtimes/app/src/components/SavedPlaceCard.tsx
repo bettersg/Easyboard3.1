@@ -1,6 +1,9 @@
 import { Pressable } from 'react-native'
 import type { MarkerData } from '../stores/onboardingStore'
-import { Button, Image, Text, View } from '.'
+import { Button } from './Button'
+import { Image } from './Image'
+import { Text } from './Text'
+import { View } from './View'
 
 export const SavedPlaceCard = (props: {
   title: string

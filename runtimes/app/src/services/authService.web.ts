@@ -141,10 +141,8 @@ export const authService: IAuthService = {
 } satisfies IAuthService
 
 // Export individual functions for backward compatibility
-export const {
-  signInWithPhoneNumber,
-  signOut,
-  getIdToken,
-  verifyOtp,
-  cleanupRecaptcha
-} = authService
+export const signInWithPhoneNumber = authService.signInWithPhoneNumber
+export const signOut = authService.signOut
+export const getIdToken = authService.getIdToken
+export const verifyOtp = authService.verifyOtp
+export const cleanupRecaptcha = authService.cleanupRecaptcha

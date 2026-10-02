@@ -9,7 +9,10 @@ import type {
   LatLong,
   MarkerData
 } from '../../types/index.js'
-import { IconButton, InputField, Text, View } from '..'
+import { IconButton } from '../IconButton'
+import { InputField } from '../InputField'
+import { Text } from '../Text'
+import { View } from '../View'
 
 // Google Places API functions
 const GOOGLE_MAPS_API_BASE_URL = 'https://maps.googleapis.com/maps/api'

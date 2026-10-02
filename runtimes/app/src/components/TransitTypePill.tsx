@@ -1,5 +1,6 @@
 import type { TransitLine, TravelMode } from '../types/googleRoute'
-import { Text, View } from '.'
+import { Text } from './Text'
+import { View } from './View'
 
 interface TransitTypePillProps {
   travelMode: TravelMode
