@@ -105,7 +105,7 @@ yarn dev
 
 #### Running specific applications (from the monorepo root)
 
-- **Expo dev server (web opens in the browser)**: `yarn app:dev`
+- **Web only** (Expo dev server, opens the browser; no functions emulator): `yarn web:dev` (same as `yarn app:dev`)
 - **Native iOS**: `yarn app:ios`
 - **Native Android**: `yarn app:android`
 
