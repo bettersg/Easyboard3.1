@@ -1,4 +1,3 @@
-import axios from 'axios'
 import Constants from 'expo-constants'
 import { Platform } from 'react-native'
 import type {
@@ -60,6 +59,16 @@ const checkApiError = (data: any): string | null => {
   return null
 }
 
+// fetch that behaves like the axios calls it replaced: rejects on a non-2xx
+// status and resolves to the parsed JSON body
+async function requestJson(method: 'GET' | 'POST', url: string) {
+  const response = await fetch(url, { method, headers: getHeaders() })
+  if (!response.ok) {
+    throw new Error(`Request failed with status code ${response.status}`)
+  }
+  return { data: await response.json() }
+}
+
 export const googlePlacesService: IGooglePlacesService = {
   queryGooglePlacesAsync: async (
     searchTerm: string
@@ -74,11 +83,10 @@ export const googlePlacesService: IGooglePlacesService = {
     }
 
     try {
-      const result = await axios.request({
-        method: 'post',
-        url: `${GOOGLE_MAPS_API_BASE_URL}/place/autocomplete/json?key=${apiKey}&input=${searchTerm}&components=country:sg`,
-        headers: getHeaders()
-      })
+      const result = await requestJson(
+        'POST',
+        `${GOOGLE_MAPS_API_BASE_URL}/place/autocomplete/json?key=${apiKey}&input=${searchTerm}&components=country:sg`
+      )
 
       if (result?.data) {
         const error = checkApiError(result.data)
@@ -116,11 +124,10 @@ export const googlePlacesService: IGooglePlacesService = {
     }
 
     try {
-      const result = await axios.request({
-        method: 'post',
-        url: `${GOOGLE_MAPS_API_BASE_URL}/place/details/json?key=${apiKey}&place_id=${placeId}&fields=geometry,photos`,
-        headers: getHeaders()
-      })
+      const result = await requestJson(
+        'POST',
+        `${GOOGLE_MAPS_API_BASE_URL}/place/details/json?key=${apiKey}&place_id=${placeId}&fields=geometry,photos`
+      )
 
       if (result?.data) {
         const error = checkApiError(result.data)
@@ -169,11 +176,10 @@ export const googlePlacesService: IGooglePlacesService = {
     }
 
     try {
-      const result = await axios.request({
-        method: 'get',
-        url: `${GOOGLE_MAPS_API_BASE_URL}/geocode/json?key=${apiKey}&latlng=${latitude},${longitude}`,
-        headers: getHeaders()
-      })
+      const result = await requestJson(
+        'GET',
+        `${GOOGLE_MAPS_API_BASE_URL}/geocode/json?key=${apiKey}&latlng=${latitude},${longitude}`
+      )
 
       if (result?.data) {
         const error = checkApiError(result.data)
