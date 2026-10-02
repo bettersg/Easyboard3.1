@@ -2,15 +2,10 @@
 import axios from 'axios'
 import type { FCMNotificationPayload, IFCMService } from './fcmService'
 
-const apiUrl =
-  process.env.NEXT_PUBLIC_FCM_API_URL ||
-  process.env.EXPO_PUBLIC_FCM_API_URL ||
-  ''
+const apiUrl = process.env.EXPO_PUBLIC_FCM_API_URL || ''
 
 if (!apiUrl && typeof window !== 'undefined') {
-  console.warn(
-    'FCM API URL not configured. Set NEXT_PUBLIC_FCM_API_URL or EXPO_PUBLIC_FCM_API_URL'
-  )
+  console.warn('FCM API URL not configured. Set EXPO_PUBLIC_FCM_API_URL')
 }
 
 export const fcmService: IFCMService = {

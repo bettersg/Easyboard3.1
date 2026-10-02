@@ -1,13 +1,12 @@
 # EasyBoard Monorepo
 
-Cross-platform monorepo for EasyBoard, based on Expo (expo-router) and Next.js
+Cross-platform monorepo for EasyBoard: one Expo (expo-router) app serving iOS, Android and web, plus Firebase Cloud Functions.
 
 ## Repository Structure
 
 ```text
 ├── apps/
-│   ├── web/             # Next.js web application
-│   ├── native/          # Expo/React Native app
+│   ├── native/          # Expo app: iOS, Android and web
 │   └── functions/       # Firebase Cloud Functions
 ├── packages/
 │   ├── common/          # Core business logic, shared UI, and services
@@ -98,21 +97,20 @@ For more detailed instructions (Android Studio, iOS Simulator, etc.), refer to t
 
 ### Development
 
-To run all services (Functions, Native dev server, and Web dev server):
+To run all services (Functions emulator and the Expo dev server, with web opened in the browser):
 ```bash
 yarn dev
 ```
 
 #### Running specific applications (from the monorepo root)
 
-- **Web only**: `yarn web:dev`
+- **Expo dev server (web opens in the browser)**: `yarn native:dev`
 - **Native iOS**: `yarn native:ios`
 - **Native Android**: `yarn native:android`
-- **Native Dev Server**: `yarn native:dev`
 
 ### Building
 
-- **Build all**: `yarn build`
+- **Build all**: `yarn build` (the app's build is a static web export in `apps/native/dist`)
 - **Build specific**: `yarn turbo build --filter=<app-name>`
 
 ### Linting and Formatting
@@ -139,13 +137,13 @@ yarn native:ios     # For iOS (macOS only)
 - Gneneral workflow:
     1. Create primitive UI in `packages/common/src/components`.
     2. Compose pages in `packages/common/src/pages`.
-    3. Register routes in `apps/native/app` and `apps/web/app` (Next.js App Router).
+    3. Register routes in `apps/native/app` (expo-router). The same routes serve iOS, Android and web.
 - Business logic should reside in `packages/common/src/services`.
 - Use **NativeWind** for styling across both platforms.
 
 ## Key Features
 
-- **Shared UI/UX**: Over 90% code sharing between Web and Native using expo-router.
+- **One codebase**: iOS, Android and web are one Expo app routed by expo-router. Platform differences live in `.web.ts` / `.native.ts` file pairs.
 - **NativeWind**: Tailwind CSS for universal styling.
 - **Firebase Integration**: Unified services for Auth, Database, and Functions.
 - **Type Safety**: Full-stack TypeScript support.

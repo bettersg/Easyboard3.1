@@ -8,10 +8,13 @@
     }
   ],
   "hosting": {
-    "source": "./apps/web",
+    "public": "apps/native/dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "frameworksBackend": {
-      "region": "asia-east1"
-    }
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
   }
 }

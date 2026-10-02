@@ -2,7 +2,6 @@
 
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { MdGpsFixed } from 'react-icons/md'
 import { Pressable } from 'react-native'
 import { useDebounce } from '../../hooks'
 import type {
@@ -14,10 +13,17 @@ import { IconButton, InputField, Text, View } from '..'
 
 // Google Places API functions
 const GOOGLE_MAPS_API_BASE_URL = 'https://maps.googleapis.com/maps/api'
-const apiKey =
-  process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ||
-  process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ||
-  ''
+const apiKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || ''
+
+// Material Design "gps_fixed" icon, inlined so the web bundle does not pull in
+// the whole react-icons Material set.
+function GpsFixedIcon({ size, color }: { size: number; color: string }) {
+  return (
+    <svg viewBox='0 0 24 24' width={size} height={size} fill={color}>
+      <path d='M12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm8.94 3A8.994 8.994 0 0 0 13 3.06V1h-2v2.06A8.994 8.994 0 0 0 3.06 11H1v2h2.06A8.994 8.994 0 0 0 11 20.94V23h2v-2.06A8.994 8.994 0 0 0 20.94 13H23v-2h-2.06zM12 19c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z' />
+    </svg>
+  )
+}
 
 async function getGoogleReverseGeoCodingAsync(
   latitude: number,
@@ -395,7 +401,7 @@ const GoogleMapView = ({
       <View className='absolute p-0 bottom-8 right-8'>
         <IconButton
           onPress={goToCurrentLocation}
-          icon={<MdGpsFixed size={30} color='#3F98F8' />}
+          icon={<GpsFixedIcon size={30} color='#3F98F8' />}
           variant='text'
           className='p-[10px] -mr-[10px] bg-white rounded-full items-center justify-center w-12 h-12'
         />

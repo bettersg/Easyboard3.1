@@ -18,10 +18,7 @@ import { OnboardingLayout } from './OnboardingLayout'
 
 const GOOGLE_MAPS_API_BASE_URL = 'https://maps.googleapis.com/maps/api'
 
-const apiKey =
-  process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ||
-  process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ||
-  ''
+const apiKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || ''
 
 /**
  * Gets photo URL from photo reference (similar to native implementation)

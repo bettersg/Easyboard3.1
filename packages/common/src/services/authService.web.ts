@@ -3,7 +3,7 @@ import {
   signInWithPhoneNumber as firebaseSignInWithPhoneNumber,
   signOut as firebaseSignOut,
   RecaptchaVerifier
-} from '@firebase/auth'
+} from 'firebase/auth'
 import type { IAuthService } from './authService'
 // Import Firebase config to ensure initialization happens
 import { auth } from './firebase.web'

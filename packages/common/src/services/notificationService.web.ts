@@ -67,9 +67,7 @@ export const notificationService: INotificationService = {
       if (permission !== 'granted') return null
 
       const fcmToken = await getToken(messagingInstance, {
-        vapidKey:
-          process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY ||
-          process.env.EXPO_PUBLIC_FIREBASE_VAPID_KEY
+        vapidKey: process.env.EXPO_PUBLIC_FIREBASE_VAPID_KEY
       })
 
       if (fcmToken) {

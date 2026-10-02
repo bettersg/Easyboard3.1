@@ -130,5 +130,9 @@ export default (): ExpoConfig => ({
     newArchEnabled: true,
     googleServicesFile: './google-services.json'
   },
-  web: { favicon: './assets/favicon.png' }
+  web: {
+    bundler: 'metro',
+    output: 'single',
+    favicon: './assets/favicon.png'
+  }
 })

@@ -68,7 +68,7 @@ Environment variables are loaded from `apps/functions/.env` via `dotenv`. The `.
 
 Both functions enforce CORS for:
 - `https://easyboard-sg.web.app` (old firebase deployment)
-- `http://localhost:3001` (local web dev)
+- `http://localhost:8081` (local web dev, Expo)
 - `https://easyboard3.vercel.app` (current vercel deployments)
 
 `getGoogleRoute` also requires Firebase Authentication (rejects unauthenticated calls).
@@ -137,7 +137,7 @@ The CORS origins are hardcoded in `apps/functions/src/index.ts`. If you deploy t
 
 ## Troubleshooting
 
-- **CORS errors**: Verify the request origin matches one of the allowed CORS origins. For local testing, use `http://localhost:3001`.
+- **CORS errors**: Verify the request origin matches one of the allowed CORS origins. For local testing, use `http://localhost:8081`.
 - **`getGoogleRoute` returns 401**: Ensure the caller includes a valid Firebase Auth token. The function rejects requests without authentication.
 - **`sendNotification` requires POST**: The function only accepts `POST` requests. Using GET will return `405 Method Not Allowed`.
 - **Deployment fails**: Check that `firebase-tools` is up to date (`npm install -g firebase-tools@latest`). Ensure your Firebase account has the `Firebase Admin` or `Editor` role on the project.

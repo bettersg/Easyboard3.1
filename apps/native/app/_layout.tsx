@@ -1,3 +1,4 @@
+import { AuthRouteGuard } from '@repo/common/components'
 import {
   AuthProvider,
   LocationSharingProvider,
@@ -10,6 +11,7 @@ import notificationService, {
 } from '@repo/common/services'
 import { router, Stack, useNavigation } from 'expo-router'
 import React, { useEffect } from 'react'
+import { Platform } from 'react-native'
 
 function RootLayoutNav() {
   const { hasAuthen, userType } = useAuth()
@@ -51,7 +53,7 @@ function RootLayoutNav() {
   }, [hasAuthen, userType]) // Re-initialize when user changes
 
   // Use Stack to enable animations between top-level routes
-  return (
+  const stack = (
     <Stack
       screenOptions={{
         headerShown: false,
@@ -61,6 +63,14 @@ function RootLayoutNav() {
       }}
     />
   )
+
+  // Web needs the route guard (deep links and reloads land on any URL);
+  // native navigation is driven by the screens themselves.
+  if (Platform.OS === 'web') {
+    return <AuthRouteGuard>{stack}</AuthRouteGuard>
+  }
+
+  return stack
 }
 
 export default function RootLayout() {

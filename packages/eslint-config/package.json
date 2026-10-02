@@ -5,7 +5,6 @@
   "private": true,
   "exports": {
     "./base": "./base.js",
-    "./next": "./next.js",
     "./react-internal": "./react-internal.js",
     "./native": "./native.js",
     "./functions": "./functions.js"
@@ -13,10 +12,8 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.19.0",
-    "@next/eslint-plugin-next": "^15.1.6",
     "eslint": "^9.19.0",
     "eslint-config-expo": "^10.0.0",
-    "eslint-config-next": "^16.1.1",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-only-warn": "^1.1.0",
     "eslint-plugin-react": "^7.37.4",

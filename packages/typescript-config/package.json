@@ -6,9 +6,5 @@
   "publishConfig": {
     "access": "public"
   },
-  "files": [
-    "base.json",
-    "nextjs.json",
-    "react-native.json"
-  ]
+  "files": ["base.json", "react-library.json"]
 }

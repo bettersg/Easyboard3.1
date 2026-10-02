@@ -19,10 +19,7 @@ export interface DirectionsMapViewProps {
   navigationStarted: boolean
 }
 
-const apiKey =
-  process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ||
-  process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY ||
-  ''
+const apiKey = process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY || ''
 
 export function DirectionsMapView({
   googleRoute,

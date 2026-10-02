@@ -2,14 +2,12 @@
 
 module.exports = {
   async constraints({ Yarn }) {
-    for (const dep of Yarn.dependencies({ ident: 'next' })) {
-      dep.update(`^14.2.23`)
-    }
+    // Expo SDK 53 ships React 19.0.0; react-dom must match it exactly on web
     for (const dep of Yarn.dependencies({ ident: 'react' })) {
-      dep.update(`18.3.1`)
+      dep.update(`19.0.0`)
     }
     for (const dep of Yarn.dependencies({ ident: 'react-dom' })) {
-      dep.update(`18.3.1`)
+      dep.update(`19.0.0`)
     }
   }
 }
