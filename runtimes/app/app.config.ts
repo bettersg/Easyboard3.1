@@ -5,7 +5,7 @@ import { type ExpoConfig } from 'expo/config'
 import * as path from 'path'
 
 // Load environment variables from root .env file
-dotenv.config({ path: path.resolve(__dirname, '../../.env') })
+dotenv.config({ path: path.resolve(__dirname, '../../.env'), quiet: true })
 
 export default (): ExpoConfig => ({
   owner: 'engineeringgood',
