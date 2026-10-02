@@ -41,7 +41,7 @@
     "@react-native-firebase/database": "^23.5.0",
     "@react-native-firebase/messaging": "^23.5.0",
     "firebase": "^12.6.0",
-    "@types/react-native-web/react-native": "0.85.3",
+    "@types/react-native-web/react-native": "0.86.3",
     "@nandorojo/iconic/react-native-svg": "15.15.4"
   }
 }

@@ -322,7 +322,7 @@ Expected versions per SDK, read from each release's `bundledNativeModules.json` 
 
 #### Hop 4: SDK 56 to 57 ([changelog](https://expo.dev/changelog/sdk-57))
 
-- [ ] Land on `expo` 57.0.17 or later; that release fixes the Hermes V1 memory and development start-up regressions.
+- [x] Land on `expo` 57.0.17 or later; that release fixes the Hermes V1 memory and development start-up regressions. Landed on 57.0.26 (tag `sdk-57`). Only `eslint-config-expo` 57, `jest-expo` 57 and the React Native 0.86.3 resolution needed setting by hand.
 
 - No breaking changes are listed. It is the last stable SDK before the beta.
 
