@@ -2321,6 +2321,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@expo/plist@npm:^0.8.1":
+  version: 0.8.1
+  resolution: "@expo/plist@npm:0.8.1"
+  dependencies:
+    "@xmldom/xmldom": "npm:^0.8.8"
+    base64-js: "npm:^1.5.1"
+    xmlbuilder: "npm:^15.1.1"
+  checksum: 10c0/45f130f3d5155d46dc415ab61b97449d5cc7bf47e41ed37965f12e50cc9728aa7c4da83fc958a8d7113e31e4342baebc1b2517de7e20186f3e64d53be378a9ce
+  languageName: node
+  linkType: hard
+
 "@expo/prebuild-config@npm:^58.0.7":
   version: 58.0.7
   resolution: "@expo/prebuild-config@npm:58.0.7"
@@ -4447,11 +4458,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-native-firebase/app@npm:^23.5.0":
-  version: 23.8.3
-  resolution: "@react-native-firebase/app@npm:23.8.3"
+"@react-native-firebase/app@npm:^26.4.0":
+  version: 26.4.0
+  resolution: "@react-native-firebase/app@npm:26.4.0"
   dependencies:
-    firebase: "npm:12.7.0"
+    firebase: "npm:12.17.1"
   peerDependencies:
     expo: ">=47.0.0"
     react: "*"
@@ -4459,62 +4470,62 @@ __metadata:
   peerDependenciesMeta:
     expo:
       optional: true
-  checksum: 10c0/d7fdb07461703e8f06b521307f2bc543665790931debae41eee2fe6309e3459d64686fd5fe8db5cdf4cf0054fa17cd2ec8f550860e620c3d06b954808fb94953
+  checksum: 10c0/da5efa6546ab953499c94ab263470a781f97351f23d361b6068a224f349f24a87d8e9c6fe88381ceffc293d75c35b79c065ddae3ceb00c92c52a825d441bdfe9
   languageName: node
   linkType: hard
 
-"@react-native-firebase/auth@npm:^23.5.0":
-  version: 23.8.3
-  resolution: "@react-native-firebase/auth@npm:23.8.3"
+"@react-native-firebase/auth@npm:^26.4.0":
+  version: 26.4.0
+  resolution: "@react-native-firebase/auth@npm:26.4.0"
   dependencies:
-    plist: "npm:^3.1.0"
+    "@expo/plist": "npm:^0.8.1"
   peerDependencies:
-    "@react-native-firebase/app": 23.8.3
+    "@react-native-firebase/app": 26.4.0
     expo: ">=47.0.0"
   peerDependenciesMeta:
     expo:
       optional: true
-  checksum: 10c0/702b23d2605e62ba04103762e85e2b1cdbecb2ddde67278ece0e831ea1c3026385833c884d4848c7a43d7367b0e9f5a93c6a3f86e99b81ffc1f7cd5c4f8411c4
+  checksum: 10c0/23f52c65f6578ba096e865fba479d132847f7845e29aa9ff4d10476e2ee9de273d56941af1d9de5efd5f896b0abb23847772acd203a8cd4accd7b711abc16300
   languageName: node
   linkType: hard
 
-"@react-native-firebase/database@npm:^23.5.0":
-  version: 23.8.3
-  resolution: "@react-native-firebase/database@npm:23.8.3"
+"@react-native-firebase/database@npm:^26.4.0":
+  version: 26.4.0
+  resolution: "@react-native-firebase/database@npm:26.4.0"
   peerDependencies:
-    "@react-native-firebase/app": 23.8.3
-  checksum: 10c0/ac9b95284d1c7408238904a5e662140ccfe80c6102e4f962693fcf6e6b6343a9646158f215aedeb029915444f8146a0a1f4549cf8a7db9c6851eb69dadd1a0d9
+    "@react-native-firebase/app": 26.4.0
+  checksum: 10c0/0901a7e86d30d682a9a5227a61402d8bd3908875b3981b6dc632fcf70f78103172e370dfb6860b2d3ffd1d785aaf75d952c22f96ccd468ac643b6a7badb1154e
   languageName: node
   linkType: hard
 
-"@react-native-firebase/functions@npm:^23.7.0":
-  version: 23.8.3
-  resolution: "@react-native-firebase/functions@npm:23.8.3"
+"@react-native-firebase/functions@npm:^26.4.0":
+  version: 26.4.0
+  resolution: "@react-native-firebase/functions@npm:26.4.0"
   peerDependencies:
-    "@react-native-firebase/app": 23.8.3
-  checksum: 10c0/6c119ff054cf4557801d55c633aef103b4efd7b82ca07b8cf474fe128c5f2ddfc87db3a45d4ba8611ea87007ba5545baf5a1b7b0b4a604d0bb9338a45fc6107a
+    "@react-native-firebase/app": 26.4.0
+  checksum: 10c0/66c271a53ca38566ba57ab79b0dcbcf02a6f2cc57287e61c1a8bb584681fa89426a8e2ee52a455965b190a48cad2a58aeaa3886d20caa0730aa66cd959f04142
   languageName: node
   linkType: hard
 
-"@react-native-firebase/messaging@npm:^23.5.0":
-  version: 23.8.3
-  resolution: "@react-native-firebase/messaging@npm:23.8.3"
+"@react-native-firebase/messaging@npm:^26.4.0":
+  version: 26.4.0
+  resolution: "@react-native-firebase/messaging@npm:26.4.0"
   peerDependencies:
-    "@react-native-firebase/app": 23.8.3
+    "@react-native-firebase/app": 26.4.0
     expo: ">=47.0.0"
   peerDependenciesMeta:
     expo:
       optional: true
-  checksum: 10c0/bf14ea6771d716caa9ca136e9fce08b477cf77a11978fad1666a2e9f6f33939b4f62f895b48e98482cc4f9e12ba69b92df001f47fa96fce3c595fa92b5bc71a9
+  checksum: 10c0/ffbbfbfced00812db9b601810aef12fb212235411731f7b54663b6a1545095c9c1e5dd60c18d134dd8e91ce35b5db81f87358df060cea8aea997d510bbbc7b0f
   languageName: node
   linkType: hard
 
-"@react-native-firebase/storage@npm:^23.8.3":
-  version: 23.8.3
-  resolution: "@react-native-firebase/storage@npm:23.8.3"
+"@react-native-firebase/storage@npm:^26.4.0":
+  version: 26.4.0
+  resolution: "@react-native-firebase/storage@npm:26.4.0"
   peerDependencies:
-    "@react-native-firebase/app": 23.8.3
-  checksum: 10c0/2ce43bfa67ec9dc7ad90b1b0a032035c82d61f59c81a237cc5ba0b802b6ff9988017a53969f8897f79d9356a5ec541882d67f0f374eb7a72cd1b027616b9f077
+    "@react-native-firebase/app": 26.4.0
+  checksum: 10c0/5ddaad0b872b1f4dcd43e1d3238943554e76484b0dc36c43e4976024f0304879d8b5992feea98663449c605140b8097b4ae5e4a1403e95a3f9e2fc653ee12301
   languageName: node
   linkType: hard
 
@@ -5947,12 +5958,12 @@ __metadata:
     "@nandorojo/iconic": "npm:0.0.1"
     "@react-google-maps/api": "npm:^2.20.7"
     "@react-native-community/cli": "npm:^18.0.0"
-    "@react-native-firebase/app": "npm:^23.5.0"
-    "@react-native-firebase/auth": "npm:^23.5.0"
-    "@react-native-firebase/database": "npm:^23.5.0"
-    "@react-native-firebase/functions": "npm:^23.7.0"
-    "@react-native-firebase/messaging": "npm:^23.5.0"
-    "@react-native-firebase/storage": "npm:^23.8.3"
+    "@react-native-firebase/app": "npm:^26.4.0"
+    "@react-native-firebase/auth": "npm:^26.4.0"
+    "@react-native-firebase/database": "npm:^26.4.0"
+    "@react-native-firebase/functions": "npm:^26.4.0"
+    "@react-native-firebase/messaging": "npm:^26.4.0"
+    "@react-native-firebase/storage": "npm:^26.4.0"
     "@react-native-masked-view/masked-view": "npm:0.3.2"
     "@storybook/react": "npm:^9"
     "@types/jest": "npm:^29.5.12"
@@ -12667,7 +12678,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"plist@npm:^3.0.5, plist@npm:^3.1.0":
+"plist@npm:^3.0.5":
   version: 3.1.0
   resolution: "plist@npm:3.1.0"
   dependencies:

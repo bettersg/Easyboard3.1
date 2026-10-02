@@ -1,12 +1,10 @@
 import {
-  AuthorizationStatus,
   getInitialNotification,
   getMessaging,
   getToken,
   onMessage,
   onNotificationOpenedApp,
-  type RemoteMessage,
-  requestPermission
+  type RemoteMessage
 } from '@react-native-firebase/messaging'
 import * as Notifications from 'expo-notifications'
 import { PermissionsAndroid, Platform } from 'react-native'
@@ -67,10 +65,12 @@ export const notificationService: INotificationService = {
   initialize: async (): Promise<string | null> => {
     try {
       const messaging = getMessaging()
-      const authStatus = await requestPermission(messaging)
+      // RN Firebase deprecated its permission API in favour of expo-notifications
+      const permission = await Notifications.requestPermissionsAsync()
       const enabled =
-        authStatus === AuthorizationStatus.AUTHORIZED ||
-        authStatus === AuthorizationStatus.PROVISIONAL
+        permission.status === 'granted' ||
+        permission.ios?.status ===
+          Notifications.IosAuthorizationStatus.PROVISIONAL
 
       if (!enabled) {
         console.warn('User declined notification permissions')

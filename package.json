@@ -36,10 +36,10 @@
     "@yarnpkg/types": "^4.0.1"
   },
   "resolutions": {
-    "@react-native-firebase/app": "^23.5.0",
-    "@react-native-firebase/auth": "^23.5.0",
-    "@react-native-firebase/database": "^23.5.0",
-    "@react-native-firebase/messaging": "^23.5.0",
+    "@react-native-firebase/app": "^26.4.0",
+    "@react-native-firebase/auth": "^26.4.0",
+    "@react-native-firebase/database": "^26.4.0",
+    "@react-native-firebase/messaging": "^26.4.0",
     "firebase": "^12.19.0",
     "@types/react-native-web/react-native": "0.88.0-rc.3",
     "@nandorojo/iconic/react-native-svg": "15.15.5"

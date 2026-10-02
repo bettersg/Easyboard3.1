@@ -56,6 +56,7 @@ export default (): ExpoConfig => ({
       }
     ],
     '@react-native-firebase/app',
+    './plugins/iosFirebaseConfigure',
     '@react-native-firebase/auth',
     [
       'expo-location',

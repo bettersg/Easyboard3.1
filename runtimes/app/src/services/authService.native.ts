@@ -1,6 +1,6 @@
 import { getApp } from '@react-native-firebase/app'
 import {
-  type FirebaseAuthTypes,
+  type ConfirmationResult as FirebaseConfirmationResult,
   getIdToken as firebaseGetIdToken,
   signInWithPhoneNumber as firebaseSignInWithPhoneNumber,
   signOut as firebaseSignOut,
@@ -9,7 +9,7 @@ import {
 import type { IAuthService } from './authService'
 
 // Platform-specific type for native
-export type ConfirmationResult = FirebaseAuthTypes.ConfirmationResult
+export type ConfirmationResult = FirebaseConfirmationResult
 
 /**
  * Ensure Firebase is initialized before using Auth
