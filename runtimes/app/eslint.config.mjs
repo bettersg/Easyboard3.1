@@ -1,7 +1,6 @@
 import { defineConfig, globalIgnores } from 'eslint/config'
 import expoConfig from 'eslint-config-expo/flat.js'
 import globals from 'globals'
-import tseslint from 'typescript-eslint'
 
 export default defineConfig([
   expoConfig,
@@ -13,9 +12,6 @@ export default defineConfig([
       parserOptions: {
         project: ['./tsconfig.json']
       }
-    },
-    plugins: {
-      '@typescript-eslint': tseslint.plugin
     },
     rules: {
       '@typescript-eslint/no-explicit-any': 'warn',
@@ -31,7 +27,14 @@ export default defineConfig([
       '@typescript-eslint/consistent-type-imports': [
         'warn',
         { prefer: 'type-imports', fixStyle: 'inline-type-imports' }
-      ]
+      ],
+      // React Compiler rules that eslint-config-expo 56 turned on as errors.
+      // Existing code trips 17 of them; warnings until they are fixed.
+      'react-hooks/set-state-in-effect': 'warn',
+      'react-hooks/immutability': 'warn',
+      'react-hooks/use-memo': 'warn',
+      'react-hooks/preserve-manual-memoization': 'warn',
+      'react-hooks/refs': 'warn'
     },
     settings: {
       'import/resolver': {

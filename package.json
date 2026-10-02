@@ -21,7 +21,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "turbo": "^2.4.0",
-    "typescript": "~5.9.2"
+    "typescript": "~6.0.3"
   },
   "engines": {
     "node": ">=20",
@@ -41,7 +41,7 @@
     "@react-native-firebase/database": "^23.5.0",
     "@react-native-firebase/messaging": "^23.5.0",
     "firebase": "^12.6.0",
-    "@types/react-native-web/react-native": "0.83.10",
-    "@nandorojo/iconic/react-native-svg": "15.15.3"
+    "@types/react-native-web/react-native": "0.85.3",
+    "@nandorojo/iconic/react-native-svg": "15.15.4"
   }
 }

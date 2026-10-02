@@ -306,14 +306,19 @@ Expected versions per SDK, read from each release's `bundledNativeModules.json` 
 
 #### Hop 3: SDK 55 to 56 ([changelog](https://expo.dev/changelog/sdk-56))
 
-- [ ] iOS minimum rises to 16.4. Change `deploymentTarget` from `15.1`. This drops iPhone 6s, 7 and first-generation SE, which the owner accepts.
-- [ ] `expo-router` stops depending on React Navigation. Run `npx expo-codemod sdk-56-expo-router-react-navigation-replace src` ([guide](https://docs.expo.dev/router/migrate/sdk-55-to-56)). App code has no `@react-navigation` imports, so it should change nothing.
-- [ ] `expo` no longer brings `@expo/vector-icons`, which is now deprecated. Two native map files use it; keep it as a direct dependency or move to `@react-native-vector-icons`.
-- [ ] `expo/fetch` becomes the global `fetch`. Retest the native Google Places calls and Firebase callables.
-- [ ] Precompiled Expo modules are on by default. If the iOS build fails with static frameworks, set `EXPO_USE_PRECOMPILED_MODULES=0`.
+- [x] iOS minimum rises to 16.4. Change `deploymentTarget` from `15.1`. This drops iPhone 6s, 7 and first-generation SE, which the owner accepts.
+- [x] `expo-router` stops depending on React Navigation. Run `npx expo-codemod sdk-56-expo-router-react-navigation-replace src` ([guide](https://docs.expo.dev/router/migrate/sdk-55-to-56)). App code has no `@react-navigation` imports, so it should change nothing.
+- [x] `expo` no longer brings `@expo/vector-icons`, which is now deprecated. Two native map files use it; keep it as a direct dependency or move to `@react-native-vector-icons`.
+- [ ] Owner: `expo/fetch` becomes the global `fetch`. Retest the native Google Places calls and Firebase callables.
+- [ ] Owner, at the first iOS build: precompiled Expo modules are on by default. If the iOS build fails with static frameworks, set `EXPO_USE_PRECOMPILED_MODULES=0`.
 
 - Hermes V1 becomes the default engine. SDK 56 has a known memory regression with Reanimated and worklets, fixed in SDK 57. Do not release from SDK 56.
 - Metro switches to an on-demand file system and a Node watcher; Watchman is no longer recommended. Expo claims a 6x faster crawl. Re-measure the warm start here.
+- Done on 2 Oct 2026 (tag `sdk-56`). The codemod changed nothing. `@expo/vector-icons` was already a direct dependency. Also needed:
+    - TypeScript 6.0 (app and root), `@babel/core` 7.29, `eslint-config-expo` 56, `jest-expo` 56, `react-test-renderer` 19.2.3; root resolutions move to React Native 0.85.3 and `react-native-svg` 15.15.4; the constraint to React 19.2.3.
+    - `splash` is no longer an app config key (top level, `ios`, `android`); the same settings moved into the `expo-splash-screen` plugin.
+    - TypeScript 6 checks side-effect imports, so `global.d.ts` declares `*.css`.
+    - `eslint-config-expo` 56 registers `@typescript-eslint` itself, so the app config no longer does. It also turns on React Compiler rules that existing code trips 17 times (`set-state-in-effect`, `refs`, `immutability`, `use-memo`, `preserve-manual-memoization`); they are warnings until fixed after SDK 58.
 
 #### Hop 4: SDK 56 to 57 ([changelog](https://expo.dev/changelog/sdk-57))
 

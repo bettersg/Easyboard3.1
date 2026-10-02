@@ -23,11 +23,6 @@ export default (): ExpoConfig => ({
   orientation: 'portrait',
   icon: './assets/icon.png',
   userInterfaceStyle: 'light',
-  splash: {
-    image: './assets/splash.png',
-    resizeMode: 'contain',
-    backgroundColor: '#ffffff'
-  },
   plugins: [
     // Custom Android build filename plugin
     [
@@ -55,7 +50,7 @@ export default (): ExpoConfig => ({
           networkInspector: true
         },
         ios: {
-          deploymentTarget: '15.1',
+          deploymentTarget: '16.4',
           useFrameworks: 'static',
           networkInspector: true
         }
@@ -75,7 +70,15 @@ export default (): ExpoConfig => ({
     ],
     'expo-font',
     'expo-secure-store',
-    'expo-notifications'
+    'expo-notifications',
+    [
+      'expo-splash-screen',
+      {
+        image: './assets/splash.png',
+        resizeMode: 'contain',
+        backgroundColor: '#ffffff'
+      }
+    ]
   ],
   updates: { fallbackToCacheTimeout: 0 },
   assetBundlePatterns: ['**/*'],
@@ -85,11 +88,6 @@ export default (): ExpoConfig => ({
     buildNumber: '2.21',
     config: {
       googleMapsApiKey: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY_IOS
-    },
-    splash: {
-      image: './assets/splash.png',
-      resizeMode: 'contain',
-      backgroundColor: '#ffffff'
     },
     googleServicesFile: './GoogleService-Info.plist',
     infoPlist: {
@@ -115,11 +113,6 @@ export default (): ExpoConfig => ({
       'android.permission.INTERNET',
       'android.permission.ACCESS_NETWORK_STATE'
     ],
-    splash: {
-      image: './assets/splash.png',
-      resizeMode: 'contain',
-      backgroundColor: '#ffffff'
-    },
     package: 'org.engineeringgood.EasyBoard.RN',
     googleServicesFile: './google-services.json'
   },
