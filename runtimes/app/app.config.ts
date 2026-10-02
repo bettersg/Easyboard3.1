@@ -51,9 +51,6 @@ export default (): ExpoConfig => ({
           compileSdkVersion: 35,
           targetSdkVersion: 35,
           buildToolsVersion: '34.0.0',
-          extraMavenRepos: [
-            '../../../../node_modules/@notifee/react-native/android/libs'
-          ],
           enableShrinkResourcesInReleaseBuilds: false,
           enableProguardInReleaseBuilds: false,
           enablePngCrunchInReleaseBuilds: true,
@@ -80,7 +77,8 @@ export default (): ExpoConfig => ({
       }
     ],
     'expo-font',
-    'expo-secure-store'
+    'expo-secure-store',
+    'expo-notifications'
   ],
   updates: { fallbackToCacheTimeout: 0 },
   assetBundlePatterns: ['**/*'],

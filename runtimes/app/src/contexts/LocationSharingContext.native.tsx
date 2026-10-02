@@ -1,4 +1,3 @@
-import _notifee, { AndroidColor } from '@notifee/react-native'
 import * as Location from 'expo-location'
 import * as TaskManager from 'expo-task-manager'
 import React, {
@@ -223,7 +222,7 @@ export const LocationSharingProvider: React.FC<{
         foregroundService: {
           notificationTitle: 'Location sharing active',
           notificationBody: 'You are currently sharing your location with xxx',
-          notificationColor: AndroidColor.RED
+          notificationColor: '#FF0000'
         }
       })
 

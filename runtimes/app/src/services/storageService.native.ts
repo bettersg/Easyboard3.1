@@ -1,6 +1,11 @@
-import auth from '@react-native-firebase/auth'
-import messaging from '@react-native-firebase/messaging'
-import storage from '@react-native-firebase/storage'
+import { getAuth, signOut } from '@react-native-firebase/auth'
+import { deleteToken, getMessaging } from '@react-native-firebase/messaging'
+import {
+  getDownloadURL,
+  getStorage,
+  putFile,
+  ref
+} from '@react-native-firebase/storage'
 import Constants from 'expo-constants'
 import * as SecureStore from 'expo-secure-store'
 import type { PWIDUser, UserStorage } from '../types'
@@ -67,12 +72,12 @@ export const storageService: IStorageService = {
   clearFirebaseData: async () => {
     try {
       try {
-        await messaging().deleteToken()
+        await deleteToken(getMessaging())
       } catch (error) {
         console.log('FCM token deletion failed (non-fatal):', error)
       }
       try {
-        await auth().signOut()
+        await signOut(getAuth())
       } catch (error) {
         console.log('Firebase Auth sign out failed (non-fatal):', error)
       }
@@ -130,8 +135,8 @@ export const storageService: IStorageService = {
       const timestamp = Date.now()
       const filename = `${locationType.toLowerCase()}_${timestamp}.jpg`
       const path = `users/${userStorage.uid}/locations/${filename}`
-      const reference = storage().ref(path)
-      await reference.putFile(imageUri)
+      const reference = ref(getStorage(), path)
+      await putFile(reference, imageUri)
       return path
     } catch (error) {
       console.error('Error uploading location photo:', error)
@@ -147,8 +152,8 @@ export const storageService: IStorageService = {
       if (fileKey.startsWith('file://')) {
         return fileKey
       }
-      const reference = storage().ref(fileKey)
-      return await reference.getDownloadURL()
+      const reference = ref(getStorage(), fileKey)
+      return await getDownloadURL(reference)
     } catch (error) {
       console.error('Error getting photo download URL:', error)
       throw error

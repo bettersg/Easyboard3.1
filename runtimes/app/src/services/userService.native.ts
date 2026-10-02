@@ -1,5 +1,15 @@
-import firebaseApp from '@react-native-firebase/app'
-import database from '@react-native-firebase/database'
+import { getApp } from '@react-native-firebase/app'
+import {
+  equalTo,
+  get,
+  getDatabase,
+  onValue,
+  orderByChild,
+  query,
+  ref,
+  remove,
+  set
+} from '@react-native-firebase/database'
 import DeviceInfo from 'react-native-device-info'
 import type {
   CaregiverUser,
@@ -15,7 +25,7 @@ import type { IUserService } from './userService'
  */
 function ensureFirebaseInitialized(): void {
   try {
-    const app = firebaseApp.app()
+    const app = getApp()
     if (!app) {
       throw new Error('Firebase app is not initialized')
     }
@@ -49,7 +59,7 @@ export const userService: IUserService = {
           updatedAt: timestamp,
           ...(initialData as Partial<PWIDUser>)
         }
-        await database().ref(`users/${phoneNumber}`).set(pwidData)
+        await set(ref(getDatabase(), `users/${phoneNumber}`), pwidData)
         return pwidData
       } else {
         const caregiverData: CaregiverUser = {
@@ -62,7 +72,7 @@ export const userService: IUserService = {
           updatedAt: timestamp,
           ...(initialData as Partial<CaregiverUser>)
         }
-        await database().ref(`users/${phoneNumber}`).set(caregiverData)
+        await set(ref(getDatabase(), `users/${phoneNumber}`), caregiverData)
         return caregiverData
       }
     } catch (error) {
@@ -73,8 +83,11 @@ export const userService: IUserService = {
 
   updatePWIDLocation: async (phoneNumber: string, location: UserLocation) => {
     try {
-      await database().ref(`users/${phoneNumber}/location`).set(location)
-      await database().ref(`users/${phoneNumber}/updatedAt`).set(Date.now())
+      await set(ref(getDatabase(), `users/${phoneNumber}/location`), location)
+      await set(
+        ref(getDatabase(), `users/${phoneNumber}/updatedAt`),
+        Date.now()
+      )
     } catch (error) {
       console.error('Error updating PWID location:', error)
       throw error
@@ -83,8 +96,11 @@ export const userService: IUserService = {
 
   clearPWIDLocation: async (phoneNumber: string) => {
     try {
-      await database().ref(`users/${phoneNumber}/location`).remove()
-      await database().ref(`users/${phoneNumber}/updatedAt`).set(Date.now())
+      await remove(ref(getDatabase(), `users/${phoneNumber}/location`))
+      await set(
+        ref(getDatabase(), `users/${phoneNumber}/updatedAt`),
+        Date.now()
+      )
     } catch (error) {
       console.error('Error clearing PWID location:', error)
       throw error
@@ -93,9 +109,7 @@ export const userService: IUserService = {
 
   getUserData: async (phoneNumber: string) => {
     try {
-      const snapshot = await database()
-        .ref(`users/${phoneNumber}`)
-        .once('value')
+      const snapshot = await get(ref(getDatabase(), `users/${phoneNumber}`))
       return snapshot.val()
     } catch (error) {
       console.error('Error getting user data:', error)
@@ -105,10 +119,11 @@ export const userService: IUserService = {
 
   updatePWIDCaregiver: async (pwidPhone: string, caregiverPhone: string) => {
     try {
-      await database()
-        .ref(`users/${pwidPhone}/caregiverPhone`)
-        .set(caregiverPhone)
-      await database().ref(`users/${pwidPhone}/updatedAt`).set(Date.now())
+      await set(
+        ref(getDatabase(), `users/${pwidPhone}/caregiverPhone`),
+        caregiverPhone
+      )
+      await set(ref(getDatabase(), `users/${pwidPhone}/updatedAt`), Date.now())
     } catch (error) {
       console.error('Error updating PWID caregiver:', error)
       throw error
@@ -117,8 +132,11 @@ export const userService: IUserService = {
 
   storeFCMToken: async (phoneNumber: string, fcmToken: string) => {
     try {
-      await database().ref(`users/${phoneNumber}/fcmToken`).set(fcmToken)
-      await database().ref(`users/${phoneNumber}/updatedAt`).set(Date.now())
+      await set(ref(getDatabase(), `users/${phoneNumber}/fcmToken`), fcmToken)
+      await set(
+        ref(getDatabase(), `users/${phoneNumber}/updatedAt`),
+        Date.now()
+      )
     } catch (error) {
       console.error('Error storing FCM token:', error)
       throw error
@@ -127,9 +145,9 @@ export const userService: IUserService = {
 
   getFCMToken: async (phoneNumber: string) => {
     try {
-      const snapshot = await database()
-        .ref(`users/${phoneNumber}/fcmToken`)
-        .once('value')
+      const snapshot = await get(
+        ref(getDatabase(), `users/${phoneNumber}/fcmToken`)
+      )
       return snapshot.val()
     } catch (error) {
       console.error('Error getting FCM token for user:', error)
@@ -138,18 +156,18 @@ export const userService: IUserService = {
   },
 
   listenToPWIDLocation: (phoneNumber, callback) => {
-    const ref = database().ref(`users/${phoneNumber}/location`)
-    const listener = (snapshot: any) => callback(snapshot.val())
-    ref.on('value', listener)
-    return () => ref.off('value', listener)
+    const locationRef = ref(getDatabase(), `users/${phoneNumber}/location`)
+    return onValue(locationRef, (snapshot) => callback(snapshot.val()))
   },
 
   getPWIDsByCaregiverPhone: async (caregiverPhone: string) => {
-    const snapshot = await database()
-      .ref('users')
-      .orderByChild('caregiverPhone')
-      .equalTo(caregiverPhone)
-      .once('value')
+    const snapshot = await get(
+      query(
+        ref(getDatabase(), 'users'),
+        orderByChild('caregiverPhone'),
+        equalTo(caregiverPhone)
+      )
+    )
 
     const pwidUsers: PWIDUser[] = []
     snapshot.forEach((child) => {
@@ -164,15 +182,15 @@ export const userService: IUserService = {
 
   updateUserData: async (phoneNumber: string, updates: Partial<UserData>) => {
     try {
-      const userRef = database().ref(`users/${phoneNumber}`)
-      const snapshot = await userRef.once('value')
+      const userRef = ref(getDatabase(), `users/${phoneNumber}`)
+      const snapshot = await get(userRef)
       const timestamp = Date.now()
       const updatedData = {
         ...(snapshot.exists() ? snapshot.val() : {}),
         ...updates,
         updatedAt: timestamp
       }
-      await userRef.set(updatedData)
+      await set(userRef, updatedData)
     } catch (error) {
       console.error('Error updating user data:', error)
       throw error

@@ -1,5 +1,11 @@
-import firebaseApp from '@react-native-firebase/app'
-import auth, { type FirebaseAuthTypes } from '@react-native-firebase/auth'
+import { getApp } from '@react-native-firebase/app'
+import {
+  type FirebaseAuthTypes,
+  getIdToken as firebaseGetIdToken,
+  signInWithPhoneNumber as firebaseSignInWithPhoneNumber,
+  signOut as firebaseSignOut,
+  getAuth
+} from '@react-native-firebase/auth'
 import type { IAuthService } from './authService'
 
 // Platform-specific type for native
@@ -12,7 +18,7 @@ export type ConfirmationResult = FirebaseAuthTypes.ConfirmationResult
 function ensureFirebaseInitialized(): void {
   try {
     // Check if Firebase app is initialized
-    const app = firebaseApp.app()
+    const app = getApp()
     if (!app) {
       throw new Error('Firebase app is not initialized')
     }
@@ -29,11 +35,9 @@ export const authService: IAuthService = {
     ensureFirebaseInitialized()
     try {
       if (process.env.NODE_ENV === 'development') {
-        const settings = auth().settings
-        settings.appVerificationDisabledForTesting = true
-        auth().settings = settings
+        getAuth().settings.appVerificationDisabledForTesting = true
       }
-      return await auth().signInWithPhoneNumber(phoneNumber)
+      return await firebaseSignInWithPhoneNumber(getAuth(), phoneNumber)
     } catch (error) {
       console.error('Firebase Auth signInWithPhoneNumber error:', error)
       throw error
@@ -42,7 +46,7 @@ export const authService: IAuthService = {
 
   signOut: async () => {
     try {
-      await auth().signOut()
+      await firebaseSignOut(getAuth())
       console.log('Firebase Auth signed out')
     } catch (error) {
       console.log('Firebase Auth sign out failed (non-fatal):', error)
@@ -52,11 +56,11 @@ export const authService: IAuthService = {
   getIdToken: async () => {
     try {
       ensureFirebaseInitialized()
-      const currentUser = auth().currentUser
+      const currentUser = getAuth().currentUser
       if (!currentUser) {
         return null
       }
-      return await currentUser.getIdToken()
+      return await firebaseGetIdToken(currentUser)
     } catch (error) {
       console.error('Error getting ID token:', error)
       return null

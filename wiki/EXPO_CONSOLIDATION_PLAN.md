@@ -357,8 +357,8 @@ Run all five hops back to back and land on the SDK 58 beta, as the owner chose. 
 
 Do these after step 3 signs off, so they are not tangled with SDK changes.
 
-1. Replace notifee with expo-notifications, using the checklist below.
-2. Move the React Native Firebase calls in the `.native` services to the modular API.
+1. [x] Replace notifee with expo-notifications, using the checklist below.
+2. [x] Move the React Native Firebase calls in the `.native` services to the modular API. Done in `authService`, `firebase`, `googleRouteService`, `notificationService`, `storageService` and `userService` (`.native.ts`); a grep finds no namespaced call left. Strict mode was not switched on, because it only shows on a device.
 
 ##### Replacing notifee with expo-notifications
 
@@ -369,15 +369,15 @@ React Native Firebase messaging stays. It supplies the FCM tokens the backend st
 | `requestPermission` | `requestPermissionsAsync` |
 | `getNotificationSettings` | `getPermissionsAsync` |
 | `createChannel` (the `default` channel, high importance) | `setNotificationChannelAsync` |
-| `displayNotification` on a foreground push | `scheduleNotificationAsync` with a `null` trigger |
+| `displayNotification` on a foreground push | `scheduleNotificationAsync`, trigger `{ channelId: 'default' }` on Android (presents immediately on that channel) and `null` on iOS |
 
-- [ ] Install with `npx expo install expo-notifications` (SDK 53 expects ~0.31.5) and add its config plugin to `app.config.ts`.
-- [ ] Rewrite the four calls in `services/notificationService.native.ts`.
-- [ ] Call `setNotificationHandler` so banners show while the app is open. From SDK 58 foreground display is the default.
-- [ ] `LocationSharingContext.native.tsx` imports notifee only for `AndroidColor.RED`, the colour of the location-sharing foreground notification. Replace it with a hex colour string.
-- [ ] Remove `@notifee/react-native` and the notifee `extraMavenRepos` line in `app.config.ts`.
-- [ ] Build Android. The two libraries are known to clash in the manifest over `com.google.firebase.messaging.default_notification_color` ([issue 8165](https://github.com/invertase/react-native-firebase/issues/8165), closed without a fix). If the merge fails, add `tools:replace="android:resource"` through a small config plugin.
-- [ ] Test on a device: the Android 13 permission prompt, a push with the app open, a push with the app closed, and a tap that opens the app.
+- [x] Install with `npx expo install expo-notifications` (SDK 53 expects ~0.31.5) and add its config plugin to `app.config.ts`. The plugin takes no options, so it writes no notification meta-data into the app manifest.
+- [x] Rewrite the four calls in `services/notificationService.native.ts`.
+- [x] Call `setNotificationHandler` so banners show while the app is open. From SDK 58 foreground display is the default.
+- [x] `LocationSharingContext.native.tsx` imports notifee only for `AndroidColor.RED`, the colour of the location-sharing foreground notification. Replace it with a hex colour string (`#FF0000`; notifee's value was `red`).
+- [x] Remove `@notifee/react-native` and the notifee `extraMavenRepos` line in `app.config.ts`.
+- [ ] Owner: build Android. Checked without a build: a prebuild's app manifest declares neither meta-data key, and `expo-notifications` registers its Firebase messaging service at priority -1, so React Native Firebase's service still receives pushes. The two libraries are known to clash in the manifest over `com.google.firebase.messaging.default_notification_color` ([issue 8165](https://github.com/invertase/react-native-firebase/issues/8165), closed without a fix). If the merge fails, add `tools:replace="android:resource"` through a small config plugin.
+- [ ] Owner: test on a device: the Android 13 permission prompt, a push with the app open, a push with the app closed, and a tap that opens the app.
 
 Taps on a foreground banner only open the app today; no handler routes them to a screen. This plan keeps that behaviour.
 

@@ -1,10 +1,14 @@
-import notifee, {
-  AndroidImportance,
-  AuthorizationStatus
-} from '@notifee/react-native'
-import messaging, {
-  type FirebaseMessagingTypes
+import {
+  AuthorizationStatus,
+  getInitialNotification,
+  getMessaging,
+  getToken,
+  onMessage,
+  onNotificationOpenedApp,
+  type RemoteMessage,
+  requestPermission
 } from '@react-native-firebase/messaging'
+import * as Notifications from 'expo-notifications'
 import { PermissionsAndroid, Platform } from 'react-native'
 import fcmService from './fcmService'
 import type {
@@ -14,6 +18,20 @@ import type {
 } from './notificationService'
 import { getUserStorage } from './storageService'
 import { getFCMToken, storeFCMToken } from './userService'
+
+const DEFAULT_CHANNEL_ID = 'default'
+
+// React Native Firebase messaging receives pushes; expo-notifications only
+// shows them while the app is in the foreground. Without a handler a
+// presented notification is dropped.
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowBanner: true,
+    shouldShowList: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false
+  })
+})
 
 let navigationCallback: NavigationCallback | null = null
 
@@ -25,21 +43,18 @@ const navigate = (screen: string, params?: any): void => {
   }
 }
 
-const handleNotification = async (
-  remoteMessage: FirebaseMessagingTypes.RemoteMessage
-) => {
+const handleNotification = async (remoteMessage: RemoteMessage) => {
   const { notification, data } = remoteMessage
   if (notification) {
-    await notifee.displayNotification({
-      title: notification.title,
-      body: notification.body,
-      data: data,
-      android: {
-        channelId: 'default',
-        pressAction: {
-          id: 'default'
-        }
-      }
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: notification.title,
+        body: notification.body,
+        data: data
+      },
+      // A channel trigger presents immediately on that Android channel
+      trigger:
+        Platform.OS === 'android' ? { channelId: DEFAULT_CHANNEL_ID } : null
     })
   }
 }
@@ -51,10 +66,11 @@ export const notificationService: INotificationService = {
 
   initialize: async (): Promise<string | null> => {
     try {
-      const authStatus = await messaging().requestPermission()
+      const messaging = getMessaging()
+      const authStatus = await requestPermission(messaging)
       const enabled =
-        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-        authStatus === messaging.AuthorizationStatus.PROVISIONAL
+        authStatus === AuthorizationStatus.AUTHORIZED ||
+        authStatus === AuthorizationStatus.PROVISIONAL
 
       if (!enabled) {
         console.warn('User declined notification permissions')
@@ -62,14 +78,13 @@ export const notificationService: INotificationService = {
       }
 
       if (Platform.OS === 'android') {
-        await notifee.createChannel({
-          id: 'default',
+        await Notifications.setNotificationChannelAsync(DEFAULT_CHANNEL_ID, {
           name: 'Default Channel',
-          importance: AndroidImportance.HIGH
+          importance: Notifications.AndroidImportance.HIGH
         })
       }
 
-      const fcmToken = await messaging().getToken()
+      const fcmToken = await getToken(messaging)
       if (fcmToken) {
         const userData = await getUserStorage()
         if (userData?.phoneNumber) {
@@ -85,8 +100,8 @@ export const notificationService: INotificationService = {
 
   checkPermissions: async (): Promise<boolean> => {
     try {
-      const settings = await notifee.getNotificationSettings()
-      return settings.authorizationStatus === AuthorizationStatus.AUTHORIZED
+      const { status } = await Notifications.getPermissionsAsync()
+      return status === 'granted'
     } catch (error) {
       console.error('Error checking permissions:', error)
       return false
@@ -103,8 +118,8 @@ export const notificationService: INotificationService = {
           return false
         }
       }
-      const settings = await notifee.requestPermission()
-      return settings.authorizationStatus === AuthorizationStatus.AUTHORIZED
+      const { status } = await Notifications.requestPermissionsAsync()
+      return status === 'granted'
     } catch (error) {
       console.error('Error requesting permissions:', error)
       return false
@@ -174,32 +189,31 @@ export const notificationService: INotificationService = {
   },
 
   setupNotificationListeners: (): (() => void) | undefined => {
-    const unsubscribeOnMessage = messaging().onMessage(
-      async (remoteMessage) => {
-        handleNotification(remoteMessage)
-      }
-    )
+    const messaging = getMessaging()
+    const unsubscribeOnMessage = onMessage(messaging, async (remoteMessage) => {
+      handleNotification(remoteMessage)
+    })
 
-    const unsubscribeOnNotificationOpenedApp =
-      messaging().onNotificationOpenedApp((remoteMessage) => {
+    const unsubscribeOnNotificationOpenedApp = onNotificationOpenedApp(
+      messaging,
+      (remoteMessage) => {
         if (remoteMessage.data?.type === 'location_sharing_start') {
           navigate('/home', {
             pwidPhoneNumber: remoteMessage.data.pwidPhoneNumber
           })
         }
-      })
+      }
+    )
 
-    messaging()
-      .getInitialNotification()
-      .then((remoteMessage) => {
-        if (remoteMessage) {
-          if (remoteMessage.data?.type === 'location_sharing_start') {
-            navigate('/home', {
-              pwidPhoneNumber: remoteMessage.data.pwidPhoneNumber
-            })
-          }
+    getInitialNotification(messaging).then((remoteMessage) => {
+      if (remoteMessage) {
+        if (remoteMessage.data?.type === 'location_sharing_start') {
+          navigate('/home', {
+            pwidPhoneNumber: remoteMessage.data.pwidPhoneNumber
+          })
         }
-      })
+      }
+    })
 
     return () => {
       unsubscribeOnMessage()

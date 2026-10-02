@@ -1,4 +1,8 @@
-import functions from '@react-native-firebase/functions'
+import {
+  connectFunctionsEmulator,
+  getFunctions,
+  httpsCallable
+} from '@react-native-firebase/functions'
 import * as Location from 'expo-location'
 import type { LatLong } from '../stores/onboardingStore'
 import type {
@@ -11,7 +15,7 @@ import type { IGoogleRouteService } from './googleRouteService'
 
 // Use emulator in development
 if (__DEV__) {
-  functions().useEmulator('localhost', 5001)
+  connectFunctionsEmulator(getFunctions(), 'localhost', 5001)
 }
 
 export const googleRouteService: IGoogleRouteService = {
@@ -24,7 +28,10 @@ export const googleRouteService: IGoogleRouteService = {
         originLatLng,
         destinationLatLng
       }
-      const getGoogleRouteCallable = functions().httpsCallable('getGoogleRoute')
+      const getGoogleRouteCallable = httpsCallable(
+        getFunctions(),
+        'getGoogleRoute'
+      )
       const response = await getGoogleRouteCallable(payload)
       if (response?.data) {
         return response.data as GoogleRoute
