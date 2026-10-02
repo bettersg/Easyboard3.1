@@ -10,7 +10,7 @@ import {
   remove,
   set
 } from '@react-native-firebase/database'
-import DeviceInfo from 'react-native-device-info'
+import { getDeviceName } from 'react-native-device-info'
 import type {
   CaregiverUser,
   PWIDUser,
@@ -46,7 +46,7 @@ export const userService: IUserService = {
   ): Promise<UserData> => {
     ensureFirebaseInitialized()
     try {
-      const deviceName = await DeviceInfo.getDeviceName()
+      const deviceName = await getDeviceName()
       const timestamp = Date.now()
       if (userType === 'PWID') {
         const pwidData: PWIDUser = {

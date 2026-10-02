@@ -491,7 +491,7 @@ Final checks, all passing: `yarn install --immutable` from a clean clone; typech
 
 Still open:
 
-- [ ] Owner: device builds for Android and iOS. This covers everything native that was only bundled here: edge-to-edge, maps, the actions sheet on Gesture Handler 3, `expo-notifications` alongside React Native Firebase messaging (permission prompt, push open, push closed, tap), background location, the iOS scene life cycle with Firebase, and precompiled modules with static frameworks.
+- [ ] Owner: device builds for Android and iOS (also: the Android 13+ notification prompt now appears when notifications initialise after login, and the RN Firebase auth plugin skips its iOS `openURL` fix because SDK 58's AppDelegate has no `openURL` method; check iOS phone sign-in if it falls back to reCAPTCHA). This covers everything native that was only bundled here: edge-to-edge, maps, the actions sheet on Gesture Handler 3, `expo-notifications` alongside React Native Firebase messaging (permission prompt, push open, push closed, tap), background location, the iOS scene life cycle with Firebase, and precompiled modules with static frameworks.
 - [ ] Owner: Google Cloud referrers for the browser Maps key (`localhost:8081` and the production domain).
 - [ ] Unpin `react-native-web` (0.21.2) once Uniwind releases its `InputAccessoryView` fix (#706).
 - [ ] 15 React Compiler lint warnings (`set-state-in-effect`, `refs`, `immutability`, `use-memo`, `preserve-manual-memoization`, `incompatible-library`). They need component refactors that should be checked on device, so they stay warnings.
@@ -499,7 +499,18 @@ Still open:
 - [ ] Notification setup runs twice on web after login: the effect depends on `userType`, which arrives after `hasAuthen`. This predates the migration.
 - [ ] The login screen nests two `accessibilityRole='form'` views (a nested `<form>` on web). This predates the migration.
 - [ ] Move to SDK 58 stable (and React Native 0.88 stable) when it ships; today the app is on `expo` 58.0.2 with React Native 0.88.0-rc.3.
-- [ ] Storybook re-homing (parked since step 1).
+- [x] Storybook re-homing (parked since step 1). Done: Storybook 10 with `@storybook/react-native-web-vite`, Uniwind's Vite plugin and `@tailwindcss/vite`, config in `runtimes/app/.storybook`. The app's tsconfig now extends `expo/tsconfig.base.json` (with the extension), which Vite's tsconfig loader needs.
+
+## Dependency upgrades (2 Oct 2026)
+
+Everything not pinned by Expo SDK 58 moved to its latest version, except where noted:
+
+- Minors: Turbo 2.11, Biome 2.5, firebase 12.19, react-hook-form, zustand, tailwind-merge, prettier, firebase-functions-test and type packages. `@nandorojo/iconic` stays at 0.0.1 (0.0.2 shipped without its build), `react-native-actions-sheet` at 10.1.1 (10.1.2 depends on `react-native-worklets` 0.7, a second native copy), and `@types/react-dom` at ~19.2 (SDK 58's pin).
+- axios removed; the three services that used it call `fetch`. dotenv 18, lint-staged 17, react-native-device-info 15 (named `getDeviceName` import).
+- firebase-admin 14 and firebase-functions 7: the functions use `firebase-admin/app` and `firebase-admin/messaging`; `engines.node` is 24 to match the deploy runtime.
+- React Native Firebase 26: notification permission goes through `expo-notifications`; `plugins/iosFirebaseConfigure.js` adds `FirebaseApp.configure()`, which RN Firebase's plugin cannot place in SDK 58's scene-based AppDelegate (it skipped it silently, so iOS would have crashed at launch on any RNFB version).
+- Storybook 10 (see above).
+- Kept back: Babel 7 and Jest 29 (Expo SDK 58 depends on them), Expo-managed packages (move with `expo install --fix` at SDK 58 stable), `react-native-web` 0.21.2 (Uniwind fix pending). Yarn 4.18.1 is already the latest.
 
 ## Decisions and risks
 

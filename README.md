@@ -109,6 +109,15 @@ yarn dev
 - **Native iOS**: `yarn app:ios`
 - **Native Android**: `yarn app:android`
 
+#### Storybook
+
+Component stories (`*.stories.tsx` next to each component) run in Storybook 10 on React Native Web with Vite, styled by the same Uniwind/Tailwind setup as the app:
+
+```bash
+yarn workspace app storybook        # http://localhost:6006
+yarn workspace app build-storybook  # static build in runtimes/app/storybook-static
+```
+
 ### Building
 
 - **Build all**: `yarn build` (the app's build is a static web export in `runtimes/app/dist`)

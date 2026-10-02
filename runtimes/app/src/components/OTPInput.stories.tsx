@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react-native-web-vite'
 import { OTPInput } from './OTPInput'
 import { Text } from './Text'
 import { View } from './View'
