@@ -5,24 +5,25 @@ Cross-platform monorepo for EasyBoard: one Expo (expo-router) app serving iOS, A
 ## Repository Structure
 
 ```text
-├── apps/
-│   ├── native/          # Expo app: iOS, Android and web
-│   └── functions/       # Firebase Cloud Functions
-├── packages/
-│   ├── common/          # Core business logic, shared UI, and services
+├── runtimes/
+│   ├── app/                 # Expo app: iOS, Android and web
 │   │   ├── src/
-│   │   │   ├── components/ # Core UI components (NativeWind)
-│   │   │   ├── contexts/   # React Contexts for global state
-│   │   │   ├── helpers/    # Utility functions
-│   │   │   ├── hooks/      # Shared React Hooks
-│   │   │   ├── pages/      # Shared pages (platform agnostic)
-│   │   │   ├── provider/   # App level providers (Theme, Auth, etc.)
-│   │   │   ├── services/   # Firebase and Google API abstractions
-│   │   │   ├── stores/     # State management stores
-│   │   │   └── types/      # Shared TypeScript interfaces
-│   ├── eslint-config/   # Shared ESLint configuration
-│   └── typescript-config/ # Shared TypeScript configuration
-└── package.json         # Root package.json with workspaces
+│   │   │   ├── app/         # Routes only (expo-router)
+│   │   │   ├── screens/     # Screen components the routes render
+│   │   │   ├── components/  # UI components (NativeWind)
+│   │   │   ├── contexts/    # React Contexts for global state
+│   │   │   ├── helpers/     # Utility functions
+│   │   │   ├── hooks/       # React Hooks
+│   │   │   ├── provider/    # App level providers (Theme, Auth, etc.)
+│   │   │   ├── services/    # Firebase and Google API abstractions (.native.ts / .web.ts pairs)
+│   │   │   ├── stores/      # State management stores
+│   │   │   └── types/       # TypeScript interfaces
+│   │   ├── assets/
+│   │   ├── plugins/         # Expo config plugins
+│   │   └── app.config.ts, metro.config.js, tailwind.config.ts, global.css
+│   └── functions/           # Firebase Cloud Functions
+├── wiki/                    # Project documentation
+└── package.json             # Root package.json with workspaces
 ```
 
 ## Getting Started
@@ -84,11 +85,11 @@ If you are on Windows, follow these steps to set up the Android development envi
 Run the following to create a development build. Typically you would only need to run these commands once unless you are making changes to the native configs (note that MacOS is required for iOS build/development):
 ```bash
 # in the monorepo root
-yarn native:prebuild
+yarn app:prebuild
 
-yarn native:android # For Android
+yarn app:android # For Android
 # and/or
-yarn native:ios     # For iOS (macOS only)
+yarn app:ios     # For iOS (macOS only)
 ```
 
 If you are running the above commands for the first time, the dev server will automatically start after the build is completed. For subsequent runs, you can simply run `yarn dev`
@@ -104,13 +105,13 @@ yarn dev
 
 #### Running specific applications (from the monorepo root)
 
-- **Expo dev server (web opens in the browser)**: `yarn native:dev`
-- **Native iOS**: `yarn native:ios`
-- **Native Android**: `yarn native:android`
+- **Expo dev server (web opens in the browser)**: `yarn app:dev`
+- **Native iOS**: `yarn app:ios`
+- **Native Android**: `yarn app:android`
 
 ### Building
 
-- **Build all**: `yarn build` (the app's build is a static web export in `apps/native/dist`)
+- **Build all**: `yarn build` (the app's build is a static web export in `runtimes/app/dist`)
 - **Build specific**: `yarn turbo build --filter=<app-name>`
 
 ### Linting and Formatting
@@ -126,19 +127,19 @@ yarn clean
 ```
 For React Native/Expo specific errors, it might be worth doing the above and then generating a new build
 ```bash
-yarn native:prebuild
+yarn app:prebuild
 
-yarn native:android # For Android
+yarn app:android # For Android
 # and/or
-yarn native:ios     # For iOS (macOS only)
+yarn app:ios     # For iOS (macOS only)
 ```
 
 ## Repo conventions
 - Gneneral workflow:
-    1. Create primitive UI in `packages/common/src/components`.
-    2. Compose pages in `packages/common/src/pages`.
-    3. Register routes in `apps/native/app` (expo-router). The same routes serve iOS, Android and web.
-- Business logic should reside in `packages/common/src/services`.
+    1. Create primitive UI in `runtimes/app/src/components`.
+    2. Compose screens in `runtimes/app/src/screens`.
+    3. Register routes in `runtimes/app/src/app` (expo-router). The same routes serve iOS, Android and web. Import with the `@/` alias, e.g. `@/screens`.
+- Business logic should reside in `runtimes/app/src/services`.
 - Use **NativeWind** for styling across both platforms.
 
 ## Key Features

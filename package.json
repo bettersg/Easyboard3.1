@@ -7,10 +7,10 @@
     "lint": "turbo lint",
     "format": "biome check --write",
     "format:check": "biome check",
-    "native:prebuild": "yarn workspace native prebuild",
-    "native:dev": "yarn workspace native dev",
-    "native:android": "yarn workspace native android",
-    "native:ios": "yarn workspace native ios",
+    "app:prebuild": "yarn workspace app prebuild",
+    "app:dev": "yarn workspace app dev",
+    "app:android": "yarn workspace app android",
+    "app:ios": "yarn workspace app ios",
     "typecheck": "turbo run typecheck",
     "prepare": "husky",
     "lint-staged": "lint-staged",
@@ -27,7 +27,9 @@
     "node": ">=20",
     "yarn": "4.11.0"
   },
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "runtimes/*"
+  ],
   "packageManager": "yarn@4.11.0",
   "version": "1.0.0",
   "dependencies": {
@@ -39,6 +41,7 @@
     "@react-native-firebase/database": "^23.5.0",
     "@react-native-firebase/messaging": "^23.5.0",
     "firebase": "^12.6.0",
-    "@types/react-native-web/react-native": "0.79.6"
+    "@types/react-native-web/react-native": "0.79.6",
+    "@nandorojo/iconic/react-native-svg": "^15.15.1"
   }
 }

@@ -1,6 +1,6 @@
 # Linting and Formatting
 
-This document outlines the linting and formatting standards for the EasyBoard monorepo. We use a combination of **Biome** for high-performance formatting and basic linting, and **ESLint** for specialized environment-specific rules (React, Next.js, React Native).
+This document outlines the linting and formatting standards for the EasyBoard monorepo. We use a combination of **Biome** for high-performance formatting and basic linting, and **ESLint** for specialized environment-specific rules (React, React Native, Node).
 
 ## Tools
 
@@ -16,8 +16,8 @@ This document outlines the linting and formatting standards for the EasyBoard mo
 
 We use [ESLint](https://eslint.org/) for more complex, framework-specific linting rules that Biome doesn't yet cover.
 
-- **Purpose**: Specialized rules for Next.js (web), React Native (native), and shared packages.
-- **Config**: Root configuration is shared via `packages/eslint-config`, and each workspace has its own `eslint.config.js` or `eslint.config.mjs`.
+- **Purpose**: Specialized rules for the Expo app (iOS, Android and web) and Cloud Functions.
+- **Config**: Each workspace has its own self-contained `eslint.config.mjs`: `runtimes/app` builds on `eslint-config-expo`, `runtimes/functions` on `typescript-eslint`.
 - **Scope**: Workspace-specific.
 
 ---
@@ -40,14 +40,11 @@ You can run the following commands from the root of the monorepo:
 If you need to run linting for a specific application or package:
 
 ```bash
-# Web
-yarn workspace web lint
+# Expo app (iOS, Android, web)
+yarn workspace app lint
 
-# Native
-yarn workspace native lint
-
-# Common Package
-yarn workspace @repo/common lint
+# Cloud Functions
+yarn workspace functions lint
 ```
 
 ---
