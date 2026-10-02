@@ -1,4 +1,5 @@
-import * as admin from 'firebase-admin'
+import { initializeApp } from 'firebase-admin/app'
+import { getMessaging, type Message } from 'firebase-admin/messaging'
 import { onCall, onRequest } from 'firebase-functions/v2/https'
 
 // Load environment variables from .env file in development
@@ -20,7 +21,7 @@ if (!process.env.K_SERVICE && !process.env.FUNCTION_TARGET) {
   }
 }
 
-admin.initializeApp()
+initializeApp()
 
 /**
  * Verify Firebase Auth token from request header (for onRequest functions)
@@ -30,7 +31,7 @@ admin.initializeApp()
  */
 // async function verifyAuthToken(req: {
 //   headers: { authorization?: string }
-// }): Promise<admin.auth.DecodedIdToken | null> {
+// }): Promise<DecodedIdToken | null> {  // from 'firebase-admin/auth'
 //   try {
 //     const authHeader = req.headers.authorization
 //     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -42,7 +43,7 @@ admin.initializeApp()
 //       return null
 //     }
 
-//     const decodedToken = await admin.auth().verifyIdToken(token)
+//     const decodedToken = await getAuth().verifyIdToken(token)
 //     return decodedToken
 //   } catch (error) {
 //     console.error('[verifyAuthToken] Error verifying token:', error)
@@ -104,7 +105,7 @@ export const sendNotification = onRequest(
       }
 
       // Create the FCM message payload
-      const message: admin.messaging.Message = {
+      const message: Message = {
         token: to,
         notification: {
           title: notification.title,
@@ -128,7 +129,7 @@ export const sendNotification = onRequest(
       }
 
       // Send the message using the Firebase Admin SDK
-      const response = await admin.messaging().send(message)
+      const response = await getMessaging().send(message)
 
       console.log('Successfully sent message:', response)
       res.status(200).json({ success: true, messageId: response })
