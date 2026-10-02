@@ -4,7 +4,7 @@
     "build": "tsc",
     "build:emulators": "tsc --outDir lib",
     "build:watch": "tsc --watch",
-    "dev": "yarn build:emulators && firebase emulators:start --only functions",
+    "dev": "yarn build:emulators && firebase emulators:start --only functions --config firebase.emulators.json --project easyboard-sg",
     "shell": "yarn build && firebase functions:shell",
     "start": "yarn shell",
     "deploy": "firebase deploy --only functions",

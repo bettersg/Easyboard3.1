@@ -1,0 +1,11 @@
+{
+  "functions": [
+    {
+      "source": ".",
+      "runtime": "nodejs24"
+    }
+  ],
+  "emulators": {
+    "functions": { "port": 5001 }
+  }
+}
