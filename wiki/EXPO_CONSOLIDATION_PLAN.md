@@ -280,18 +280,19 @@ Expected versions per SDK, read from each release's `bundledNativeModules.json` 
 
 #### Hop 1: SDK 53 to 54 ([changelog](https://expo.dev/changelog/sdk-54))
 
-- [ ] Reanimated 3 to 4, adding `react-native-worklets`. Remove `react-native-reanimated/plugin` from `babel.config.js`; the Expo preset now handles it.
-- [ ] NativeWind 4.1.23 to 4.2.7 and `react-native-css-interop` to 0.2.7, the releases that accept Reanimated 4. Tailwind stays on 3.
-- [ ] `metro.config.js` requires `metro-config/src/defaults/exclusionList`. Metro 0.83 no longer allows imports from `metro/src`; remove it.
-- [ ] `metro.config.js` sets `experimentalImportSupport: false`. It is now on by default and the override is slated for removal; delete the line. This is what unlocks tree shaking on web.
-- [ ] `app.config.ts` pins `compileSdkVersion` 35, `targetSdkVersion` 35 and `buildToolsVersion` 34.0.0. React Native 0.81 targets Android 16 (API 36); remove the pins.
-- [ ] `enableProguardInReleaseBuilds` is deprecated in favour of `enableMinifyInReleaseBuilds`.
-- [ ] Edge-to-edge becomes mandatory on Android. `GoogleMapView.native.tsx` positions a control from `StatusBar.currentHeight`; check it and every screen's top and bottom edges.
-- [ ] `components/Page.tsx` imports `SafeAreaView` from `react-native`, now deprecated. Use `react-native-safe-area-context`.
-- [ ] `expo-router` 5 to 6, React Native Web 0.20 to 0.21, `@expo/vector-icons` 14 to 15 (re-run typecheck).
-- [ ] Autolinking now follows declared dependencies. Run `npx expo-modules-autolinking verify -v` after the step 2 dependency merge.
+- [x] Reanimated 3 to 4, adding `react-native-worklets`. Remove `react-native-reanimated/plugin` from `babel.config.js`; the Expo preset now handles it.
+- [x] NativeWind 4.1.23 to 4.2.7 and `react-native-css-interop` to 0.2.7, the releases that accept Reanimated 4. Tailwind stays on 3.
+- [x] `metro.config.js` requires `metro-config/src/defaults/exclusionList`. Metro 0.83 no longer allows imports from `metro/src`; remove it.
+- [x] `metro.config.js` sets `experimentalImportSupport: false`. It is now on by default and the override is slated for removal; delete the line. This is what unlocks tree shaking on web. Deleting only the line was not enough: the custom `getTransformOptions` replaced Expo's defaults, so the whole override is gone. Tree shaking itself still needs `EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH=1` and `EXPO_UNSTABLE_TREE_SHAKING=1` on SDK 54; with them the web bundle drops to 702 kB but crashes on load (`Cannot read properties of undefined (reading 'EventEmitter')`), so they stay off.
+- [x] `app.config.ts` pins `compileSdkVersion` 35, `targetSdkVersion` 35 and `buildToolsVersion` 34.0.0. React Native 0.81 targets Android 16 (API 36); remove the pins.
+- [x] `enableProguardInReleaseBuilds` is deprecated in favour of `enableMinifyInReleaseBuilds`. Renamed, still `false` until hop 5.
+- [x] Edge-to-edge becomes mandatory on Android. `GoogleMapView.native.tsx` positions a control from `StatusBar.currentHeight`; check it and every screen's top and bottom edges. The map's search box now adds the top safe-area inset on Android. Other screens already pad with `useSafeArea` insets. Owner: check edges on an Android device.
+- [x] `components/Page.tsx` imports `SafeAreaView` from `react-native`, now deprecated. Use `react-native-safe-area-context`. `Page` is not used by any screen.
+- [x] `expo-router` 5 to 6, React Native Web 0.20 to 0.21, `@expo/vector-icons` 14 to 15 (re-run typecheck). One fix: `Flatlist.tsx` uses `React.JSX.Element`, since React 19.1 types drop the global `JSX` namespace.
+- [x] Autolinking now follows declared dependencies. Run `npx expo-modules-autolinking verify -v` after the step 2 dependency merge.
 
 - The `expo-image` 3.0.11 mismatch resolves itself: SDK 54 expects that version.
+- Done on 2 Oct 2026 (tag `sdk-54`). Also changed: `react-native-worklets` 0.5.1 added; `react-test-renderer` 19.1.0; TypeScript ~5.9.2 in both the app and the root; the two root resolutions move to React Native 0.81.5 and `react-native-svg` 15.12.1; `yarn.config.cjs` pins React 19.1.0. `expo-doctor` passes 18 of 18. Web bundle 759 kB gzipped (708 kB on SDK 53).
 - React Native's precompiled iOS frameworks will not apply: they are "not compatible with `use_frameworks!`", which Firebase requires here. iOS keeps building from source.
 
 #### Hop 2: SDK 54 to 55 ([changelog](https://expo.dev/changelog/sdk-55))

@@ -48,11 +48,8 @@ export default (): ExpoConfig => ({
       'expo-build-properties',
       {
         android: {
-          compileSdkVersion: 35,
-          targetSdkVersion: 35,
-          buildToolsVersion: '34.0.0',
           enableShrinkResourcesInReleaseBuilds: false,
-          enableProguardInReleaseBuilds: false,
+          enableMinifyInReleaseBuilds: false,
           enablePngCrunchInReleaseBuilds: true,
 
           networkInspector: true

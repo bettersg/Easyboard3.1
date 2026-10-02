@@ -3,7 +3,6 @@
 // (SDK 52+): https://docs.expo.dev/guides/monorepos
 const { getDefaultConfig } = require('expo/metro-config')
 const { withNativeWind } = require('nativewind/metro')
-const exclusionList = require('metro-config/src/defaults/exclusionList')
 const fs = require('fs')
 const path = require('path')
 
@@ -20,7 +19,10 @@ const blockListPatterns = [
   (folder) => new RegExp(`${folder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}/.*`)
 )
 
-config.resolver.blockList = exclusionList(blockListPatterns)
+config.resolver.blockList = [
+  ...[].concat(config.resolver.blockList ?? []),
+  ...blockListPatterns
+]
 
 // Configure resolver to handle packages with missing react-native field
 config.resolver.resolverMainFields = ['react-native', 'browser', 'main']
@@ -54,13 +56,6 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   }
   return context.resolveRequest(context, moduleName, platform)
 }
-
-config.transformer.getTransformOptions = async () => ({
-  transform: {
-    experimentalImportSupport: false,
-    inlineRequires: true
-  }
-})
 
 module.exports = withNativeWind(config, {
   input: './global.css',

@@ -4,7 +4,7 @@ import { type FlatListProps, FlatList as RNFlatlist } from 'react-native'
 
 export interface FlatListDataType {
   id: string
-  component: JSX.Element
+  component: React.JSX.Element
 }
 
 const MappedFlatList = cssInterop(RNFlatlist<FlatListDataType>, {

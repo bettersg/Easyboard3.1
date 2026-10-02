@@ -1,9 +1,16 @@
 import { MaterialIcons } from '@expo/vector-icons'
 import * as Location from 'expo-location'
 import { useEffect, useRef, useState } from 'react'
-import { Dimensions, Keyboard, StatusBar, TouchableOpacity } from 'react-native'
+import {
+  Dimensions,
+  Keyboard,
+  Platform,
+  StatusBar,
+  TouchableOpacity
+} from 'react-native'
 import Autocomplete from 'react-native-autocomplete-input'
 import MapView, { Marker } from 'react-native-maps'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useDebounce } from '../../hooks'
 import {
   getGooglePlacePhotoAsync,
@@ -25,6 +32,7 @@ const GoogleMapView = ({
   initialCenter,
   isTracking = false
 }: GoogleMapViewProps) => {
+  const insets = useSafeAreaInsets()
   // Map View reference
   const mapViewRef = useRef<MapView>(null)
 
@@ -205,7 +213,13 @@ const GoogleMapView = ({
     <View className='flex flex-1 items-center justify-center'>
       <View
         className={`absolute left-0 right-0 z-10 flex flex-1 px-3`}
-        style={{ top: (StatusBar.currentHeight || 10) * 2 }}
+        // Android draws edge-to-edge from SDK 54, so the container now starts
+        // under the status bar; add its inset to keep the search box in place
+        style={{
+          top:
+            (Platform.OS === 'android' ? insets.top : 0) +
+            (StatusBar.currentHeight || 10) * 2
+        }}
       >
         <Autocomplete
           inputContainerStyle={{ borderWidth: 0 }}
