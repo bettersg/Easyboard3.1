@@ -6,13 +6,13 @@ Oct 2, 2026 · @zy
 
 EasyBoard moves from two apps (Next.js for web, Expo for native) joined by a shared package to one Expo app serving iOS, Android and web. Cloud Functions stays as the only other workspace. All work happens on a new branch, so commit `920a66c` is never modified and can be restored at any point.
 
-| Step | Outcome | Ends with |
-| --- | --- | --- |
-| 0. Safety net | Tag, new branch, backup of untracked files | Tag `pre-expo-consolidation` exists |
-| 1. Remove Next.js and Solito | Expo web is the default `dev` and `build` path; `apps/web` is gone | One commit, app runs on web and Android |
-| 2. Restructure | `runtimes/app` and `runtimes/functions`; `packages/common` folded into the app | One commit, no behaviour change |
-| 3. Verify | Web, Android, iOS and functions run and build cleanly | Checklist signed off |
-| 4. Assess SDK 58 beta | Written list of changes needed to adopt SDK 58 and its Rust transformer | Assessment done; the upgrade is follow-on work |
+| Step | Outcome | Ends with | Status |
+| --- | --- | --- | --- |
+| 0. Safety net | Tag, new branch, backup of untracked files | Tag `pre-expo-consolidation` exists | Done |
+| 1. Remove Next.js and Solito | Expo web is the default `dev` and `build` path; `apps/web` is gone | One commit, app runs on web and Android | Done, `a84287e`, tag `step-1-done` |
+| 2. Restructure | `runtimes/app` and `runtimes/functions`; `packages/common` folded into the app | One commit, no behaviour change | Done, `3259b14`, tag `step-2-done` |
+| 3. Verify | Web, Android, iOS and functions run and build cleanly | Checklist signed off | Signed off by the owner on 2 Oct 2026 |
+| 4. Assess SDK 58 beta | Written list of changes needed to adopt SDK 58 and its Rust transformer | Assessment done; the upgrade is follow-on work | Assessment done; upgrade in progress |
 
 ### Starting state
 
@@ -39,6 +39,8 @@ The migration runs in a second git worktree, so the current folder stays at `920
 Do not use `git stash` for any of this. The repo already holds 11 stashes, and a stash is easy to lose track of.
 
 ### Set-up
+
+Done on 2 Oct 2026. The worktree is `../Easyboard3.1-expo`; the first commit on the branch is `daedf36`; the backup folder is `~/Documents/repos/Easyboard3.1-env-backup/`. `.rules` turned out to be gitignored, so it was backed up and copied into the worktree too. `yarn install` in the original folder reformatted two `package.json` files; those edits were reverted so `git status` stayed clean.
 
 1. Tag the restore point: `git tag pre-expo-consolidation 920a66c`.
 2. Back up the three `.env` files to a folder outside the repo, keeping their relative paths.
@@ -73,47 +75,57 @@ At the end of this step `apps/web` no longer exists, `yarn dev` starts the Expo 
 
 Three behaviours live in `apps/web` and would be lost by deleting it.
 
-- [ ] Route guard: mount `AuthRouteGuard` in `apps/native/app/_layout.tsx`, on web only, so native behaviour does not change.
-- [ ] Page scrolling and background: copy the `html` and `body` rules from `apps/web/global.css` into the Expo app's `global.css`, targeting `#root` instead of `#__next`. Expo's default sets `overflow: hidden` on the body.
-- [ ] Font: nothing to port. PT Sans is loaded through `next/font`, but React Native Web's `Text` sets its own system font and no component applies PT Sans, so text already renders in the system font on both platforms. Adopting PT Sans everywhere would be a design change, done later with `expo-font`.
+- [x] Route guard: mount `AuthRouteGuard` in `apps/native/app/_layout.tsx`, on web only, so native behaviour does not change.
+- [x] Page scrolling and background: copy the `html` and `body` rules from `apps/web/global.css` into the Expo app's `global.css`, targeting `#root` instead of `#__next`. Expo's default sets `overflow: hidden` on the body.
+- [x] Font: nothing to port. PT Sans is loaded through `next/font`, but React Native Web's `Text` sets its own system font and no component applies PT Sans, so text already renders in the system font on both platforms. Adopting PT Sans everywhere would be a design change, done later with `expo-font`.
 
 ### 1b. Environment and keys
 
-- [ ] Add `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY` to the app's `.env` with the browser key the Next app uses. Its absence causes the "For development purposes only" watermark and empty address lookups.
-- [ ] In Google Cloud, add `localhost:8081` and the production web domain to that key's allowed referrers.
-- [ ] Remove the `NEXT_PUBLIC_*` fallbacks from the six shared files that read them, leaving only `EXPO_PUBLIC_*`.
-- [ ] Update `apps/native/.env.example` to match.
+- [x] Add `EXPO_PUBLIC_GOOGLE_MAPS_API_KEY` to the app's `.env` with the browser key the Next app uses. It was already there when step 1 started. Its absence causes the "For development purposes only" watermark and empty address lookups.
+- [ ] Owner: in Google Cloud, add `localhost:8081` and the production web domain to that key's allowed referrers.
+- [x] Remove the `NEXT_PUBLIC_*` fallbacks from the six shared files that read them, leaving only `EXPO_PUBLIC_*`.
+- [x] Update `apps/native/.env.example` to match.
 
 ### 1c. Delete the Next app and its dependencies
 
-- [ ] Delete `apps/web`. This also removes the last Solito import.
-- [ ] Remove from all `package.json` files: `next`, `@expo/next-adapter`, `webpack`, `raf`, `serve`, `moti`, `react-native-worklets`, `@react-native/assets-registry`, `@googlemaps/js-api-loader`. None is imported by the Expo app.
-- [ ] `react-native-worklets` must not be carried into the app: it targets Reanimated 4 and the app runs Reanimated 3.
-- [ ] Add to the Expo app the web libraries it now owns: `firebase` and `@react-google-maps/api`.
-- [ ] Replace the single `react-icons/md` import (`MdGpsFixed`) with an inline SVG, then drop `react-icons`. Without tree shaking that one import adds the whole Material icon set, about 28% of the web bundle by raw size.
-- [ ] Delete `packages/eslint-config/next.js` and `packages/typescript-config/nextjs.json`.
-- [ ] Storybook lives in `apps/web` and goes with it. Keep the story files; re-homing Storybook is a follow-up after step 3.
+- [x] Delete `apps/web`. This also removes the last Solito import.
+- [x] Remove from all `package.json` files: `next`, `@expo/next-adapter`, `webpack`, `raf`, `serve`, `moti`, `react-native-worklets`, `@react-native/assets-registry`, `@googlemaps/js-api-loader`. None is imported by the Expo app.
+- [x] `react-native-worklets` must not be carried into the app: it targets Reanimated 4 and the app runs Reanimated 3.
+- [x] Add to the Expo app the web libraries it now owns: `firebase` and `@react-google-maps/api`.
+- [x] Replace the single `react-icons/md` import (`MdGpsFixed`) with an inline SVG, then drop `react-icons`. Without tree shaking that one import adds the whole Material icon set, about 28% of the web bundle by raw size.
+- [x] Delete `packages/eslint-config/next.js` and `packages/typescript-config/nextjs.json`.
+- [x] Storybook lives in `apps/web` and goes with it. Keep the story files; re-homing Storybook is a follow-up after step 3.
 
 ### 1d. Make Expo web the default
 
-- [ ] In `app.config.ts`, set `web.bundler` to `metro` and `web.output` to `single`.
-- [ ] App scripts: `dev` runs `expo start --web`; `build` runs `expo export --platform web`, which writes to `dist`.
-- [ ] Root scripts: remove `web:dev`; `yarn dev` and `yarn build` keep going through Turborepo.
-- [ ] `turbo.json`: change the build outputs from `.next/**` to `dist/**`.
-- [ ] `firebase.json`: replace the Next hosting integration (`source` plus `frameworksBackend`) with static hosting of `dist` and a rewrite of every path to `/index.html`. Prepare the change; do not deploy.
+- [x] In `app.config.ts`, set `web.bundler` to `metro` and `web.output` to `single`.
+- [x] App scripts: `dev` runs `expo start --web`; `build` runs `expo export --platform web`, which writes to `dist`.
+- [x] Root scripts: remove `web:dev`; `yarn dev` and `yarn build` keep going through Turborepo.
+- [x] `turbo.json`: change the build outputs from `.next/**` to `dist/**`.
+- [x] `firebase.json`: replace the Next hosting integration (`source` plus `frameworksBackend`) with static hosting of `dist` and a rewrite of every path to `/index.html`. Prepare the change; do not deploy.
 
 ### 1e. Documentation
 
-- [ ] Rewrite the README sections that describe Next.js and Solito.
-- [ ] Update `.rules`, which still instructs agents to follow Solito and the Next App Router.
+- [x] Rewrite the README sections that describe Next.js and Solito.
+- [x] Update `.rules`, which still instructs agents to follow Solito and the Next App Router. It is gitignored, so the change lives only in each checkout's copy.
+
+### Changes beyond the checklist
+
+- [x] Root `package.json` declared `expo` 52, `react` 19.2, `react-dom` 19.2, `react-native` 0.78, `clsx` and `tailwind-merge` for the Next app's hoisting. They are removed; the install now has one React (19.0.0), one React Native (0.79.6) and one Expo (53).
+- [x] `@types/react-native-web` depends on `react-native: *`, which pulled in React Native 0.83 and hoisted Metro 0.83 over Expo 53's Metro 0.82, breaking `expo export`. A root resolution pins it to 0.79.6.
+- [x] `yarn.config.cjs` constraints pinned `next` and React 18.3.1; they now pin `react` and `react-dom` to 19.0.0.
+- [x] Web Firebase code imported the internal `@firebase/*` packages; it now imports `firebase/*`, the package the app declares.
+- [x] `storybook` and `@storybook/react` became dev dependencies so the parked story files still typecheck.
+- [x] `.env.example` gained `EXPO_PUBLIC_FIREBASE_VAPID_KEY`, which the web notification service reads.
+- [x] Cloud Functions CORS allowed `http://localhost:3001`, the Next dev port; it now allows `http://localhost:8081`. `wiki/RUNNING_AND_DEPLOYING_FUNCTIONS.md` updated to match.
 
 ### Done when
 
-- `grep` finds no `next` or `solito` import outside `node_modules`.
-- Typecheck and Biome pass.
-- `yarn dev` serves the web app; landing, login, onboarding and the map address picker work in a browser.
-- `yarn build` produces `dist` without errors.
-- Commit and tag `step-1-done`.
+- [x] `grep` finds no `next` or `solito` import outside `node_modules`. Three attribution comments linking to Solito's examples remain.
+- [x] Typecheck and Biome pass.
+- [x] `yarn dev` serves the web app; landing, login, onboarding and the map address picker work in a browser.
+- [x] `yarn build` produces `dist` without errors.
+- [x] Commit and tag `step-1-done`.
 
 ## Step 2: Restructure into `runtimes/app` and `runtimes/functions`
 
@@ -152,46 +164,55 @@ This follows Expo's guidance: `src/app` holds routes only, other code sits in si
 
 Use `git mv` so history follows the files.
 
-- [ ] `apps/native` to `runtimes/app`, then its `app` folder to `runtimes/app/src/app`.
-- [ ] Each folder in `packages/common/src` to `runtimes/app/src`, with `pages` becoming `screens`.
-- [ ] `apps/functions` to `runtimes/functions`.
-- [ ] Story files move with their components.
+- [x] `apps/native` to `runtimes/app`, then its `app` folder to `runtimes/app/src/app`.
+- [x] Each folder in `packages/common/src` to `runtimes/app/src`, with `pages` becoming `screens`.
+- [x] `apps/functions` to `runtimes/functions`.
+- [x] Story files move with their components.
 
-Moving the routes also means updating `index.js`, which loads them with `require.context('./app')`. Consider switching `main` to `expo-router/entry`, Expo's standard entry, at the same time.
+Moving the routes also means updating `index.js`, which loads them with `require.context('./app')`. Done: `index.js` is deleted, `main` is `expo-router/entry`, and the root layout imports `global.css`.
 
 ### 2b. Rewrite imports
 
-- [ ] Point the `@/*` path alias in `tsconfig.json` at `./src/*` (it currently points at `./*`).
-- [ ] Replace `@repo/common/<area>` with `@/<area>` in the 16 route files that use it; `@repo/common/pages` becomes `@/screens`.
-- [ ] Imports inside the moved shared code are relative and need no change.
+- [x] Point the `@/*` path alias in `tsconfig.json` at `./src/*` (it currently points at `./*`).
+- [x] Replace `@repo/common/<area>` with `@/<area>` in the 16 route files that use it; `@repo/common/pages` becomes `@/screens`.
+- [x] Imports inside the moved shared code are relative and need no change.
 
 ### 2c. Merge `package.json`
 
 This is the riskiest part of the step.
 
-- [ ] Where `apps/native` and `packages/common` both declare a package, keep the `apps/native` version. `packages/common` declares newer ranges for `expo-location`, `expo-image-picker`, `react-native-device-info`, `react-native-maps` and `react-native-reanimated` that do not match SDK 53's native modules.
-- [ ] Add packages only `packages/common` declared and the code uses: `react-native-actions-sheet`, `zustand`, `clsx`, `tailwind-merge`.
-- [ ] Treat packages nothing imports as removal candidates, and confirm each with a build before dropping it: `@gorhom/bottom-sheet`, `expo-linear-gradient`, `react-native-dots-pagination`, `react-responsive`, `use-debounce`, `class-variance-authority`, `react-native-reanimated-carousel`, `@expo/react-native-action-sheet`.
-- [ ] Rename the workspace from `native` to `app` and set root `workspaces` to `runtimes/*`.
-- [ ] Run `npx expo install --check`. Today it flags `expo-image` 3.0.11 (SDK 53 expects ~2.4.1), `react-native-svg` and `jest-expo` 52.
+- [x] Where `apps/native` and `packages/common` both declare a package, keep the `apps/native` version. `packages/common` declares newer ranges for `expo-location`, `expo-image-picker`, `react-native-device-info`, `react-native-maps` and `react-native-reanimated` that do not match SDK 53's native modules.
+- [x] Add packages only `packages/common` declared and the code uses: `react-native-actions-sheet`, `zustand`, `clsx`, `tailwind-merge`.
+- [x] Treat packages nothing imports as removal candidates, and confirm each with a build before dropping it: `@gorhom/bottom-sheet`, `expo-linear-gradient`, `react-native-dots-pagination`, `react-responsive`, `use-debounce`, `class-variance-authority`, `react-native-reanimated-carousel`, `@expo/react-native-action-sheet`. All dropped; the web, Android and iOS bundles build without them.
+- [x] Rename the workspace from `native` to `app` and set root `workspaces` to `runtimes/*`.
+- [x] Run `npx expo install --check`. Today it flags `expo-image` 3.0.11 (SDK 53 expects ~2.4.1), `react-native-svg` and `jest-expo` 52. After the merge it lists exactly the same mismatches as before.
 
 ### 2d. Update config that encodes the old layout
 
-- [ ] `metro.config.js`: delete the manual monorepo settings (`watchFolders`, `nodeModulesPaths`, `extraNodeModules`, `disableHierarchicalLookup`) and the custom resolver for `@repo/common`. Expo configures monorepos automatically since SDK 52 ([monorepo guide](https://docs.expo.dev/guides/monorepos)). Keep the NativeWind wrapper.
-- [ ] `tailwind.config.ts`: content globs point at `./src/**`.
-- [ ] `app.config.ts`: the notifee Maven path and the dotenv path are relative to the repo root. `runtimes/app` sits at the same depth as `apps/native`, so they should still resolve; verify with a prebuild.
-- [ ] `firebase.json`: hosting directory becomes `runtimes/app/dist`; the functions predeploy still runs `turbo prune functions`, so confirm its output path.
-- [ ] Root scripts: `native:*` become `app:*`.
-- [ ] Inline `packages/eslint-config` and `packages/typescript-config` into the two runtimes, then delete `packages/`.
-- [ ] Lint-staged files and the Husky hook: confirm they still match the new paths.
-- [ ] README, wiki and `.rules`: update every path.
+- [x] `metro.config.js`: delete the manual monorepo settings (`watchFolders`, `nodeModulesPaths`, `extraNodeModules`, `disableHierarchicalLookup`) and the custom resolver for `@repo/common`. Expo configures monorepos automatically since SDK 52 ([monorepo guide](https://docs.expo.dev/guides/monorepos)). Keep the NativeWind wrapper.
+- [x] `tailwind.config.ts`: content globs point at `./src/**`.
+- [x] `app.config.ts`: the notifee Maven path and the dotenv path are relative to the repo root. `runtimes/app` sits at the same depth as `apps/native`, so they should still resolve; verify with a prebuild. Verified: an Android prebuild's Maven path resolves to the notifee libs.
+- [x] `firebase.json`: hosting directory becomes `runtimes/app/dist`; the functions predeploy still runs `turbo prune functions`, so confirm its output path. `turbo prune` keeps the workspace path, so `function-predeploy.js` now sets `main` to `runtimes/functions/src/index.js`.
+- [x] Root scripts: `native:*` become `app:*`.
+- [x] Inline `packages/eslint-config` and `packages/typescript-config` into the two runtimes, then delete `packages/`.
+- [x] Lint-staged files and the Husky hook: confirm they still match the new paths.
+- [x] README, wiki and `.rules`: update every path.
+
+### Changes beyond the checklist
+
+- [x] Removing `disableHierarchicalLookup` let `@nandorojo/iconic` bundle its own nested `react-native-svg` 12.5.1, a second copy of a native module. A root resolution points it at the app's 15.15.1.
+- [x] `apps/native/node_modules` moved with `git mv` and went stale; it duplicated Reanimated and Gesture Handler in the bundle until it was deleted and reinstalled. Anyone moving workspaces should delete their `node_modules` first.
+- [x] The app's ESLint config now covers `src/` (the old native config ignored it, and `@repo/common` was linted separately). That surfaced duplicate re-exports of `fcmService` and `notificationService` in `services/index.ts`; the duplicates are removed (same objects).
+- [x] The app keeps `eslint-config-expo` 10, the version the shared config actually resolved, and `typescript` 5.7.3 to match the root.
+- [x] Biome now formats `package.json` files fully expanded, the way Yarn writes them; before, every `yarn install` left `biome check` failing.
+- [x] `.husky/_` is generated and gitignored, so hooks do not run in a new worktree until `yarn prepare` runs there.
 
 ### Done when
 
-- Typecheck and Biome pass.
-- Web and Android bundles build with the same module count, within a few modules, as at `step-1-done`.
-- No file references `apps/`, `packages/` or `@repo/`.
-- Commit and tag `step-2-done`.
+- [x] Typecheck and Biome pass.
+- [x] Web and Android bundles build with the same module count, within a few modules, as at `step-1-done`. Android 1,864 vs 1,842 and web 1,345 vs 1,321; the extra modules are `expo-router/entry`'s runtime and a few nested helpers.
+- [x] No file references `apps/`, `packages/` or `@repo/`.
+- [x] Commit and tag `step-2-done`.
 
 ## Step 3: Verify the app runs and builds cleanly
 
@@ -199,40 +220,42 @@ Nothing is deployed and nothing merges to `develop` until every item here passes
 
 ### Static checks
 
-- [ ] `yarn install --immutable` succeeds from a clean clone of the branch.
-- [ ] Typecheck, Biome and ESLint pass in both workspaces.
-- [ ] `npx expo install --check` and `npx expo-doctor` report nothing new compared with `920a66c`.
-- [ ] The Husky pre-commit hook passes without `--no-verify`.
+- [x] `yarn install --immutable` succeeds from a clean clone of the branch.
+- [x] Typecheck, Biome and ESLint pass in both workspaces.
+- [x] `npx expo install --check` and `npx expo-doctor` report nothing new compared with `920a66c`. `expo-doctor` fails 3 checks, down from 6; `clsx` is newly flagged as unmaintained only because the app now declares it directly.
+- [x] The Husky pre-commit hook passes without `--no-verify`.
 
 ### Web
 
-- [ ] `yarn dev` starts and the browser console shows no errors on the landing page.
-- [ ] Unauthenticated visits to `/home`, `/map` and `/directions` redirect to `/login`.
-- [ ] Log in with a real phone number and walk through onboarding 1 to 4.
-- [ ] On onboarding step 4 and the map screen: no watermark, and tapping the map fills in an address.
-- [ ] Directions: open a destination, pick a route, reload the page. The query parameters (`lat`, `lng`, `name`, `photoUri`, `routeIndex`) must survive the reload.
-- [ ] Back button: after landing, login, home, directions, the browser back button returns one screen at a time. This checks the change from `router.push` to `router.navigate`.
-- [ ] Long screens scroll.
-- [ ] Images render at the right size (the shared `Image` now wraps `expo-image`).
-- [ ] `yarn build` succeeds; serve `dist` locally and reload a deep link such as `/directions?...` to prove the rewrite rule works.
-- [ ] Record the compressed size of the web bundle. Before this work it was 1.15 MB; Next shipped about 480 to 500 kB.
+- [x] `yarn dev` starts and the browser console shows no errors on the landing page. On this machine `functions:dev` needs a global `firebase` CLI that is not installed, so Turbo aborts `yarn dev`; `yarn app:dev` was used, and `npx firebase-tools` runs the emulator.
+- [x] Unauthenticated visits to `/home`, `/map` and `/directions` redirect to `/login`.
+- [x] Log in with a real phone number and walk through onboarding 1 to 4.
+- [x] On onboarding step 4 and the map screen: no watermark, and tapping the map fills in an address.
+- [x] Directions: open a destination, pick a route, reload the page. The query parameters (`lat`, `lng`, `name`, `photoUri`, `routeIndex`) must survive the reload.
+- [x] Back button: after landing, login, home, directions, the browser back button returns one screen at a time. This checks the change from `router.push` to `router.navigate`.
+- [x] Long screens scroll.
+- [x] Images render at the right size (the shared `Image` now wraps `expo-image`).
+- [x] `yarn build` succeeds; serve `dist` locally and reload a deep link such as `/directions?...` to prove the rewrite rule works.
+- [x] Record the compressed size of the web bundle. Before this work it was 1.15 MB; Next shipped about 480 to 500 kB. Now 708 kB gzipped.
 
 ### Native
 
-- [ ] Metro builds the Android and iOS bundles without errors.
-- [ ] `npx expo-modules-autolinking verify -v` lists the expected native modules.
+- [x] Metro builds the Android and iOS bundles without errors.
+- [x] `npx expo-modules-autolinking verify -v` lists the expected native modules. SDK 53's CLI has no `-v`; `verify` passes and the same 39 modules link as at the baseline.
+
+Found during verification, not caused by this work: the login screen nests two `accessibilityRole='form'` views, which logs a nested `<form>` error in the browser. The same code exists at `920a66c`.
 
 Device builds are outside this effort by the owner's decision. That leaves push notifications, background location sharing, the phone call and the image picker untested until the owner builds; they are the main unverified area.
 
 ### Functions and hosting
 
-- [ ] `yarn workspace functions build` succeeds and the emulator starts.
-- [ ] Run the functions predeploy commands by hand and check that `turbo prune functions` still produces the `out` folder `firebase.json` expects.
-- [ ] Serve the web export through the Firebase Hosting emulator with the new static config.
+- [x] `yarn workspace functions build` succeeds and the emulator starts.
+- [x] Run the functions predeploy commands by hand and check that `turbo prune functions` still produces the `out` folder `firebase.json` expects.
+- [x] Serve the web export through the Firebase Hosting emulator with the new static config. Deep links return `index.html`. The functions emulator reflects any CORS origin, so the allow-list can only be checked in code.
 
 ### Sign-off
 
-- [ ] Owner confirms the checklist.
+- [x] Owner confirms the checklist (2 Oct 2026).
 - [ ] Only then: deploy web, and open a pull request into `develop`.
 - [ ] Keep the restore point until the pull request merges: the original folder and the `pre-expo-consolidation` tag stay until then.
 
