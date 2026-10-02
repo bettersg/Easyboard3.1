@@ -137,6 +137,12 @@ function getStorageInstance(): FirebaseStorage {
   return initializeStorage()
 }
 
-export { app, auth, getDatabaseInstance, getStorageInstance }
-export { type Database, type FirebaseStorage as Storage }
+export {
+  app,
+  auth,
+  type Database,
+  type FirebaseStorage as Storage,
+  getDatabaseInstance,
+  getStorageInstance
+}
 export default app

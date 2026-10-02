@@ -25,7 +25,7 @@
   },
   "devDependencies": {
     "dotenv": "^17.2.3",
-    "firebase-functions-test": "^3.1.0",
+    "firebase-functions-test": "^3.5.0",
     "oxlint": "^1.86.0",
     "typescript": "^7.0.2"
   },

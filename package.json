@@ -17,10 +17,10 @@
     "clean": "turbo clean && find . -name \"node_modules\" -type d -prune -exec rm -rf '{}' +"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.10",
+    "@biomejs/biome": "2.5.15",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
-    "turbo": "^2.4.0",
+    "turbo": "^2.11.6",
     "typescript": "^7.0.2"
   },
   "engines": {
@@ -40,7 +40,7 @@
     "@react-native-firebase/auth": "^23.5.0",
     "@react-native-firebase/database": "^23.5.0",
     "@react-native-firebase/messaging": "^23.5.0",
-    "firebase": "^12.6.0",
+    "firebase": "^12.19.0",
     "@types/react-native-web/react-native": "0.88.0-rc.3",
     "@nandorojo/iconic/react-native-svg": "15.15.5"
   }

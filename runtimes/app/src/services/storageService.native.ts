@@ -171,4 +171,4 @@ export const isSessionExpired = storageService.isSessionExpired
 export const uploadLocationPhoto = storageService.uploadLocationPhoto
 export const getPhotoDownloadUrl = storageService.getPhotoDownloadUrl
 
-export type { UserStorage, PWIDUser }
+export type { PWIDUser, UserStorage }
