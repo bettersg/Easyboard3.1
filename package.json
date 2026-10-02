@@ -9,7 +9,6 @@
     "format:check": "biome check",
     "app:prebuild": "yarn workspace app prebuild",
     "app:dev": "yarn workspace app dev",
-    "web:dev": "yarn workspace app dev",
     "app:android": "yarn workspace app android",
     "app:ios": "yarn workspace app ios",
     "typecheck": "turbo run typecheck",

@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "expo start --web",
+    "dev": "expo start",
     "start": "expo start",
     "build": "EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH=1 EXPO_UNSTABLE_TREE_SHAKING=1 expo export --platform web",
     "prebuild": "expo prebuild",

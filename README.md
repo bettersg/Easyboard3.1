@@ -98,14 +98,14 @@ For more detailed instructions (Android Studio, iOS Simulator, etc.), refer to t
 
 ### Development
 
-To run all services (Functions emulator and the Expo dev server, with web opened in the browser):
+To run all services (Functions emulator and the Expo dev server; the web app is at http://localhost:8081, press `w` to open it):
 ```bash
 yarn dev
 ```
 
 #### Running specific applications (from the monorepo root)
 
-- **Web only** (Expo dev server, opens the browser; no functions emulator): `yarn web:dev` (same as `yarn app:dev`)
+- **Expo dev server** (web at http://localhost:8081; press `w` to open it): `yarn app:dev`
 - **Native iOS**: `yarn app:ios`
 - **Native Android**: `yarn app:android`
 
