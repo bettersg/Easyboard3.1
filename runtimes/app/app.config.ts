@@ -91,7 +91,6 @@ export default (): ExpoConfig => ({
       resizeMode: 'contain',
       backgroundColor: '#ffffff'
     },
-    newArchEnabled: true,
     googleServicesFile: './GoogleService-Info.plist',
     infoPlist: {
       NSAppTransportSecurity: { NSAllowsArbitraryLoads: true } // Enable HTTP requests
@@ -122,7 +121,6 @@ export default (): ExpoConfig => ({
       backgroundColor: '#ffffff'
     },
     package: 'org.engineeringgood.EasyBoard.RN',
-    newArchEnabled: true,
     googleServicesFile: './google-services.json'
   },
   web: {

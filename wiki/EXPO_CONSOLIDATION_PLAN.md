@@ -297,10 +297,12 @@ Expected versions per SDK, read from each release's `bundledNativeModules.json` 
 
 #### Hop 2: SDK 54 to 55 ([changelog](https://expo.dev/changelog/sdk-55))
 
-- [ ] Remove both `newArchEnabled` entries from `app.config.ts`; the option no longer exists. The app is already on the New Architecture.
-- [ ] Expo packages switch to SDK-numbered versions (`expo-location` becomes `^55`). `expo install --fix` handles it.
-- [ ] `react-native-maps` moves for the first time, 1.20.1 to 1.27.2. Retest every map screen on device.
-- [ ] Minimum Xcode becomes 26. This machine has no Xcode, so iOS builds go through EAS.
+- [x] Remove both `newArchEnabled` entries from `app.config.ts`; the option no longer exists. The app is already on the New Architecture.
+- [x] Expo packages switch to SDK-numbered versions (`expo-location` becomes `^55`). `expo install --fix` handles it.
+- [x] `react-native-maps` moves for the first time, 1.20.1 to 1.27.2. Owner: retest every map screen on device.
+- [x] Minimum Xcode becomes 26. This machine has no Xcode, so iOS builds go through EAS.
+
+- Done on 2 Oct 2026 (tag `sdk-55`). `--fix` stopped on `eslint-config-expo` and `jest-expo`; those, `@types/react` 19.2, `react-test-renderer` 19.2.0, the root resolutions (React Native 0.83.10, `react-native-svg` 15.15.3) and the constraint (React 19.2.0) were set by hand. `components/Animated.tsx` lost its unused `Text`, `Image` and `ScrollView` wrappers: typing `cssInterop(Animated.ScrollView)` hit TypeScript's union-size limit (TS2590).
 
 #### Hop 3: SDK 55 to 56 ([changelog](https://expo.dev/changelog/sdk-56))
 
