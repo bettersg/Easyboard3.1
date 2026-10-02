@@ -1,4 +1,5 @@
-import { type ElementRef, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
+import type { TextInputInstance } from 'react-native'
 import { TextInput, View } from './index'
 
 export interface OTPInputProps {
@@ -13,7 +14,7 @@ export const OTPInput = ({
   className = ''
 }: OTPInputProps) => {
   const [otp, setOtp] = useState<string[]>(Array(length).fill(''))
-  const inputRefs = useRef<(ElementRef<typeof TextInput> | null)[]>([])
+  const inputRefs = useRef<(TextInputInstance | null)[]>([])
 
   const handleChange = (text: string, index: number) => {
     // Only allow single digit

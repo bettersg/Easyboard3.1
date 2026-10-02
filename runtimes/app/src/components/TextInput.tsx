@@ -2,7 +2,8 @@ import { cssInterop } from 'nativewind'
 import React, { useImperativeHandle, useRef } from 'react'
 import {
   TextInput as RNTextInput,
-  type TextInputProps as RNTextInputProps
+  type TextInputProps as RNTextInputProps,
+  type TextInputInstance
 } from 'react-native'
 
 export interface TextInputProps extends RNTextInputProps {
@@ -13,14 +14,14 @@ const MappedTextInput = cssInterop(RNTextInput, {
   className: 'style'
 })
 
-export const TextInput = React.forwardRef<RNTextInput, TextInputProps>(
+export const TextInput = React.forwardRef<TextInputInstance, TextInputProps>(
   ({ className, ...props }, ref) => {
-    const innerRef = useRef<RNTextInput>(null)
+    const innerRef = useRef<TextInputInstance>(null)
 
-    useImperativeHandle(ref, () => innerRef.current as RNTextInput, [])
+    useImperativeHandle(ref, () => innerRef.current as TextInputInstance, [])
 
     const MappedComponent = MappedTextInput as React.ComponentType<
-      TextInputProps & { ref?: React.Ref<RNTextInput> }
+      TextInputProps & { ref?: React.Ref<TextInputInstance> }
     >
 
     return <MappedComponent {...props} ref={innerRef} className={className} />

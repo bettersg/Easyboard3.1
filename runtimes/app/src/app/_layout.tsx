@@ -1,7 +1,7 @@
 import '../../global.css'
 
-import { router, Stack, useNavigation } from 'expo-router'
-import React, { useEffect } from 'react'
+import { Stack, useRouter } from 'expo-router'
+import React, { useEffect, useRef } from 'react'
 import { Platform } from 'react-native'
 import { AuthRouteGuard } from '@/components'
 import {
@@ -16,25 +16,20 @@ import notificationService, { setNavigationCallback } from '@/services'
 function RootLayoutNav() {
   const { hasAuthen, userType } = useAuth()
 
-  const navigation = useNavigation()
-
+  const router = useRouter()
+  // Keep the latest router without re-running notification setup on every
+  // render (re-running would add duplicate listeners)
+  const routerRef = useRef(router)
   useEffect(() => {
-    // This listener fires whenever the navigation state changes
-    const unsubscribe = navigation.addListener('state', () => {
-      const state = navigation.getState()
-      console.log(
-        'Current navigation history:',
-        state?.routes.map((route) => route.name)
-      )
-    })
-
-    return unsubscribe
-  }, [navigation])
+    routerRef.current = router
+  }, [router])
 
   // Initialize notification service
   useEffect(() => {
     // Set navigation callback for notification service
-    setNavigationCallback(router.navigate)
+    setNavigationCallback((screen, params) =>
+      routerRef.current.navigate({ pathname: screen, params })
+    )
 
     const initializeNotifications = async () => {
       try {

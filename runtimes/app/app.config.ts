@@ -44,7 +44,6 @@ export default (): ExpoConfig => ({
       {
         android: {
           enableShrinkResourcesInReleaseBuilds: false,
-          enableMinifyInReleaseBuilds: false,
           enablePngCrunchInReleaseBuilds: true,
 
           networkInspector: true

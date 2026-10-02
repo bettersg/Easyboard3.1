@@ -34,7 +34,10 @@ export default defineConfig([
       'react-hooks/immutability': 'warn',
       'react-hooks/use-memo': 'warn',
       'react-hooks/preserve-manual-memoization': 'warn',
-      'react-hooks/refs': 'warn'
+      'react-hooks/refs': 'warn',
+      // TypeScript already checks namespace members; this rule cannot follow
+      // expo-notifications 58's build output and reports false errors
+      'import/namespace': 'off'
     },
     settings: {
       'import/resolver': {

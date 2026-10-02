@@ -5,8 +5,8 @@ import {
   Dimensions,
   Keyboard,
   Platform,
-  StatusBar,
-  TouchableOpacity
+  Pressable,
+  StatusBar
 } from 'react-native'
 import Autocomplete from 'react-native-autocomplete-input'
 import MapView, { Marker } from 'react-native-maps'
@@ -245,15 +245,16 @@ const GoogleMapView = ({
             keyExtractor: (item: any) => item.place_id,
             style: { borderBottomRightRadius: 6, borderBottomLeftRadius: 6 },
             renderItem: ({ item }) => (
-              <TouchableOpacity
+              <Pressable
                 onPress={() => tapPrediction(item.place_id, item.description)}
+                style={({ pressed }) => ({ opacity: pressed ? 0.2 : 1 })}
               >
                 <View className='border-b-[0.5px] border-gray-300 bg-white p-2'>
                   <Text className='text-lg' numberOfLines={1}>
                     {item.description}
                   </Text>
                 </View>
-              </TouchableOpacity>
+              </Pressable>
             )
           }}
         />

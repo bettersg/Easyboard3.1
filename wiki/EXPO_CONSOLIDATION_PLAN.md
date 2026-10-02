@@ -328,16 +328,17 @@ Expected versions per SDK, read from each release's `bundledNativeModules.json` 
 
 #### Hop 5: SDK 57 to 58 beta ([changelog](https://expo.dev/changelog/sdk-58-beta))
 
-- [ ] Gesture Handler 2.32 to 3.2, a major version. The app uses only `GestureHandlerRootView` directly; `react-native-actions-sheet` depends on it more deeply and must be retested.
-- [ ] React Native removes the `Touchable` root export and some `StatusBar` props. `GoogleMapView.native.tsx` uses `TouchableOpacity`; switch to `Pressable`.
-- [ ] `expo-router` changes its navigation core ([guide](https://docs.expo.dev/router/migrate/sdk-57-to-58)). `app/_layout.tsx` reads navigation state through `useNavigation`, `addListener('state')` and `getState()` for a debug log; remove it or use `usePathname`.
-- [ ] The same layout passes the module-level `router.navigate` to the notification service. SDK 58 prefers the router from `useRouter()`.
-- [ ] Per-route code splitting turns on for web by default.
-- [ ] iOS moves to the scene-based life cycle; prebuild regenerates the project. Confirm Firebase still initialises.
-- [ ] Android enables R8 minification in release builds by default. The owner accepts the default, so remove the Proguard opt-out from the app config.
+- [x] Gesture Handler 2.32 to 3.2, a major version. The app uses only `GestureHandlerRootView` directly; `react-native-actions-sheet` depends on it more deeply and must be retested. Typecheck and bundles pass; owner: retest the sheet on a device.
+- [x] React Native removes the `Touchable` root export and some `StatusBar` props. `GoogleMapView.native.tsx` uses `TouchableOpacity`; switch to `Pressable`. Done, with the same 0.2 pressed opacity. `StatusBar.currentHeight` still exists.
+- [x] `expo-router` changes its navigation core ([guide](https://docs.expo.dev/router/migrate/sdk-57-to-58)). `app/_layout.tsx` reads navigation state through `useNavigation`, `addListener('state')` and `getState()` for a debug log; remove it or use `usePathname`. Removed.
+- [x] The same layout passes the module-level `router.navigate` to the notification service. SDK 58 prefers the router from `useRouter()`. The layout now keeps `useRouter()` in a ref, so notification setup does not re-run. The callback passes `params` as route params: before, they landed in `navigate`'s options argument and were dropped.
+- [x] Per-route code splitting turns on for web by default. Confirmed: the export has one chunk per route.
+- [ ] Owner, at the first iOS build: iOS moves to the scene-based life cycle; prebuild regenerates the project. Confirm Firebase still initialises.
+- [x] Android enables R8 minification in release builds by default. The owner accepts the default, so remove the Proguard opt-out from the app config.
 
 - Node 24.3 or later is required; this machine runs 24.18.
 - SDK 58 stable ships after React Native 0.88 does.
+- Done on 2 Oct 2026 (tag `sdk-58`): `expo` 58.0.2, React Native 0.88.0-rc.3, React 19.3.0. Set by hand: `@types/react` 19.3, `eslint-config-expo` 58, `jest-expo` 58, `react-test-renderer` 19.3.0, the root resolutions (React Native 0.88.0-rc.3, `react-native-svg` 15.15.5) and the React 19.3.0 constraint. React Native 0.88's types needed three fixes: the `TextInput` wrapper and `OTPInput` use `TextInputInstance` (the `TextInput` name is now the component type); the web-only `onSubmit` on two form views carries the `@ts-expect-error` (`accessibilityRole='form'` type-checks now); and ESLint's `import/namespace` is off for TypeScript, because it misreads expo-notifications 58.
 
 ### Assessment: third-party dependencies
 

@@ -68,8 +68,8 @@ export function OnboardingLayout({
       </View>
       <View
         className='flex-1'
+        // @ts-expect-error - onSubmit is web-only (react-native-web form)
         onSubmit={(e: Event) => e.preventDefault()}
-        // @ts-expect-error - web-specific
         accessibilityRole='form'
       >
         {children}
