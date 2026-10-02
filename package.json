@@ -18,11 +18,10 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.10",
-    "@typescript/native": "npm:typescript@^7.0.2",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "turbo": "^2.4.0",
-    "typescript": "npm:@typescript/typescript6@^6.0.2"
+    "typescript": "^7.0.2"
   },
   "engines": {
     "node": ">=20",

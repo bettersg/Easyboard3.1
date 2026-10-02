@@ -9,7 +9,7 @@
     "start": "yarn shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "lint": "eslint .",
+    "lint": "oxlint",
     "typecheck": "tsc --noEmit",
     "predeploy": "node ./function-predeploy.js",
     "postdeploy": "node ./function-postdeploy.js"
@@ -24,14 +24,10 @@
     "firebase-functions": "^6.3.2"
   },
   "devDependencies": {
-    "@eslint/js": "^9.19.0",
-    "@typescript/native": "npm:typescript@^7.0.2",
     "dotenv": "^17.2.3",
-    "eslint": "^9.19.0",
     "firebase-functions-test": "^3.1.0",
-    "globals": "^15.14.0",
-    "typescript": "npm:@typescript/typescript6@^6.0.2",
-    "typescript-eslint": "^8.23.0"
+    "oxlint": "^1.86.0",
+    "typescript": "^7.0.2"
   },
   "private": true
 }
