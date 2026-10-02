@@ -12,7 +12,7 @@ EasyBoard moves from two apps (Next.js for web, Expo for native) joined by a sha
 | 1. Remove Next.js and Solito | Expo web is the default `dev` and `build` path; `apps/web` is gone | One commit, app runs on web and Android | Done, `a84287e`, tag `step-1-done` |
 | 2. Restructure | `runtimes/app` and `runtimes/functions`; `packages/common` folded into the app | One commit, no behaviour change | Done, `3259b14`, tag `step-2-done` |
 | 3. Verify | Web, Android, iOS and functions run and build cleanly | Checklist signed off | Signed off by the owner on 2 Oct 2026 |
-| 4. Assess SDK 58 beta | Written list of changes needed to adopt SDK 58 and its Rust transformer | Assessment done; the upgrade is follow-on work | Assessment done; upgrade in progress |
+| 4. Assess SDK 58 beta | Written list of changes needed to adopt SDK 58 and its Rust transformer | Assessment done; the upgrade is follow-on work | Done: SDK 58 beta, TypeScript 7, oxlint, Uniwind, Rust transformer (tag `phase-c-done`, final fixes after it) |
 
 ### Starting state
 
@@ -469,14 +469,37 @@ Decision: Uniwind. It is on a stable release line, needs no Babel configuration,
 
 ### Baselines to re-measure
 
-| Measure | Baseline on SDK 53 |
-| --- | --- |
-| Cold Android bundle | 4.0 s for 2,022 modules |
-| Warm restart to first bundle | 5 to 7 s, about 4 s of it file crawl |
-| Files that fall back to Babel | All of them |
-| Web bundle, compressed | 1.15 MB; 650 kB with tree shaking forced on |
+| Measure | Baseline on SDK 53 | SDK 58, Uniwind, Rust transformer (2 Oct 2026) |
+| --- | --- | --- |
+| Cold Android bundle | 4.0 s for 2,022 modules | 1.5 s for 1,433 modules (dev bundle after `expo start --clear`) |
+| Warm restart to first bundle | 5 to 7 s, about 4 s of it file crawl | 1.8 s (server up 1.5 s, bundle 0.4 s) |
+| Files that fall back to Babel | All of them | 359 of 2,533, all in dependencies |
+| Web bundle, compressed | 1.15 MB; 650 kB with tree shaking forced on | 749 kB with tree shaking (843 kB without) |
 
 Baselines were taken on an 18-core M5 Pro. On that machine Babel costs about 2 to 3 s per cold start, so that is the most the transformer can save there. The warm-start gain would come from SDK 56's faster file crawl, not from the transformer.
+
+## After SDK 58: issues found and their status
+
+Fixed on 2 Oct 2026, after phase C:
+
+- Web tree shaking. The services exported functions by destructuring (`export const { a, b } = service`), which Metro's tree shaker dropped (`setNavigationCallback is not a function`). They now export one named const each, and the app's `build` script sets `EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH=1` and `EXPO_UNSTABLE_TREE_SHAKING=1`. Both flags are marked unstable by Expo; remove them from the script if a production build misbehaves.
+- 11 require cycles: components imported siblings through `components/index.ts`. They now import files directly.
+- `expo-doctor` failed intermittently because dotenv 17 printed a tip on stdout into JSON that the doctor parses; the app config loads dotenv with `quiet: true`.
+- The functions build writes JS into `src/` (its `outDir`); oxlint now ignores `src/**/*.js` there.
+
+Final checks, all passing: `yarn install --immutable` from a clean clone; typecheck (TypeScript 7), oxlint (0 errors, 46 warnings), Biome; `expo install --check`; `expo-doctor` 20 of 20; autolinking verify; web, Android and iOS bundles; `yarn build`; the web export under the Firebase Hosting emulator with deep links; logged-in home in the dev server; functions build, predeploy and postdeploy, and the functions emulator; the Husky pre-commit hook.
+
+Still open:
+
+- [ ] Owner: device builds for Android and iOS. This covers everything native that was only bundled here: edge-to-edge, maps, the actions sheet on Gesture Handler 3, `expo-notifications` alongside React Native Firebase messaging (permission prompt, push open, push closed, tap), background location, the iOS scene life cycle with Firebase, and precompiled modules with static frameworks.
+- [ ] Owner: Google Cloud referrers for the browser Maps key (`localhost:8081` and the production domain).
+- [ ] Unpin `react-native-web` (0.21.2) once Uniwind releases its `InputAccessoryView` fix (#706).
+- [ ] 15 React Compiler lint warnings (`set-state-in-effect`, `refs`, `immutability`, `use-memo`, `preserve-manual-memoization`, `incompatible-library`). They need component refactors that should be checked on device, so they stay warnings.
+- [ ] Web push: there is no `firebase-messaging-sw.js`, so `getToken` fails on web and the dev overlay shows the error. This predates the migration.
+- [ ] Notification setup runs twice on web after login: the effect depends on `userType`, which arrives after `hasAuthen`. This predates the migration.
+- [ ] The login screen nests two `accessibilityRole='form'` views (a nested `<form>` on web). This predates the migration.
+- [ ] Move to SDK 58 stable (and React Native 0.88 stable) when it ships; today the app is on `expo` 58.0.2 with React Native 0.88.0-rc.3.
+- [ ] Storybook re-homing (parked since step 1).
 
 ## Decisions and risks
 

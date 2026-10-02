@@ -10,7 +10,7 @@ Cross-platform monorepo for EasyBoard: one Expo (expo-router) app serving iOS, A
 │   │   ├── src/
 │   │   │   ├── app/         # Routes only (expo-router)
 │   │   │   ├── screens/     # Screen components the routes render
-│   │   │   ├── components/  # UI components (NativeWind)
+│   │   │   ├── components/  # UI components (Uniwind / Tailwind 4)
 │   │   │   ├── contexts/    # React Contexts for global state
 │   │   │   ├── helpers/     # Utility functions
 │   │   │   ├── hooks/       # React Hooks
@@ -140,11 +140,11 @@ yarn app:ios     # For iOS (macOS only)
     2. Compose screens in `runtimes/app/src/screens`.
     3. Register routes in `runtimes/app/src/app` (expo-router). The same routes serve iOS, Android and web. Import with the `@/` alias, e.g. `@/screens`.
 - Business logic should reside in `runtimes/app/src/services`.
-- Use **NativeWind** for styling across both platforms.
+- Use **Uniwind** (Tailwind 4 `className`) for styling across all platforms.
 
 ## Key Features
 
 - **One codebase**: iOS, Android and web are one Expo app routed by expo-router. Platform differences live in `.web.ts` / `.native.ts` file pairs.
-- **NativeWind**: Tailwind CSS for universal styling.
+- **Uniwind**: Tailwind CSS 4 for universal styling.
 - **Firebase Integration**: Unified services for Auth, Database, and Functions.
 - **Type Safety**: Full-stack TypeScript support.
