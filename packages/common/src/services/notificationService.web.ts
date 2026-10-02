@@ -172,3 +172,15 @@ export const notificationService: INotificationService = {
 } satisfies INotificationService
 
 export default notificationService
+
+// Re-export methods individually for parity with notificationService.native.ts
+export const {
+  initialize,
+  checkPermissions,
+  requestPermissions,
+  sendLocationShareNotification,
+  sendLocationStopNotification,
+  sendFCMNotification,
+  setupNotificationListeners,
+  setNavigationCallback
+} = notificationService

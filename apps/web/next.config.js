@@ -10,6 +10,8 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 /**
+ * Fallback only: used when something runs `next build`/`next dev` without
+ * `--turbopack` (the package.json scripts always pass it).
  * @type {import('next').NextConfig}
  */
 const withWebpack = {
@@ -55,13 +57,14 @@ const withWebpack = {
  */
 const withTurbopack = {
   turbopack: {
+    // Turbopack does not support webpack's `$` exact-match suffix
     resolveAlias: {
-      'react-native$': 'react-native-web',
-      'react-native/Libraries/EventEmitter/RCTDeviceEventEmitter$':
+      'react-native': 'react-native-web',
+      'react-native/Libraries/EventEmitter/RCTDeviceEventEmitter':
         'react-native-web/dist/vendor/react-native/NativeEventEmitter/RCTDeviceEventEmitter',
-      'react-native/Libraries/vendor/emitter/EventEmitter$':
+      'react-native/Libraries/vendor/emitter/EventEmitter':
         'react-native-web/dist/vendor/react-native/emitter/EventEmitter',
-      'react-native/Libraries/EventEmitter/NativeEventEmitter$':
+      'react-native/Libraries/EventEmitter/NativeEventEmitter':
         'react-native-web/dist/vendor/react-native/NativeEventEmitter'
     },
     resolveExtensions: [
@@ -99,7 +102,6 @@ const nextConfig = {
     'react-native-actions-sheet',
     'react-native-safe-area-context',
     'react-native-svg',
-    'solito',
     'moti',
     '@repo/common',
     'expo-image-picker',
@@ -111,9 +113,6 @@ const nextConfig = {
     define: {
       __DEV__: JSON.stringify(process.env.NODE_ENV !== 'production')
     }
-  },
-  experimental: {
-    forceSwcTransforms: true
   },
   typescript: {
     ignoreBuildErrors: true // do not do this in prod

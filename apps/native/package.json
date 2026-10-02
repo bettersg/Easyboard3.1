@@ -48,6 +48,7 @@
     "expo-task-manager": "~13.1.6",
     "nativewind": "4.1.23",
     "react": "19.0.0",
+    "react-dom": "19.0.0",
     "react-hook-form": "^7.34.2",
     "react-native": "0.79.6",
     "react-native-autocomplete-input": "^5.1.1",
@@ -61,7 +62,6 @@
     "react-native-screens": "~4.11.1",
     "react-native-svg": "^15.15.1",
     "react-native-web": "^0.20.0",
-    "solito": "^5.0.0",
     "tailwindcss": "^3"
   },
   "devDependencies": {
@@ -69,6 +69,7 @@
     "@react-native-community/cli": "^18.0.0",
     "@types/jest": "^29.5.12",
     "@types/react": "^19",
+    "@types/react-dom": "^19",
     "@types/react-test-renderer": "^18.3.0",
     "@typescript-eslint/eslint-plugin": "^8.26.0",
     "dotenv": "^17.2.3",

@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'solito/navigation'
+import { useRouter } from 'expo-router'
 import { Text, View } from '../../components'
 import { OnboardingLayout } from '../onboarding/OnboardingLayout'
 
@@ -8,7 +8,7 @@ export function LandingPage() {
   const router = useRouter()
 
   const handleNext = () => {
-    router.push('/login')
+    router.navigate('/login')
   }
 
   return (

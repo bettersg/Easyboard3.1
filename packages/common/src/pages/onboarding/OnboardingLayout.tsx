@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from 'solito/navigation'
+import { useRouter } from 'expo-router'
 import { BackButton, Button, View } from '../../components'
 import { useSafeArea } from '../../provider'
 
@@ -32,7 +32,7 @@ export function OnboardingLayout({
     } else {
       // Default: navigate to previous step
       if (currentStep > 1) {
-        router.push(`/onboarding/${currentStep - 1}`)
+        router.navigate(`/onboarding/${currentStep - 1}`)
       }
     }
   }
@@ -43,7 +43,7 @@ export function OnboardingLayout({
     } else {
       // Default: navigate to next step
       if (currentStep < totalSteps) {
-        router.push(`/onboarding/${currentStep + 1}`)
+        router.navigate(`/onboarding/${currentStep + 1}`)
       }
     }
   }

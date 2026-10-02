@@ -1,6 +1,6 @@
+import { useRouter } from 'expo-router'
 import { useEffect, useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { useRouter } from 'solito/navigation'
 import { ProgressIndicator, ScrollView, Text, View } from '../../components'
 import {
   LocationInput,
@@ -294,7 +294,7 @@ export function OnboardingScreen4() {
         savingCompleteRef.current = true
 
         // Navigate to home page
-        router.push('/home')
+        router.navigate('/home')
       } catch (error) {
         console.error(
           '[OnboardingScreen4] Error saving onboarding data:',
@@ -309,7 +309,7 @@ export function OnboardingScreen4() {
   }
 
   const handleBack = () => {
-    router.push('/onboarding/3')
+    router.navigate('/onboarding/3')
   }
 
   const renderError = (err: any, display: string) => {

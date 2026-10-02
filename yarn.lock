@@ -5796,6 +5796,7 @@ __metadata:
     expo-image-picker: "npm:^17.0.9"
     expo-linear-gradient: "npm:^14.0.2"
     expo-location: "npm:^19.0.7"
+    expo-router: "npm:~5.1.7"
     firebase: "npm:^12.6.0"
     nativewind: "npm:4.1.23"
     next: "npm:15"
@@ -5809,7 +5810,6 @@ __metadata:
     react-native-safe-area-context: "npm:^5.6.2"
     react-native-svg: "npm:^15.15.1"
     react-responsive: "npm:^10.0.0"
-    solito: "npm:^5.0.0"
     tailwind-merge: "npm:^3.0.1"
     tailwindcss: "npm:^3.4.1"
     typescript: "npm:5.7.3"
@@ -6773,6 +6773,15 @@ __metadata:
   version: 1.2.7
   resolution: "@types/range-parser@npm:1.2.7"
   checksum: 10c0/361bb3e964ec5133fa40644a0b942279ed5df1949f21321d77de79f48b728d39253e5ce0408c9c17e4e0fd95ca7899da36841686393b9f7a1e209916e9381a3c
+  languageName: node
+  linkType: hard
+
+"@types/react-dom@npm:^19":
+  version: 19.3.0
+  resolution: "@types/react-dom@npm:19.3.0"
+  peerDependencies:
+    "@types/react": ^19.3.0
+  checksum: 10c0/ce0066d28b62bc6afdd17ca84756b8fbe0f6ffc0c8b1e60739abc30e81510da2edbc1007e6ab3d974d30f5a8c25bb0f7de8d7ce09736c909fe84c0f9aed0b946
   languageName: node
   linkType: hard
 
@@ -17232,6 +17241,7 @@ __metadata:
     "@repo/common": "npm:*"
     "@types/jest": "npm:^29.5.12"
     "@types/react": "npm:^19"
+    "@types/react-dom": "npm:^19"
     "@types/react-native-web": "npm:^0.19.0"
     "@types/react-test-renderer": "npm:^18.3.0"
     "@typescript-eslint/eslint-plugin": "npm:^8.26.0"
@@ -17259,6 +17269,7 @@ __metadata:
     prettier: "npm:^3.0.3"
     prettier-plugin-tailwindcss: "npm:^0.5.6"
     react: "npm:19.0.0"
+    react-dom: "npm:19.0.0"
     react-hook-form: "npm:^7.34.2"
     react-native: "npm:0.79.6"
     react-native-autocomplete-input: "npm:^5.1.1"
@@ -17273,7 +17284,6 @@ __metadata:
     react-native-svg: "npm:^15.15.1"
     react-native-web: "npm:^0.20.0"
     react-test-renderer: "npm:18.3.1"
-    solito: "npm:^5.0.0"
     tailwindcss: "npm:^3"
     typescript: "npm:^5.3.3"
   languageName: unknown
@@ -19022,6 +19032,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-dom@npm:19.0.0":
+  version: 19.0.0
+  resolution: "react-dom@npm:19.0.0"
+  dependencies:
+    scheduler: "npm:^0.25.0"
+  peerDependencies:
+    react: ^19.0.0
+  checksum: 10c0/a36ce7ab507b237ae2759c984cdaad4af4096d8199fb65b3815c16825e5cfeb7293da790a3fc2184b52bfba7ba3ff31c058c01947aff6fd1a3701632aabaa6a9
+  languageName: node
+  linkType: hard
+
 "react-dom@npm:^19.2.0":
   version: 19.2.3
   resolution: "react-dom@npm:19.2.3"
@@ -20266,7 +20287,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"scheduler@npm:0.25.0":
+"scheduler@npm:0.25.0, scheduler@npm:^0.25.0":
   version: 0.25.0
   resolution: "scheduler@npm:0.25.0"
   checksum: 10c0/a4bb1da406b613ce72c1299db43759526058fdcc413999c3c3e0db8956df7633acf395cb20eb2303b6a65d658d66b6585d344460abaee8080b4aa931f10eaafe
@@ -20896,15 +20917,6 @@ __metadata:
     ip-address: "npm:^10.0.1"
     smart-buffer: "npm:^4.2.0"
   checksum: 10c0/2805a43a1c4bcf9ebf6e018268d87b32b32b06fbbc1f9282573583acc155860dc361500f89c73bfbb157caa1b4ac78059eac0ef15d1811eb0ca75e0bdadbc9d2
-  languageName: node
-  linkType: hard
-
-"solito@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "solito@npm:5.0.0"
-  dependencies:
-    typescript: "npm:^5.0.4"
-  checksum: 10c0/751244470902111de6490debc70f2a9fcdf346bde85e2ca227767212cb32955487a6f44f488b376272b2252a9f4844ac7cd59127bf6ea52e911237ef82df5c24
   languageName: node
   linkType: hard
 
@@ -22212,7 +22224,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.0.4, typescript@npm:^5.3.3, typescript@npm:^5.7.3":
+"typescript@npm:^5.3.3, typescript@npm:^5.7.3":
   version: 5.9.3
   resolution: "typescript@npm:5.9.3"
   bin:
@@ -22232,7 +22244,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.0.4#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.3.3#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.7.3#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A^5.3.3#optional!builtin<compat/typescript>, typescript@patch:typescript@npm%3A^5.7.3#optional!builtin<compat/typescript>":
   version: 5.9.3
   resolution: "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"
   bin:
@@ -22796,7 +22808,6 @@ __metadata:
     react-native-web: "npm:^0.21.2"
     react-native-worklets: "npm:^0.6.1"
     serve: "npm:^14.2.5"
-    solito: "npm:^5.0.0"
     storybook: "npm:^9"
     tailwindcss: "npm:^3"
     tty-browserify: "npm:^0.0.1"

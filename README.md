@@ -1,6 +1,6 @@
 # EasyBoard Monorepo
 
-Cross-platform monorepo for EasyBoard, based on Solito, Expo and Next.js
+Cross-platform monorepo for EasyBoard, based on Expo (expo-router) and Next.js
 
 ## Repository Structure
 
@@ -145,7 +145,7 @@ yarn native:ios     # For iOS (macOS only)
 
 ## Key Features
 
-- **Shared UI/UX**: Over 90% code sharing between Web and Native using Solito.
+- **Shared UI/UX**: Over 90% code sharing between Web and Native using expo-router.
 - **NativeWind**: Tailwind CSS for universal styling.
 - **Firebase Integration**: Unified services for Auth, Database, and Functions.
 - **Type Safety**: Full-stack TypeScript support.

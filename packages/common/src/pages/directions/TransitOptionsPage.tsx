@@ -1,7 +1,7 @@
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ActivityIndicator } from 'react-native'
 import { useSafeArea } from 'react-native-safe-area-context'
-import { useRouter, useSearchParams } from 'solito/navigation'
 import { BackButton, Button, ScrollView, Text, View } from '../../components'
 import { TransitOptionCard } from '../../components/TransitOptionCard'
 import { useNavigation } from '../../contexts/NavigationContext'
@@ -20,7 +20,13 @@ export function TransitOptionsPage() {
 
   const { top } = useSafeArea()
   const router = useRouter()
-  const searchParams = useSearchParams()
+  const { lat, lng, name, description, photoUri } = useLocalSearchParams<{
+    lat?: string
+    lng?: string
+    name?: string
+    description?: string
+    photoUri?: string
+  }>()
 
   // Get state from navigation context
   const {
@@ -35,14 +41,6 @@ export function TransitOptionsPage() {
   // Read destination from URL query params (Next.js idiomatic way)
   // This ensures data is available even in production builds
   const destinationFromParams = useMemo<MarkerData | null>(() => {
-    if (!searchParams) return null
-
-    const lat = searchParams.get('lat')
-    const lng = searchParams.get('lng')
-    const name = searchParams.get('name')
-    const description = searchParams.get('description')
-    const photoUri = searchParams.get('photoUri')
-
     if (lat && lng) {
       return {
         description: description || name || 'Destination',
@@ -54,12 +52,11 @@ export function TransitOptionsPage() {
       }
     }
     return null
-  }, [searchParams])
+  }, [lat, lng, name, description, photoUri])
 
   // Use destination from params if available, otherwise fall back to context
   const destination = destinationFromParams || contextDestination
-  const destinationName =
-    searchParams?.get('name') || contextDestinationName || 'Destination'
+  const destinationName = name || contextDestinationName || 'Destination'
 
   // Update context when params are available (for consistency)
   useEffect(() => {
@@ -181,7 +178,7 @@ export function TransitOptionsPage() {
         }
 
         // Navigate immediately - sessionStorage ensures route is available
-        router.push(`/directions?${params.toString()}`)
+        router.navigate(`/directions?${params.toString()}`)
       }
     },
     [availableRoutes, destination, destinationName, selectRoute, router]

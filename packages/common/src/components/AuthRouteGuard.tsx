@@ -1,7 +1,7 @@
 'use client'
 
+import { usePathname, useRouter } from 'expo-router'
 import React, { useEffect, useState } from 'react'
-import { usePathname, useRouter } from 'solito/navigation'
 import { LoadingIndicator, Text, View } from '../components'
 import { useAuth } from '../contexts'
 

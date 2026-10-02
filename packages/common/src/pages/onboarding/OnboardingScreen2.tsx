@@ -1,5 +1,5 @@
+import { useRouter } from 'expo-router'
 import { useEffect, useRef } from 'react'
-import { useRouter } from 'solito/navigation'
 import { Button, ProgressIndicator, Text, View } from '../../components'
 import { useLogin } from '../../hooks'
 import { OnboardingLayout } from './OnboardingLayout'
@@ -19,13 +19,13 @@ export function OnboardingScreen2() {
     const currentUserType = userTypeRef.current
     // Validate that userType is selected before proceeding
     if (currentUserType) {
-      router.push('/onboarding/3')
+      router.navigate('/onboarding/3')
     }
     // If no userType selected, don't navigate (user needs to select first)
   }
 
   const handleBack = () => {
-    router.push('/onboarding/1')
+    router.navigate('/onboarding/1')
   }
 
   return (

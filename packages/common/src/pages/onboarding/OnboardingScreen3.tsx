@@ -1,6 +1,6 @@
+import { useRouter } from 'expo-router'
 import { useEffect, useRef } from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import { useRouter } from 'solito/navigation'
 import { InputField, ProgressIndicator, Text, View } from '../../components'
 import { useOnboardingStore } from '../../stores/onboardingStore'
 import { OnboardingLayout } from './OnboardingLayout'
@@ -55,13 +55,13 @@ export function OnboardingScreen3() {
     ) {
       // Save to store before navigating
       updateFormData({ careGiverPhoneNumber: currentPhoneValue })
-      router.push('/onboarding/4')
+      router.navigate('/onboarding/4')
     }
     // If validation fails, errors will be shown by react-hook-form
   }
 
   const handleBack = () => {
-    router.push('/onboarding/2')
+    router.navigate('/onboarding/2')
   }
 
   const renderError = (err: any, display: string) => {

@@ -1,6 +1,6 @@
+import { useRouter } from 'expo-router'
 import { useEffect, useRef, useState } from 'react'
 import { Animated as RNAnimated, useWindowDimensions } from 'react-native'
-import { useRouter } from 'solito/navigation'
 import { Animated, InputField, OTPInput, Text, View } from '../../components'
 import { useLogin } from '../../hooks'
 import { OnboardingLayout } from '../onboarding/OnboardingLayout'
@@ -102,7 +102,7 @@ export function LoginFlow() {
       reset(true)
       setCurrentStep('phone')
     } else {
-      router.push('/')
+      router.navigate('/')
     }
   }
 
@@ -116,7 +116,7 @@ export function LoginFlow() {
       console.log(
         '[LoginFlow] No existing data found, navigating to onboarding'
       )
-      router.push('/onboarding/1')
+      router.navigate('/onboarding/1')
     } catch (err) {
       console.error('[LoginFlow] OTP verification failed:', err)
       alert('Invalid OTP')

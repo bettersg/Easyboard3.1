@@ -1,7 +1,7 @@
+import { useRouter } from 'expo-router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Modal, RefreshControl } from 'react-native'
 import { useSafeArea } from 'react-native-safe-area-context'
-import { useRouter } from 'solito/navigation'
 import { BackButton, Button, ScrollView, Text, View } from '../../components'
 import GoogleMapView from '../../components/mapView/GoogleMapView'
 import { SavedPlaceCard } from '../../components/SavedPlaceCard'
@@ -151,7 +151,7 @@ export function PWIDHome() {
       setLoggingOut(true)
       await completeLogout()
       setAuthentication(false, undefined)
-      router.push('/')
+      router.navigate('/')
     } catch (error) {
       console.error('Error during logout:', error)
       setLoggingOut(false)
@@ -211,7 +211,7 @@ export function PWIDHome() {
         params.set('photoUri', destination.photoUri)
       }
 
-      router.push(`/transit-options?${params.toString()}`)
+      router.navigate(`/transit-options?${params.toString()}`)
     },
     [router]
   )

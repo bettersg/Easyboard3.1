@@ -1,4 +1,5 @@
 import { Phone, Pin, Users } from '@nandorojo/iconic'
+import { useRouter } from 'expo-router'
 import { useCallback, useEffect, useState } from 'react'
 import {
   ActivityIndicator,
@@ -7,7 +8,6 @@ import {
   RefreshControl
 } from 'react-native'
 import { useSafeArea } from 'react-native-safe-area-context'
-import { useRouter } from 'solito/navigation'
 import { Button, ScrollView, Text, View } from '../../components'
 import { getUserStorage } from '../../services/storageService'
 import { getPWIDsByCaregiverPhone } from '../../services/userService'
@@ -54,7 +54,7 @@ export function CaregiverHome() {
 
   const handleTrackPWID = useCallback(
     (pwidPhone: string, pwidName: string) => {
-      router.push(`/track-pwid?phone=${pwidPhone}&name=${pwidName}`)
+      router.navigate(`/track-pwid?phone=${pwidPhone}&name=${pwidName}`)
     },
     [router]
   )

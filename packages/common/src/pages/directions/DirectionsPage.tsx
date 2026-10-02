@@ -1,6 +1,6 @@
+import { useLocalSearchParams, useRouter } from 'expo-router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useSafeArea } from 'react-native-safe-area-context'
-import { useRouter, useSearchParams } from 'solito/navigation'
 import { Button, Text, View } from '../../components'
 import { DirectionsMapView } from '../../components/mapView/DirectionsMapView'
 import { TransitOptionCard } from '../../components/TransitOptionCard'
@@ -59,7 +59,15 @@ export function DirectionsPage() {
 
   const { bottom } = useSafeArea()
   const router = useRouter()
-  const searchParams = useSearchParams()
+  const { lat, lng, name, description, photoUri, routeIndex } =
+    useLocalSearchParams<{
+      lat?: string
+      lng?: string
+      name?: string
+      description?: string
+      photoUri?: string
+      routeIndex?: string
+    }>()
 
   // Get state from navigation context
   const {
@@ -76,14 +84,6 @@ export function DirectionsPage() {
   // Read destination from URL query params (Next.js idiomatic way)
   // This ensures data is available even in production builds
   const destinationFromParams = useMemo<MarkerData | null>(() => {
-    if (!searchParams) return null
-
-    const lat = searchParams.get('lat')
-    const lng = searchParams.get('lng')
-    const name = searchParams.get('name')
-    const description = searchParams.get('description')
-    const photoUri = searchParams.get('photoUri')
-
     if (lat && lng) {
       return {
         description: description || name || 'Destination',
@@ -95,14 +95,12 @@ export function DirectionsPage() {
       }
     }
     return null
-  }, [searchParams])
+  }, [lat, lng, name, description, photoUri])
 
   // Get route index from query params
   const routeIndexFromParams = useMemo(() => {
-    if (!searchParams) return null
-    const index = searchParams.get('routeIndex')
-    return index ? parseInt(index, 10) : null
-  }, [searchParams])
+    return routeIndex ? parseInt(routeIndex, 10) : null
+  }, [routeIndex])
 
   // Get selected route: from sessionStorage (most reliable), context, or availableRoutes
   // sessionStorage is idiomatic for Next.js App Router and works in production
@@ -193,8 +191,7 @@ export function DirectionsPage() {
 
   // Use destination from params if available, otherwise fall back to context
   const destination = destinationFromParams || contextDestination
-  const destinationName =
-    searchParams?.get('name') || contextDestinationName || 'Destination'
+  const destinationName = name || contextDestinationName || 'Destination'
 
   // Update context when params are available (for consistency)
   // IMPORTANT: Don't call setDestination if we have a routeIndex, as it will clear availableRoutes
@@ -279,7 +276,7 @@ export function DirectionsPage() {
         console.warn('[DirectionsPage] Failed to clear sessionStorage:', e)
       }
     }
-    router.push('/home')
+    router.navigate('/home')
   }, [clearNavigation, router])
 
   const handleBack = useCallback(() => {

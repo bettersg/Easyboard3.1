@@ -11,8 +11,5 @@ module.exports = {
     for (const dep of Yarn.dependencies({ ident: 'react-dom' })) {
       dep.update(`18.3.1`)
     }
-    for (const dep of Yarn.dependencies({ ident: 'solito' })) {
-      dep.update(`^5.0.0`)
-    }
   }
 }
