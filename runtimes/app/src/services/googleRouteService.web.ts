@@ -69,8 +69,19 @@ export const googleRouteService: IGoogleRouteService = {
           })
         },
         (error) => {
-          console.error('[googleRouteService.web] Geolocation error:', error)
-          reject(error)
+          // GeolocationPositionError's fields are not enumerable, so logging
+          // or rethrowing it as-is shows `{}`; turn it into a plain Error
+          // (same wording as the native service for permission denial)
+          const message =
+            error.code === error.PERMISSION_DENIED
+              ? 'Location permission is required to get directions'
+              : error.code === error.TIMEOUT
+                ? 'Timed out getting the current location'
+                : `Current location unavailable: ${error.message}`
+          console.error(
+            `[googleRouteService.web] Geolocation error ${error.code}: ${error.message}`
+          )
+          reject(new Error(message))
         },
         {
           enableHighAccuracy: true,
