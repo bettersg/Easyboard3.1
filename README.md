@@ -31,7 +31,7 @@ Cross-platform monorepo for EasyBoard: one Expo (expo-router) app serving iOS, A
 ### Prerequisites
 
 - Node.js >= 20
-- Yarn 4.11.0
+- Yarn 4.18.1
 
 ```bash
 # this should be sufficient to enable yarn in most Node.js installations

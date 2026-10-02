@@ -402,6 +402,15 @@ Each hop follows the same routine, on the migration branch:
 
 Native device builds are outside this effort, so each hop is checked through Metro bundles and the web app only. Do not release from SDK 55 or 56: 56 carries Hermes V1 regressions fixed in 57. At SDK 58, re-take the measurements in the table below.
 
+#### TypeScript 7 (added on 2 Oct 2026 at the owner's request)
+
+Done on 2 Oct 2026, after SDK 58. TypeScript 7 drops the classic compiler API, and typescript-eslint refuses to run on it, so the repo follows Microsoft's side-by-side setup:
+
+- `typescript` is `npm:@typescript/typescript6@^6.0.2`: the TS 6 API for typescript-eslint, Expo CLI and editors.
+- `@typescript/native` is `npm:typescript@^7.0.2`: it provides `tsc`, so `yarn typecheck` runs TypeScript 7 (about 1 s for both workspaces).
+- Yarn 4.11's built-in TypeScript patch fails on the TS 6 alias (`lib/_tsc.js` not found); Yarn 4.18.1 installs it cleanly, so the repo moves to Yarn 4.18.1.
+- No source changes were needed; the app's 118 source files typecheck clean.
+
 #### Phase C: the Rust transformer
 
 1. Replace NativeWind 4 with Uniwind, the owner's choice.
