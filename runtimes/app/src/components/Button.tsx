@@ -1,4 +1,3 @@
-import { cssInterop } from 'nativewind'
 import React from 'react'
 import {
   type ImageSourcePropType,
@@ -9,13 +8,9 @@ import {
 import { cn } from '../helpers/classnames'
 import { Text } from './Text'
 
-const Pressable = cssInterop(RNPressable, {
-  className: 'style'
-})
+const Pressable = RNPressable
 
-const IconImage = cssInterop(RNImage, {
-  className: 'style'
-})
+const IconImage = RNImage
 
 interface ButtonProps extends RNPressableProps {
   onPress: () => void

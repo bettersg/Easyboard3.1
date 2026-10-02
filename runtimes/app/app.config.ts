@@ -115,6 +115,12 @@ export default (): ExpoConfig => ({
     package: 'org.engineeringgood.EasyBoard.RN',
     googleServicesFile: './google-services.json'
   },
+  // Expo SDK 58's Rust (oxc) transform worker; files it cannot handle fall
+  // back to Babel per file. Expo CLI reads the key, but SDK 58's ExpoConfig
+  // type does not declare it yet.
+  experiments: {
+    noxcturnalTransformWorker: true
+  } as ExpoConfig['experiments'],
   web: {
     bundler: 'metro',
     output: 'single',

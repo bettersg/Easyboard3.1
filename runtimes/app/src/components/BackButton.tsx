@@ -1,10 +1,7 @@
-import { cssInterop } from 'nativewind'
 import { Pressable as RNPressable } from 'react-native'
 import { Text } from './Text'
 
-const Pressable = cssInterop(RNPressable, {
-  className: 'style'
-})
+const Pressable = RNPressable
 
 export interface BackButtonProps {
   onPress: () => void

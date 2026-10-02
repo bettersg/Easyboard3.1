@@ -1,9 +1,4 @@
 import { Image as ExpoImage, type ImageContentFit } from 'expo-image'
-import { cssInterop } from 'nativewind'
-
-cssInterop(ExpoImage, {
-  className: 'style'
-})
 
 interface ImageProps {
   src: string

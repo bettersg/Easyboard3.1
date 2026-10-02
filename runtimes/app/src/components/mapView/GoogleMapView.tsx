@@ -403,7 +403,7 @@ const GoogleMapView = ({
           onPress={goToCurrentLocation}
           icon={<GpsFixedIcon size={30} color='#3F98F8' />}
           variant='text'
-          className='p-[10px] -mr-[10px] bg-white rounded-full items-center justify-center w-12 h-12'
+          className='p-[10px] mr-[-10px] bg-white rounded-full items-center justify-center w-12 h-12'
         />
       </View>
     </View>

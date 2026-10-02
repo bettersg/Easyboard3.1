@@ -16,7 +16,7 @@ import type { Step } from '../../types/googleRoute'
 const StepCard = ({ step, isActive }: { step: Step; isActive?: boolean }) => {
   return (
     <View
-      className={`flex-col justify-between rounded-lg bg-white px-4 py-3 shadow-sm border ${isActive ? 'border-blue-500 border-2' : 'border-gray-200'}`}
+      className={`flex-col justify-between rounded-lg bg-white px-4 py-3 shadow-xs border ${isActive ? 'border-blue-500 border-2' : 'border-gray-200'}`}
     >
       <View className='flex-row items-center justify-between mb-2'>
         <TransitTypePill

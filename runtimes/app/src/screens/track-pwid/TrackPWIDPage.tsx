@@ -167,7 +167,7 @@ export function TrackPWIDPage({
 
           <View className='flex-row items-center mt-0.5 w-full gap-2'>
             <Button
-              className='flex-row items-center flex-1 p-1.5 h-[3rem] justify-center gap-1'
+              className='flex-row items-center flex-1 p-1.5 h-12 justify-center gap-1'
               onPress={handleCall}
             >
               <Phone width={30} height={30} color='#F4F5F6' />

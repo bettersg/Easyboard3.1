@@ -1,10 +1,7 @@
-import { cssInterop } from 'nativewind'
 import { Animated as RNAnimated } from 'react-native'
+import { withUniwind } from 'uniwind'
 
-// Only View is used. Typing cssInterop(Animated.ScrollView) exceeds
-// TypeScript's union limit on React Native 0.83, so add others only as needed.
+// Uniwind styles core components directly; animated ones need withUniwind
 export const Animated = {
-  View: cssInterop(RNAnimated.View, {
-    className: 'style'
-  })
+  View: withUniwind(RNAnimated.View)
 }

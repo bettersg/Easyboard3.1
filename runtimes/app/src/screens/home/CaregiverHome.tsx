@@ -98,7 +98,7 @@ export function CaregiverHome() {
 
         <View className='flex-row items-center mt-0.5 w-full gap-2'>
           <Button
-            className='flex-row items-center flex-1 p-1.5 h-[3rem] justify-center gap-1 border-[#007AFF]'
+            className='flex-row items-center flex-1 p-1.5 h-12 justify-center gap-1 border-[#007AFF]'
             onPress={() => handleCall(item.phoneNumber)}
             variant='outline'
             disabled={!item.phoneNumber}
@@ -107,7 +107,7 @@ export function CaregiverHome() {
             <Text className='font-bold text-base text-[#007AFF]'>Call</Text>
           </Button>
           <Button
-            className='flex-row items-center flex-1 p-1.5 h-[3rem] justify-center gap-1'
+            className='flex-row items-center flex-1 p-1.5 h-12 justify-center gap-1'
             onPress={() => handleTrackPWID(item.phoneNumber, item.name)}
             disabled={!item.phoneNumber}
           >

@@ -413,10 +413,20 @@ Done on 2 Oct 2026, after SDK 58 (tag `ts-7`).
 
 #### Phase C: the Rust transformer
 
-1. Replace NativeWind 4 with Uniwind, the owner's choice.
-2. Reduce `babel.config.js` to the Expo preset alone, or delete it.
-3. Set `experiments.noxcturnalTransformWorker` in the app config.
-4. Measure cold bundling and count the files that still fall back to Babel.
+1. [x] Replace NativeWind 4 with Uniwind, the owner's choice.
+2. [x] Reduce `babel.config.js` to the Expo preset alone, or delete it. Deleted.
+3. [x] Set `experiments.noxcturnalTransformWorker` in the app config.
+4. [x] Measure cold bundling and count the files that still fall back to Babel.
+
+Done on 2 Oct 2026 (tag `phase-c-done`):
+
+- Tailwind 3 to 4 with `@tailwindcss/upgrade`. It renamed `shadow-sm` to `shadow-xs`, `-mr-[10px]` to `mr-[-10px]` and `h-[3rem]` to `h-12`, and added a base-layer rule keeping the v3 border colour. It also wrongly renamed the Button `variant` value `'outline'` to `'outline-solid'`; that was reverted.
+- Uniwind 1.12.1: `withUniwindConfig` wraps the Metro config (`cssEntryFile: './global.css'`, generated `uniwind-types.d.ts`, rem 16 as before); `global.css` imports `tailwindcss` and `uniwind`; `tailwind.config.ts` and `nativewind-env.d.ts` are gone. The `Inter` font family was never applied (no `font-sans` class), so it was dropped.
+- The component wrappers no longer call `cssInterop`: core components take `className` directly, `Animated.View` goes through `withUniwind`, and the global `cssInterop(ExpoImage)` (unused) was removed.
+- `react-native-web` is pinned to 0.21.2. On 0.21.3 Uniwind's web `InputAccessoryView` creates an import cycle and the app crashes on load (Uniwind issues #695, #704; fix #706 merged 2 Oct 2026, not yet released). Unpin once Uniwind releases it.
+- Uniwind rejected `w-[calc(100%-48px)]` on native (mixing % with px); that text in `LocationInput` now uses `flex-1` in its row.
+- The NativeWind web error `Cannot manually set color scheme, as dark mode is type 'media'`, seen on SDK 58, is gone.
+- Rust transformer: 2,174 files go through it, 359 fall back to Babel, all in dependencies (144 worklets, 95 Flow, 90 React Native codegen, 21 worklet candidates, 9 Expo directives). Cold Android bundle 9.4 s with it versus 10.6 s without. SDK 58's `ExpoConfig` type lacks the key, so the app config asserts the `experiments` type.
 
 The styling replacement is the bulk of phase C. It touches 41 files that use `className` and 14 `cssInterop` calls in 10 files; the Tailwind config has a single customisation.
 

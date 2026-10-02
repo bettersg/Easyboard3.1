@@ -2,7 +2,7 @@
 // Expo configures monorepo watch folders and node_modules lookup itself
 // (SDK 52+): https://docs.expo.dev/guides/monorepos
 const { getDefaultConfig } = require('expo/metro-config')
-const { withNativeWind } = require('nativewind/metro')
+const { withUniwindConfig } = require('uniwind/metro')
 const fs = require('fs')
 const path = require('path')
 
@@ -57,7 +57,8 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   return context.resolveRequest(context, moduleName, platform)
 }
 
-module.exports = withNativeWind(config, {
-  input: './global.css',
-  inlineRem: 16
+// Uniwind must be the outermost wrapper
+module.exports = withUniwindConfig(config, {
+  cssEntryFile: './global.css',
+  dtsFile: './uniwind-types.d.ts'
 })

@@ -1,4 +1,3 @@
-import { cssInterop } from 'nativewind'
 import React, { useImperativeHandle, useRef } from 'react'
 import {
   TextInput as RNTextInput,
@@ -10,9 +9,7 @@ export interface TextInputProps extends RNTextInputProps {
   className?: string
 }
 
-const MappedTextInput = cssInterop(RNTextInput, {
-  className: 'style'
-})
+const MappedTextInput = RNTextInput
 
 export const TextInput = React.forwardRef<TextInputInstance, TextInputProps>(
   ({ className, ...props }, ref) => {

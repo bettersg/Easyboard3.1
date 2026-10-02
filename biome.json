@@ -7,7 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**/*.{ts,tsx,md,json,css,scss}"]
+    "includes": ["**/*.{ts,tsx,md,json,css,scss}", "!**/uniwind-types.d.ts"]
   },
   "formatter": {
     "enabled": true,

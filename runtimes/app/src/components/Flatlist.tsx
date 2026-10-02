@@ -1,4 +1,3 @@
-import { cssInterop } from 'nativewind'
 import React, { useImperativeHandle, useRef } from 'react'
 import { type FlatListProps, FlatList as RNFlatlist } from 'react-native'
 
@@ -7,9 +6,7 @@ export interface FlatListDataType {
   component: React.JSX.Element
 }
 
-const MappedFlatList = cssInterop(RNFlatlist<FlatListDataType>, {
-  className: 'style'
-})
+const MappedFlatList = RNFlatlist<FlatListDataType>
 
 export interface FlatlistProps extends FlatListProps<FlatListDataType> {
   className?: string

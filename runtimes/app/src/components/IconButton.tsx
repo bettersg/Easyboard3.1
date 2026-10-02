@@ -1,4 +1,3 @@
-import { cssInterop } from 'nativewind'
 import React from 'react'
 import {
   Pressable as RNPressable,
@@ -6,9 +5,7 @@ import {
 } from 'react-native'
 import { cn } from '../helpers/classnames'
 
-const Pressable = cssInterop(RNPressable, {
-  className: 'style'
-})
+const Pressable = RNPressable
 
 interface IconButtonProps extends RNPressableProps {
   onPress: () => void

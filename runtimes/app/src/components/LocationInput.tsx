@@ -279,7 +279,7 @@ export const LocationInput = forwardRef<LocationInputRef, LocationInputProps>(
                         </Text>
                         <View className='flex-row items-center justify-start gap-2 bg-[#FCFCFD] w-full border border-[#DCDFE3] rounded-md p-4'>
                           <Pin width={24} height={24} />
-                          <Text className='text-base font-normal text-[#414852] w-[calc(100%-48px)]'>
+                          <Text className='text-base font-normal text-[#414852] flex-1'>
                             {location?.description}
                           </Text>
                         </View>
