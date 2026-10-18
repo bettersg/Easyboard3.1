@@ -11,8 +11,8 @@ import { Alert } from 'react-native'
 import notificationService from '../services/notificationService'
 import { getUserStorage } from '../services/storageService'
 import {
-  clearPWIDLocation,
   getUserData,
+  stopPWIDLocationSharing,
   updatePWIDLocation
 } from '../services/userService'
 import type { PWIDUser } from '../types'
@@ -68,9 +68,9 @@ export const LocationSharingProvider: React.FC<{
         locationSubscription.current = null
       }
       setDestinationState(null)
-      // Clear PWID location from database
-      if (pwidPhoneNumber)
-        clearPWIDLocation(pwidPhoneNumber).catch((_err) => {})
+      // Update database to reflect that location sharing ended
+      if (pwidPhoneNumber && hasSharedRef.current)
+        stopPWIDLocationSharing(pwidPhoneNumber).catch((_err) => {})
     }
 
     const stopSharing = async () => {
@@ -181,7 +181,8 @@ export const LocationSharingProvider: React.FC<{
               await updatePWIDLocation(pwidPhoneNumber, {
                 lat: loc.coords.latitude,
                 lng: loc.coords.longitude,
-                updatedAt: Date.now()
+                updatedAt: Date.now(),
+                isSharing: true
               })
 
               // Use the ref for the latest destination

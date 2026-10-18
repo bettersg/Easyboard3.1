@@ -364,6 +364,7 @@ export function PWIDHome() {
 
           <View className='flex-1'>
             <GoogleMapView
+              isModal
               onLocationMarkerDrop={(location) => setSearchLocation(location)}
               value={searchLocation}
               initialCenter={{

@@ -30,7 +30,8 @@ const GoogleMapView = ({
   onLocationMarkerDrop,
   value,
   initialCenter,
-  isTracking = false
+  isTracking = false,
+  isModal = false
 }: GoogleMapViewProps) => {
   const insets = useSafeAreaInsets()
   // Map View reference
@@ -213,12 +214,14 @@ const GoogleMapView = ({
     <View className='flex flex-1 items-center justify-center'>
       <View
         className={`absolute left-0 right-0 z-10 flex flex-1 px-3`}
-        // Android draws edge-to-edge from SDK 54, so the container now starts
-        // under the status bar; add its inset to keep the search box in place
+        // Android draws edge-to-edge from SDK 54, so the container starts
+        // under the status bar; modal maps add its inset to keep the search
+        // box in place, full-screen maps sit just below it
         style={{
-          top:
-            (Platform.OS === 'android' ? insets.top : 0) +
-            (StatusBar.currentHeight || 10) * 2
+          top: isModal
+            ? (Platform.OS === 'android' ? insets.top : 0) +
+              (StatusBar.currentHeight || 10) * 2
+            : insets.top
         }}
       >
         <Autocomplete

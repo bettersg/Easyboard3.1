@@ -8,12 +8,7 @@ import { BackButton, Button, Text, View } from '../../components'
 import GoogleMapView from '../../components/mapView/GoogleMapView'
 import { listenToPWIDLocation } from '../../services/userService'
 import type { MarkerData } from '../../stores/onboardingStore'
-
-interface Location {
-  lat: number
-  lng: number
-  updatedAt: number
-}
+import type { UserLocation } from '../../types'
 
 interface TrackPWIDPageProps {
   pwidPhoneNumber: string
@@ -26,7 +21,7 @@ export function TrackPWIDPage({
 }: TrackPWIDPageProps) {
   const { top } = useSafeArea()
   const router = useRouter()
-  const [location, setLocation] = useState<Location | null>(null)
+  const [location, setLocation] = useState<UserLocation | null>(null)
   const [_, setLocationUpdated] = useState<string>('')
   const [loading, setLoading] = useState(true)
   const actionSheetRef = useRef<ActionSheetRef>(null)
@@ -65,7 +60,7 @@ export function TrackPWIDPage({
     }
   }
 
-  const isSharing = !!location
+  const isSharing = !!location?.isSharing
   const statusColor = isSharing ? '#CBF4DF' : '#F7CBC8'
   const statusTextColor = isSharing ? '#209D5E' : '#E13F33'
   const statusText = isSharing ? 'Online' : 'Offline'

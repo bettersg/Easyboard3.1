@@ -7,8 +7,8 @@ import {
   orderByChild,
   query,
   ref,
-  remove,
-  set
+  set,
+  update
 } from '@react-native-firebase/database'
 import { getDeviceName } from 'react-native-device-info'
 import type {
@@ -94,15 +94,17 @@ export const userService: IUserService = {
     }
   },
 
-  clearPWIDLocation: async (phoneNumber: string) => {
+  stopPWIDLocationSharing: async (phoneNumber: string) => {
     try {
-      await remove(ref(getDatabase(), `users/${phoneNumber}/location`))
+      await update(ref(getDatabase(), `users/${phoneNumber}/location`), {
+        isSharing: false
+      })
       await set(
         ref(getDatabase(), `users/${phoneNumber}/updatedAt`),
         Date.now()
       )
     } catch (error) {
-      console.error('Error clearing PWID location:', error)
+      console.error('Error stopping PWID location sharing:', error)
       throw error
     }
   },
@@ -201,7 +203,7 @@ export const userService: IUserService = {
 // Export individual functions for backward compatibility
 export const createUser = userService.createUser
 export const updatePWIDLocation = userService.updatePWIDLocation
-export const clearPWIDLocation = userService.clearPWIDLocation
+export const stopPWIDLocationSharing = userService.stopPWIDLocationSharing
 export const getUserData = userService.getUserData
 export const updatePWIDCaregiver = userService.updatePWIDCaregiver
 export const storeFCMToken = userService.storeFCMToken
