@@ -38,4 +38,5 @@ export interface GoogleMapViewProps {
   value: MarkerData | null
   initialCenter: LatLong
   isTracking?: boolean
+  isModal?: boolean
 }

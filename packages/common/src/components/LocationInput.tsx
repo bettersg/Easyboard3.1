@@ -193,6 +193,7 @@ export const LocationInput = forwardRef<LocationInputRef, LocationInputProps>(
                 {/* Page 1: Map */}
                 <View className='h-full' style={{ width }}>
                   <GoogleMapView
+                    isModal
                     onLocationMarkerDrop={onLocationMarkerDrop}
                     value={location}
                     initialCenter={{

@@ -2,6 +2,7 @@ import { MaterialIcons } from '@expo/vector-icons'
 import * as Location from 'expo-location'
 import { useEffect, useRef, useState } from 'react'
 import { Dimensions, Keyboard, StatusBar, TouchableOpacity } from 'react-native'
+import { useSafeArea } from '@repo/common/provider'
 import Autocomplete from 'react-native-autocomplete-input'
 import MapView, { Marker } from 'react-native-maps'
 import { useDebounce } from '../../hooks'
@@ -23,8 +24,10 @@ const GoogleMapView = ({
   onLocationMarkerDrop,
   value,
   initialCenter,
-  isTracking = false
+  isTracking = false, 
+  isModal = false
 }: GoogleMapViewProps) => {
+  const { top } = useSafeArea()
   // Map View reference
   const mapViewRef = useRef<MapView>(null)
 
@@ -205,7 +208,7 @@ const GoogleMapView = ({
     <View className='flex flex-1 items-center justify-center'>
       <View
         className={`absolute left-0 right-0 z-10 flex flex-1 px-3`}
-        style={{ top: (StatusBar.currentHeight || 10) * 2 }}
+        style={{ top: isModal ? (StatusBar.currentHeight || 10) * 2 : top }}
       >
         <Autocomplete
           inputContainerStyle={{ borderWidth: 0 }}
