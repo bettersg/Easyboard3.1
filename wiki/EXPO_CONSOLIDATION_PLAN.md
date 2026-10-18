@@ -498,7 +498,7 @@ Still open:
 - [ ] Web push: there is no `firebase-messaging-sw.js`, so `getToken` fails on web and the dev overlay shows the error. This predates the migration.
 - [ ] Notification setup runs twice on web after login: the effect depends on `userType`, which arrives after `hasAuthen`. This predates the migration.
 - [ ] The login screen nests two `accessibilityRole='form'` views (a nested `<form>` on web). This predates the migration.
-- [ ] Move to SDK 58 stable (and React Native 0.88 stable) when it ships; today the app is on `expo` 58.0.2 with React Native 0.88.0-rc.3.
+- [ ] Move to SDK 58 stable (and React Native 0.88 stable). React Native 0.88.0 and `expo` 58.0.14 are out as of 18 Oct 2026; the app is still on `expo` 58.0.2 with React Native 0.88.0-rc.3, and `expo-doctor` now flags the gap (Jest 30 and the Expo-managed packages). Run `expo install --fix` as its own change.
 - [x] Storybook re-homing (parked since step 1). Done: Storybook 10 with `@storybook/react-native-web-vite`, Uniwind's Vite plugin and `@tailwindcss/vite`, config in `runtimes/app/.storybook`. The app's tsconfig now extends `expo/tsconfig.base.json` (with the extension), which Vite's tsconfig loader needs.
 
 ## Dependency upgrades (2 Oct 2026)
@@ -511,6 +511,15 @@ Everything not pinned by Expo SDK 58 moved to its latest version, except where n
 - React Native Firebase 26: notification permission goes through `expo-notifications`; `plugins/iosFirebaseConfigure.js` adds `FirebaseApp.configure()`, which RN Firebase's plugin cannot place in SDK 58's scene-based AppDelegate (it skipped it silently, so iOS would have crashed at launch on any RNFB version).
 - Storybook 10 (see above).
 - Kept back: Babel 7 and Jest 29 (Expo SDK 58 depends on them), Expo-managed packages (move with `expo install --fix` at SDK 58 stable), `react-native-web` 0.21.2 (Uniwind fix pending). Yarn 4.18.1 is already the latest.
+
+## Merged from `develop` (18 Oct 2026)
+
+`bettersg/Easyboard3.1` PRs #16 (deprecate the map page) and #17 (keep the PWID's last known location; `isSharing` drives Online/Offline) were merged into this branch:
+
+- `stopPWIDLocationSharing` uses the modular database API and a named-const export, like the rest of the services.
+- `GoogleMapView`'s `isModal` keeps the Android edge-to-edge inset for the two modal maps; other maps (now only the PWID tracking page) put the search box at the safe-area top.
+- The `/map` route and the commented-out `MapView` were deleted rather than kept as comments; git history has the old page.
+- [ ] Owner: check start/stop sharing (caregiver Online/Offline, last known point kept) on web and devices, and the tracking page's search-box position.
 
 ## Decisions and risks
 
