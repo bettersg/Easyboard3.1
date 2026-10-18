@@ -60,7 +60,7 @@ export function CaregiverHome() {
   )
 
   const renderPWIDItem = (item: PWIDUser) => {
-    const isSharing = !!item.location
+    const isSharing = !!item.location?.isSharing
     const statusColor = isSharing ? '#CBF4DF' : '#F7CBC8'
     const statusTextColor = isSharing ? '#209D5E' : '#E13F33'
     const statusText = isSharing ? 'Online' : 'Offline'
