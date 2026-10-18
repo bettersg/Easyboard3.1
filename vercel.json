@@ -1,0 +1,8 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "yarn install --immutable",
+  "buildCommand": "yarn turbo run build --filter=app",
+  "outputDirectory": "runtimes/app/dist",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
