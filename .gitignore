@@ -136,3 +136,7 @@ firebase-debug.log
 .rules
 
 .env.production
+
+# Local DB snapshots (contain FCM tokens / uids)
+new-schema.json
+old-schema.json

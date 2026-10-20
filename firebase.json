@@ -1,17 +1,20 @@
 {
   "functions": [
     {
-      "source": "./apps/functions",
+      "source": "out",
       "predeploy": "yarn workspace functions build && yarn turbo prune functions && yarn workspace functions predeploy",
       "postdeploy": "yarn workspace functions postdeploy",
       "runtime": "nodejs24"
     }
   ],
   "hosting": {
-    "source": "./apps/web",
+    "public": "runtimes/app/dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "frameworksBackend": {
-      "region": "asia-east1"
-    }
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
   }
 }

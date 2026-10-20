@@ -1,0 +1,33 @@
+{
+  "name": "functions",
+  "scripts": {
+    "build": "tsc",
+    "build:emulators": "tsc --outDir lib",
+    "build:watch": "tsc --watch",
+    "dev": "yarn build:emulators && firebase emulators:start --only functions --config firebase.emulators.json --project easyboard-sg",
+    "shell": "yarn build && firebase functions:shell",
+    "start": "yarn shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log",
+    "lint": "oxlint",
+    "typecheck": "tsc --noEmit",
+    "predeploy": "node ./function-predeploy.js",
+    "postdeploy": "node ./function-postdeploy.js"
+  },
+  "engines": {
+    "node": "24"
+  },
+  "main": "lib/index.js",
+  "dependencies": {
+    "express": "^5.1.0",
+    "firebase-admin": "^14.5.0",
+    "firebase-functions": "^7.4.0"
+  },
+  "devDependencies": {
+    "dotenv": "^18.0.5",
+    "firebase-functions-test": "^3.5.0",
+    "oxlint": "^1.86.0",
+    "typescript": "^7.0.2"
+  },
+  "private": true
+}

@@ -1,29 +1,29 @@
 # EasyBoard Monorepo
 
-Cross-platform monorepo for EasyBoard, based on Solito, Expo and Next.js
+Cross-platform monorepo for EasyBoard: one Expo (expo-router) app serving iOS, Android and web, plus Firebase Cloud Functions.
 
 ## Repository Structure
 
 ```text
-├── apps/
-│   ├── web/             # Next.js web application
-│   ├── native/          # Expo/React Native app
-│   └── functions/       # Firebase Cloud Functions
-├── packages/
-│   ├── common/          # Core business logic, shared UI, and services
+├── runtimes/
+│   ├── app/                 # Expo app: iOS, Android and web
 │   │   ├── src/
-│   │   │   ├── components/ # Core UI components (NativeWind)
-│   │   │   ├── contexts/   # React Contexts for global state
-│   │   │   ├── helpers/    # Utility functions
-│   │   │   ├── hooks/      # Shared React Hooks
-│   │   │   ├── pages/      # Shared pages (platform agnostic)
-│   │   │   ├── provider/   # App level providers (Theme, Auth, etc.)
-│   │   │   ├── services/   # Firebase and Google API abstractions
-│   │   │   ├── stores/     # State management stores
-│   │   │   └── types/      # Shared TypeScript interfaces
-│   ├── eslint-config/   # Shared ESLint configuration
-│   └── typescript-config/ # Shared TypeScript configuration
-└── package.json         # Root package.json with workspaces
+│   │   │   ├── app/         # Routes only (expo-router)
+│   │   │   ├── screens/     # Screen components the routes render
+│   │   │   ├── components/  # UI components (Uniwind / Tailwind 4)
+│   │   │   ├── contexts/    # React Contexts for global state
+│   │   │   ├── helpers/     # Utility functions
+│   │   │   ├── hooks/       # React Hooks
+│   │   │   ├── provider/    # App level providers (Theme, Auth, etc.)
+│   │   │   ├── services/    # Firebase and Google API abstractions (.native.ts / .web.ts pairs)
+│   │   │   ├── stores/      # State management stores
+│   │   │   └── types/       # TypeScript interfaces
+│   │   ├── assets/
+│   │   ├── plugins/         # Expo config plugins
+│   │   └── app.config.ts, metro.config.js, tailwind.config.ts, global.css
+│   └── functions/           # Firebase Cloud Functions
+├── wiki/                    # Project documentation
+└── package.json             # Root package.json with workspaces
 ```
 
 ## Getting Started
@@ -31,7 +31,7 @@ Cross-platform monorepo for EasyBoard, based on Solito, Expo and Next.js
 ### Prerequisites
 
 - Node.js >= 20
-- Yarn 4.11.0
+- Yarn 4.18.1
 
 ```bash
 # this should be sufficient to enable yarn in most Node.js installations
@@ -85,11 +85,11 @@ If you are on Windows, follow these steps to set up the Android development envi
 Run the following to create a development build. Typically you would only need to run these commands once unless you are making changes to the native configs (note that MacOS is required for iOS build/development):
 ```bash
 # in the monorepo root
-yarn native:prebuild
+yarn app:prebuild
 
-yarn native:android # For Android
+yarn app:android # For Android
 # and/or
-yarn native:ios     # For iOS (macOS only)
+yarn app:ios     # For iOS (macOS only)
 ```
 
 If you are running the above commands for the first time, the dev server will automatically start after the build is completed. For subsequent runs, you can simply run `yarn dev`
@@ -98,21 +98,29 @@ For more detailed instructions (Android Studio, iOS Simulator, etc.), refer to t
 
 ### Development
 
-To run all services (Functions, Native dev server, and Web dev server):
+To run all services (Functions emulator and the Expo dev server; the web app is at http://localhost:8081, press `w` to open it):
 ```bash
 yarn dev
 ```
 
 #### Running specific applications (from the monorepo root)
 
-- **Web only**: `yarn web:dev`
-- **Native iOS**: `yarn native:ios`
-- **Native Android**: `yarn native:android`
-- **Native Dev Server**: `yarn native:dev`
+- **Expo dev server** (web at http://localhost:8081; press `w` to open it): `yarn app:dev`
+- **Native iOS**: `yarn app:ios`
+- **Native Android**: `yarn app:android`
+
+#### Storybook
+
+Component stories (`*.stories.tsx` next to each component) run in Storybook 10 on React Native Web with Vite, styled by the same Uniwind/Tailwind setup as the app:
+
+```bash
+yarn workspace app storybook        # http://localhost:6006
+yarn workspace app build-storybook  # static build in runtimes/app/storybook-static
+```
 
 ### Building
 
-- **Build all**: `yarn build`
+- **Build all**: `yarn build` (the app's build is a static web export in `runtimes/app/dist`)
 - **Build specific**: `yarn turbo build --filter=<app-name>`
 
 ### Linting and Formatting
@@ -128,24 +136,24 @@ yarn clean
 ```
 For React Native/Expo specific errors, it might be worth doing the above and then generating a new build
 ```bash
-yarn native:prebuild
+yarn app:prebuild
 
-yarn native:android # For Android
+yarn app:android # For Android
 # and/or
-yarn native:ios     # For iOS (macOS only)
+yarn app:ios     # For iOS (macOS only)
 ```
 
 ## Repo conventions
 - Gneneral workflow:
-    1. Create primitive UI in `packages/common/src/components`.
-    2. Compose pages in `packages/common/src/pages`.
-    3. Register routes in `apps/native/app` and `apps/web/app` (Next.js App Router).
-- Business logic should reside in `packages/common/src/services`.
-- Use **NativeWind** for styling across both platforms.
+    1. Create primitive UI in `runtimes/app/src/components`.
+    2. Compose screens in `runtimes/app/src/screens`.
+    3. Register routes in `runtimes/app/src/app` (expo-router). The same routes serve iOS, Android and web. Import with the `@/` alias, e.g. `@/screens`.
+- Business logic should reside in `runtimes/app/src/services`.
+- Use **Uniwind** (Tailwind 4 `className`) for styling across all platforms.
 
 ## Key Features
 
-- **Shared UI/UX**: Over 90% code sharing between Web and Native using Solito.
-- **NativeWind**: Tailwind CSS for universal styling.
+- **One codebase**: iOS, Android and web are one Expo app routed by expo-router. Platform differences live in `.web.ts` / `.native.ts` file pairs.
+- **Uniwind**: Tailwind CSS 4 for universal styling.
 - **Firebase Integration**: Unified services for Auth, Database, and Functions.
 - **Type Safety**: Full-stack TypeScript support.

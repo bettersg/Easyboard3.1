@@ -1,9 +1,13 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
-  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  "$schema": "https://biomejs.dev/schemas/2.5.15/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**/*.{ts,tsx,md,json,css,scss}"]
+    "includes": ["**/*.{ts,tsx,md,json,css,scss}", "!**/uniwind-types.d.ts"]
   },
   "formatter": {
     "enabled": true,
@@ -18,7 +22,12 @@
     "expand": "auto",
     "useEditorconfig": true
   },
-  "linter": { "enabled": false, "rules": { "recommended": true } },
+  "linter": {
+    "enabled": false,
+    "rules": {
+      "preset": "recommended"
+    }
+  },
   "javascript": {
     "formatter": {
       "jsxQuoteStyle": "single",
@@ -40,6 +49,18 @@
   },
   "assist": {
     "enabled": true,
-    "actions": { "source": { "organizeImports": "on" } }
-  }
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["**/package.json"],
+      "formatter": {
+        "expand": "always"
+      }
+    }
+  ]
 }
