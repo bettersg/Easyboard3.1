@@ -1,8 +1,12 @@
 // Export page components here when created
 
 export { DirectionsPage } from './directions/DirectionsPage'
+export { HelpCardPage } from './trip/HelpCardPage'
+export { PrivacyPage } from './privacy/PrivacyPage'
+export { TripPage } from './trip/TripPage'
 export { TransitOptionsPage } from './directions/TransitOptionsPage'
 export { CaregiverHome } from './home/CaregiverHome'
+export { CaregiverJourneysPage } from './caregiver/CaregiverJourneysPage'
 export { HomePage } from './home/HomePage'
 export { PWIDHome } from './home/PWIDHome'
 export { LandingPage } from './landing/LandingPage'

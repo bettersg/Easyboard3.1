@@ -44,9 +44,9 @@ export const Button = React.forwardRef<
     ref
   ) => {
     const variantStyles = {
-      primary: 'bg-[#3F98F8]',
-      secondary: 'bg-[#005BBE]',
-      outline: 'bg-transparent border border-[#DCDFE3]',
+      primary: 'bg-[#174E8C]',
+      secondary: 'bg-[#E7EFF9]',
+      outline: 'bg-transparent border border-[#C9D4CE]',
       text: 'bg-transparent'
     }
 
@@ -54,10 +54,10 @@ export const Button = React.forwardRef<
       variant === 'outline'
         ? 'text-[#414852]'
         : variant === 'secondary'
-          ? 'text-[#3F98F8]'
+          ? 'text-[#174E8C]'
           : variant === 'text'
-            ? 'text-[#3F98F8]'
-            : 'text-[#F4F5F6]'
+            ? 'text-[#174E8C]'
+            : 'text-[#F4F7F4]'
 
     // If children are provided, use them instead of text
     const hasChildren = children !== undefined && children !== null
@@ -65,13 +65,16 @@ export const Button = React.forwardRef<
     return (
       <Pressable
         className={cn(
-          hasChildren ? '' : 'h-[48px]',
-          'flex-row items-center justify-center rounded-lg px-3 gap-2',
+          hasChildren ? '' : 'min-h-[48px]',
+          'flex-row items-center justify-center rounded-[14px] px-3 gap-2',
           variantStyles[variant],
           disabled ? 'opacity-50' : 'active:opacity-75',
           className
         )}
         ref={ref}
+        accessibilityRole='button'
+        accessibilityLabel={text}
+        accessibilityState={{ disabled }}
         onPress={disabled ? () => {} : onPress}
         disabled={disabled}
         android_ripple={{ color: '#333', radius: 10 }}

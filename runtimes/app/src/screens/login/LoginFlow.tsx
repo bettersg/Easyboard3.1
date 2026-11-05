@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router'
+import { colors, font } from '../../theme/tokens'
 import { useEffect, useRef, useState } from 'react'
-import { Animated as RNAnimated, useWindowDimensions } from 'react-native'
+import { Animated as RNAnimated, Platform, useWindowDimensions } from 'react-native'
 import { Animated, InputField, OTPInput, Text, View } from '../../components'
 import { useLogin } from '../../hooks'
 import { OnboardingLayout } from '../onboarding/OnboardingLayout'
@@ -9,13 +10,14 @@ export function LoginFlow() {
   const router = useRouter()
   const { width } = useWindowDimensions()
   const [currentStep, setCurrentStep] = useState<'phone' | 'otp'>('phone')
+  const [error, setError] = useState('')
   const slideAnim = useRef(new RNAnimated.Value(0)).current
 
   useEffect(() => {
     RNAnimated.timing(slideAnim, {
       toValue: currentStep === 'phone' ? 0 : -width,
       duration: 300,
-      useNativeDriver: true
+      useNativeDriver: Platform.OS !== 'web'
     }).start()
   }, [currentStep, slideAnim, width])
 
@@ -29,6 +31,7 @@ export function LoginFlow() {
     displayPhoneNumber,
     verifyOTP,
     isVerifyingOTP,
+    error: loginError,
     reset
   } = useLogin()
 
@@ -83,7 +86,7 @@ export function LoginFlow() {
 
       // Validate and send OTP
       if (!currentCanSendOTP) {
-        console.log('[LoginFlow] Cannot send OTP - validation failed')
+        setError('Enter a valid phone number.')
         return
       }
 
@@ -108,6 +111,7 @@ export function LoginFlow() {
 
   const handleVerifyOTP = async (otp: string) => {
     console.log('[LoginFlow] handleVerifyOTP called')
+    setError('')
     try {
       await verifyOTP(otp)
 
@@ -119,7 +123,7 @@ export function LoginFlow() {
       router.navigate('/onboarding/1')
     } catch (err) {
       console.error('[LoginFlow] OTP verification failed:', err)
-      alert('Invalid OTP')
+      setError('That code did not work. Try again.')
     }
   }
 
@@ -129,7 +133,9 @@ export function LoginFlow() {
       totalSteps={2}
       onNext={handleNext}
       onBack={handleBack}
-      showBackButton={true} // Always show back button in login flow
+      showBackButton={true}
+      showNextButton={currentStep === 'phone'}
+      nextButtonText={currentStep === 'phone' ? 'Send code' : 'Next'}
     >
       <View className='flex-1 overflow-hidden'>
         <Animated.View
@@ -144,33 +150,34 @@ export function LoginFlow() {
             className='justify-start items-center px-6 py-4 h-[calc(100svh-80px)]'
             style={{ width }}
           >
-            <View
-              // @ts-expect-error - onSubmit is web-only (react-native-web form)
-              onSubmit={(e: Event) => e.preventDefault()}
-              className='gap-4 w-full'
-              accessibilityRole='form'
-            >
+            <View className='gap-4 w-full'>
               <View className='gap-2'>
-                <Text className='text-2xl font-bold text-[#414852]'>
+                <Text style={{ fontFamily: font.display, fontSize: 30, lineHeight: 34, color: colors.ink }}>
                   What&apos;s your phone number?
                 </Text>
-                <Text className='text-base text-[#677281]'>
-                  An OTP will be sent to this number for verification.
+                <Text style={{ fontSize: 15, lineHeight: 22, color: colors.muted }}>
+                  We will send you a code.
                 </Text>
               </View>
               <InputField
                 placeholder='+65 | your phone number'
                 value={phoneNumber ? `+65 | ${phoneNumber}` : ''}
-                onChangeText={(text) =>
+                onChangeText={(text) => {
+                  setError('')
                   setPhoneNumber(text.replace('+65 | ', ''))
-                }
+                }}
                 keyboardType='phone-pad'
                 maxLength={14} // Allow for +65 prefix
                 onSubmitEditing={handleNext}
               />
+              {error || loginError ? (
+                <Text accessibilityRole='alert' className='text-sm text-[#F50008]'>
+                  {error || loginError}
+                </Text>
+              ) : null}
               {isSendingOTP && (
                 <Text className='text-base text-[#677281] text-center'>
-                  Sending OTP...
+                  Sending code...
                 </Text>
               )}
             </View>
@@ -183,11 +190,11 @@ export function LoginFlow() {
           >
             <View className='gap-4 w-full'>
               <View className='gap-2'>
-                <Text className='text-2xl font-bold text-[#414852]'>
-                  Enter your OTP
+                <Text style={{ fontFamily: font.display, fontSize: 30, lineHeight: 34, color: colors.ink }}>
+                  Enter the code
                 </Text>
-                <Text className='text-base text-[#677281]'>
-                  A 6-digit OTP was sent to {displayPhoneNumber}
+                <Text style={{ fontSize: 15, lineHeight: 22, color: colors.muted }}>
+                  Sent to {displayPhoneNumber}
                 </Text>
               </View>
               <OTPInput
@@ -197,9 +204,14 @@ export function LoginFlow() {
               />
               {isVerifyingOTP && (
                 <Text className='text-base text-[#677281] text-center'>
-                  Verifying OTP...
+                  Checking...
                 </Text>
               )}
+              {error || loginError ? (
+                <Text accessibilityRole='alert' className='text-sm text-[#F50008]'>
+                  {error || loginError}
+                </Text>
+              ) : null}
             </View>
           </View>
         </Animated.View>

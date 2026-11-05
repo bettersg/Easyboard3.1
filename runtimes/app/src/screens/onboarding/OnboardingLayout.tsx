@@ -3,6 +3,7 @@
 import { useRouter } from 'expo-router'
 import { BackButton, Button, View } from '../../components'
 import { useSafeArea } from '../../provider'
+import { colors } from '../../theme/tokens'
 
 interface OnboardingLayoutProps {
   children: React.ReactNode
@@ -12,6 +13,7 @@ interface OnboardingLayoutProps {
   onBack?: () => void
   showBackButton?: boolean
   nextButtonText?: string
+  showNextButton?: boolean
 }
 
 export function OnboardingLayout({
@@ -21,7 +23,8 @@ export function OnboardingLayout({
   onNext,
   onBack,
   showBackButton,
-  nextButtonText
+  nextButtonText,
+  showNextButton = true
 }: OnboardingLayoutProps) {
   const { top, bottom } = useSafeArea()
   const router = useRouter()
@@ -54,8 +57,8 @@ export function OnboardingLayout({
 
   return (
     <View
-      className='flex ios:flex-1 android:flex-1 h-dvh bg-[#F4F5F6] justify-between'
-      style={{ paddingTop: top }}
+      className='flex ios:flex-1 android:flex-1 h-dvh justify-between'
+      style={{ paddingTop: top, backgroundColor: colors.canvas }}
     >
       <View
         className='flex-row items-center justify-start px-6 pt-4 gap-4'
@@ -74,16 +77,18 @@ export function OnboardingLayout({
       >
         {children}
       </View>
-      <View
-        className='h-20 w-screen justify-between items-center align-middle flex-row px-6'
-        style={{ paddingBottom: bottom * 2 }}
-      >
-        <Button
-          text={buttonText}
-          className='w-full'
-          onPress={handleNextPress}
-        />
-      </View>
+      {showNextButton ? (
+        <View
+          className='h-20 w-screen justify-between items-center align-middle flex-row px-6'
+          style={{ paddingBottom: bottom * 2 }}
+        >
+          <Button
+            text={buttonText}
+            className='w-full'
+            onPress={handleNextPress}
+          />
+        </View>
+      ) : null}
     </View>
   )
 }

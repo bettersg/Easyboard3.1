@@ -9,6 +9,7 @@ import React, {
 } from 'react'
 import { Alert } from 'react-native'
 import notificationService from '../services/notificationService'
+import { usePreferences } from './PreferencesContext'
 import { getUserStorage } from '../services/storageService'
 import {
   getUserData,
@@ -31,7 +32,10 @@ const LocationSharingContext = createContext<
 export const LocationSharingProvider: React.FC<{
   children: React.ReactNode
 }> = ({ children }) => {
-  const [isLocationSharing, setIsLocationSharingState] = useState(false)
+  const { preferences } = usePreferences()
+  const [isLocationSharing, setIsLocationSharingState] = useState(
+    preferences.privacyMode === 'always'
+  )
   const locationSubscription = useRef<Location.LocationSubscription | null>(
     null
   )
@@ -168,7 +172,7 @@ export const LocationSharingProvider: React.FC<{
           error: TaskManager.TaskManagerError | null
         }) => {
           if (error) {
-            console.error(error.message)
+            console.info(error.message)
             return
           }
           if (locations as Location.LocationObject[]) {
@@ -206,7 +210,7 @@ export const LocationSharingProvider: React.FC<{
                 }
               }
             } catch (e) {
-              console.error('Failed to share location', e)
+              console.info('Location unavailable while sharing.', e)
             }
           }
         }

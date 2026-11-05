@@ -1,13 +1,22 @@
-import { Phone, Pin } from '@nandorojo/iconic'
+'use client'
+
+import { Ionicons } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
-import { useEffect, useRef, useState } from 'react'
-import { ActivityIndicator, Linking } from 'react-native'
-import ActionSheet, { type ActionSheetRef } from 'react-native-actions-sheet'
-import { useSafeArea } from 'react-native-safe-area-context'
-import { BackButton, Button, Text, View } from '../../components'
+import { useEffect, useState } from 'react'
+import {
+  ActivityIndicator,
+  Linking,
+  Pressable,
+  useWindowDimensions,
+  View
+} from 'react-native'
+import { Text } from '../../components'
+import { ActionButton, AppFrame } from '../../components/ui'
 import GoogleMapView from '../../components/mapView/GoogleMapView'
+import { usePreferences } from '../../contexts/PreferencesContext'
 import { listenToPWIDLocation } from '../../services/userService'
 import type { MarkerData } from '../../stores/onboardingStore'
+import { colors, font, radius, shadow, space } from '../../theme/tokens'
 import type { UserLocation } from '../../types'
 
 interface TrackPWIDPageProps {
@@ -19,158 +28,217 @@ export function TrackPWIDPage({
   pwidPhoneNumber,
   pwidName
 }: TrackPWIDPageProps) {
-  const { top } = useSafeArea()
   const router = useRouter()
+  const { width } = useWindowDimensions()
+  const { scale, bodyLine } = usePreferences()
   const [location, setLocation] = useState<UserLocation | null>(null)
-  const [_, setLocationUpdated] = useState<string>('')
   const [loading, setLoading] = useState(true)
-  const actionSheetRef = useRef<ActionSheetRef>(null)
 
   useEffect(() => {
-    // Set up real-time location listener
-    const unsubscribe = listenToPWIDLocation(pwidPhoneNumber, (newLocation) => {
-      if (newLocation) {
-        setLocation(newLocation)
-        const updateTime = new Date(newLocation.updatedAt).toLocaleTimeString()
-        setLocationUpdated(updateTime)
-      } else {
-        setLocation(null)
-        setLocationUpdated('')
-      }
+    const unsubscribe = listenToPWIDLocation(pwidPhoneNumber, newLocation => {
+      setLocation(newLocation)
       setLoading(false)
     })
-
-    // Clean up listener on unmount
     return () => unsubscribe()
   }, [pwidPhoneNumber])
 
-  useEffect(() => {
-    if (location && !loading) {
-      actionSheetRef.current?.show()
-    } else {
-      actionSheetRef.current?.hide()
-    }
-  }, [location, loading])
-
   const handleCall = () => {
-    if (pwidPhoneNumber) {
-      Linking.openURL(`tel:${pwidPhoneNumber}`).catch((err) =>
-        console.error('Failed to open URL:', err)
-      )
-    }
+    if (!pwidPhoneNumber) return
+    Linking.openURL(`tel:${pwidPhoneNumber}`).catch(error =>
+      console.error('Failed to open phone dialer:', error)
+    )
   }
 
-  const isSharing = !!location?.isSharing
-  const statusColor = isSharing ? '#CBF4DF' : '#F7CBC8'
-  const statusTextColor = isSharing ? '#209D5E' : '#E13F33'
-  const statusText = isSharing ? 'Online' : 'Offline'
-
-  // Convert location to MarkerData format for GoogleMapView
+  const name = pwidName?.trim() || 'Your person'
+  const isSharing = Boolean(location?.isSharing)
+  const updatedAt = location ? new Date(location.updatedAt) : null
+  const validUpdatedAt =
+    updatedAt && !Number.isNaN(updatedAt.getTime()) ? updatedAt : null
   const markerData: MarkerData | null = location
     ? {
         latlng: {
           latitude: location.lat,
           longitude: location.lng
         },
-        description: `${pwidPhoneNumber}'s Location`,
+        description: `${name}'s location`,
         photoUri: undefined
       }
     : null
+  const mapHeight = width < 480 ? 320 : width >= 980 ? 440 : 380
 
   return (
-    <View className='flex-1 bg-gray-100'>
-      {/* Header */}
+    <AppFrame statusLabel='Caregiver view' statusAction='none'>
       <View
-        className='bg-white px-6 py-4 border-b border-gray-200'
-        style={{ paddingTop: top + 16 }}
+        style={{
+          width: '100%',
+          maxWidth: 820,
+          marginHorizontal: 'auto',
+          gap: space.lg
+        }}
       >
-        <View className='flex-row items-center gap-4'>
-          <BackButton
-            onPress={() => router.back()}
-            textClassName='text-[40px] mb-1'
-          />
-          <Text className='text-2xl font-bold text-[#414852]'>
-            View location
+        <Pressable
+          accessibilityRole='button'
+          accessibilityLabel='Back to people'
+          onPress={() => (router.canGoBack() ? router.back() : router.navigate('/home'))}
+          style={{ minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: 8 }}
+        >
+          <Ionicons name='arrow-back' size={scale(20)} color={colors.brand} />
+          <Text style={{ fontSize: scale(14), fontWeight: '700', color: colors.brand }}>
+            People
+          </Text>
+        </Pressable>
+
+        <View style={{ gap: 8 }}>
+          <Text
+            style={{
+              fontSize: scale(13),
+              fontWeight: '800',
+              letterSpacing: 0.8,
+              textTransform: 'uppercase',
+              color: colors.brand
+            }}
+          >
+            Live location
+          </Text>
+          <Text
+            style={{
+              fontFamily: font.display,
+              fontSize: scale(34),
+              lineHeight: scale(38),
+              color: colors.ink
+            }}
+          >
+            {name}.
           </Text>
         </View>
-      </View>
 
-      {/* Map View */}
-      <View className='flex-1'>
-        {loading ? (
-          <View className='flex-1 items-center justify-center bg-gray-200'>
-            <View className='items-center gap-2'>
-              <ActivityIndicator size='large' color='#3F98F8' />
-              <Text className='text-base text-[#677281]'>
-                Loading location...
-              </Text>
-            </View>
-          </View>
-        ) : location ? (
-          <GoogleMapView
-            value={markerData}
-            initialCenter={{
-              latitude: location.lat,
-              longitude: location.lng
+        <View
+          style={{
+            backgroundColor: colors.surface,
+            borderWidth: 1,
+            borderColor: colors.line,
+            borderRadius: radius.lg,
+            padding: 12,
+            gap: 12,
+            boxShadow: shadow.card
+          }}
+        >
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 10,
+              paddingHorizontal: 2
             }}
-            onLocationMarkerDrop={() => {}}
-            isTracking={true}
-          />
-        ) : (
-          <View className='flex-1 items-center justify-center bg-gray-200'>
-            <View className='items-center gap-2'>
-              <Pin width={64} height={64} color='#DC2626' />
-              <Text className='text-lg font-semibold text-[#677281]'>
-                Location Not Available
-              </Text>
-              <Text className='text-sm text-[#677281] text-center px-6'>
-                PWID is not currently sharing their location
-              </Text>
-            </View>
-          </View>
-        )}
-      </View>
-
-      {/* ActionSheet for location info */}
-      <ActionSheet ref={actionSheetRef} backgroundInteractionEnabled={true}>
-        <View className='bg-white rounded-xl p-4 mb-4 w-full flex-1'>
-          <View className='flex-row justify-between items-start mb-3'>
-            <View className='flex-1 flex flex-col'>
-              <Text className='text-xl font-semibold text-[#414852] mb-1'>
-                {pwidName}
-              </Text>
-              <Text className='text-sm text-[#677281] mb-1'>
-                Updated{' '}
-                {location
-                  ? new Date(location.updatedAt).toLocaleTimeString()
-                  : 'unknown'}
-              </Text>
-            </View>
+          >
             <View
-              className='flex-row items-center px-2 py-2 rounded-[100px]'
-              style={{ backgroundColor: statusColor }}
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 6,
+                backgroundColor: isSharing ? colors.successSoft : colors.surfaceMuted,
+                borderRadius: radius.pill,
+                paddingHorizontal: 10,
+                paddingVertical: 6
+              }}
             >
-              <Pin width={20} height={20} color={statusTextColor} />
-              <Text
-                className='text-sm font-bold'
-                style={{ color: statusTextColor }}
-              >
-                {statusText}
+              <View
+                style={{
+                  width: 7,
+                  height: 7,
+                  borderRadius: 4,
+                  backgroundColor: isSharing ? colors.success : colors.muted
+                }}
+              />
+              <Text style={{ fontSize: scale(12), fontWeight: '800', color: isSharing ? colors.success : colors.muted }}>
+                {isSharing ? 'Sharing' : 'Not sharing'}
               </Text>
             </View>
+            <Text style={{ fontSize: scale(12), color: colors.muted }}>
+              {validUpdatedAt ? `Updated ${validUpdatedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : 'No update yet'}
+            </Text>
           </View>
 
-          <View className='flex-row items-center mt-0.5 w-full gap-2'>
-            <Button
-              className='flex-row items-center flex-1 p-1.5 h-12 justify-center gap-1'
-              onPress={handleCall}
+          {loading ? (
+            <View style={{ height: mapHeight, alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+              <ActivityIndicator size='large' color={colors.brand} />
+              <Text style={{ fontSize: scale(14), color: colors.muted }}>Loading location…</Text>
+            </View>
+          ) : isSharing && location ? (
+            <View
+              style={{
+                height: mapHeight,
+                width: '100%',
+                borderRadius: radius.md,
+                overflow: 'hidden',
+                borderWidth: 1,
+                borderColor: colors.line
+              }}
             >
-              <Phone width={30} height={30} color='#F4F5F6' />
-              <Text className='font-bold text-base text-[#F4F5F6]'>Call</Text>
-            </Button>
-          </View>
+              <GoogleMapView
+                height={mapHeight}
+                value={markerData}
+                initialCenter={{
+                  latitude: location.lat,
+                  longitude: location.lng
+                }}
+                onLocationMarkerDrop={() => {}}
+                isTracking={true}
+              />
+            </View>
+          ) : (
+            <View
+              style={{
+                minHeight: 220,
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 8,
+                paddingHorizontal: 20
+              }}
+            >
+              <View
+                style={{
+                  width: 52,
+                  height: 52,
+                  borderRadius: 26,
+                  backgroundColor: colors.surfaceMuted,
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Ionicons name='location-outline' size={scale(26)} color={colors.muted} />
+              </View>
+              <Text style={{ fontSize: scale(18), fontWeight: '800', color: colors.ink }}>
+                Location is off
+              </Text>
+              <Text style={{ fontSize: scale(14), lineHeight: bodyLine(14), color: colors.muted, textAlign: 'center' }}>
+                Ask {name} to turn on sharing, or call them to check where they are.
+              </Text>
+            </View>
+          )}
         </View>
-      </ActionSheet>
-    </View>
+
+        <ActionButton
+          label='Call'
+          icon='call-outline'
+          variant='secondary'
+          onPress={handleCall}
+          disabled={!pwidPhoneNumber}
+          accessibilityHint={`Call ${name}`}
+          fullWidth
+        />
+
+        <Text
+          style={{
+            fontSize: scale(12),
+            lineHeight: bodyLine(12),
+            color: colors.muted
+          }}
+        >
+          Shown only while {name} is sharing.
+        </Text>
+      </View>
+    </AppFrame>
   )
 }

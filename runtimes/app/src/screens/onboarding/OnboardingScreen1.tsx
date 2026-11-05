@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router'
+import { colors, font } from '../../theme/tokens'
 import { useEffect, useRef } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { InputField, ProgressIndicator, Text, View } from '../../components'
@@ -70,7 +71,7 @@ export function OnboardingScreen1() {
         <View className='gap-6 w-full'>
           <ProgressIndicator currentStep={1} totalSteps={4} />
           <View className='gap-2'>
-            <Text className='text-2xl font-bold text-[#414852]'>
+            <Text style={{ fontFamily: font.display, fontSize: 30, lineHeight: 34, color: colors.ink }}>
               What&apos;s your name?
             </Text>
           </View>

@@ -18,7 +18,7 @@ export function TransitOptionsPage() {
   const [errorMessage, setErrorMessage] = useState<string>('')
   const hasFetchedRef = useRef(false)
 
-  const { top } = useSafeArea()
+  const { top, bottom } = useSafeArea()
   const router = useRouter()
   const { lat, lng, name, description, photoUri } = useLocalSearchParams<{
     lat?: string
@@ -185,7 +185,8 @@ export function TransitOptionsPage() {
   )
 
   const handleBack = () => {
-    router.back()
+    if (router.canGoBack()) router.back()
+    else router.navigate('/home')
   }
 
   const transitOptions: GoogleRouteStepsOverview[] = useMemo(
@@ -247,7 +248,7 @@ export function TransitOptionsPage() {
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
         className='flex-1 px-4'
-        contentContainerClassName='pb-8'
+        contentContainerStyle={{ paddingBottom: bottom + 32 }}
       >
         {/* Error Message */}
         {errorMessage && (

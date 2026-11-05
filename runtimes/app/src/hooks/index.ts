@@ -1,3 +1,5 @@
 export { useCallCaregiver } from './useCallCaregiver'
 export { useDebounce } from './useDebounce'
 export { LoginProvider, useLogin } from './useLogin'
+export { useReadAloud } from './useReadAloud'
+export { useToast } from './useToast'

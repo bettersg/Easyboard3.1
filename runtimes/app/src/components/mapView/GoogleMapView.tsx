@@ -50,8 +50,10 @@ const GoogleMapView = ({
   onLocationMarkerDrop,
   value,
   initialCenter,
-  isTracking = false
+  isTracking = false,
+  height
 }: GoogleMapViewProps) => {
+  const embedded = typeof height === 'number'
   const mapRef = useRef<google.maps.Map | null>(null)
   const autocompleteServiceRef =
     useRef<google.maps.places.AutocompleteService | null>(null)
@@ -291,7 +293,10 @@ const GoogleMapView = ({
   }
 
   return (
-    <View className='flex flex-1 items-center justify-center relative h-screen w-screen'>
+    <View
+      className={embedded ? 'relative w-full' : 'flex flex-1 items-center justify-center relative h-screen w-screen'}
+      style={embedded ? { height, width: '100%' } : undefined}
+    >
       {/* Search Bar */}
       <View
         className='absolute left-0 right-0 z-10 flex flex-1 px-3'
@@ -401,14 +406,16 @@ const GoogleMapView = ({
       </GoogleMap>
 
       {/* GPS Button */}
-      <View className='absolute p-0 bottom-8 right-8'>
-        <IconButton
-          onPress={goToCurrentLocation}
-          icon={<GpsFixedIcon size={30} color='#3F98F8' />}
-          variant='text'
-          className='p-[10px] mr-[-10px] bg-white rounded-full items-center justify-center w-12 h-12'
-        />
-      </View>
+      {!embedded && !isTracking ? (
+        <View className='absolute p-0 bottom-8 right-8'>
+          <IconButton
+            onPress={goToCurrentLocation}
+            icon={<GpsFixedIcon size={30} color='#3F98F8' />}
+            variant='text'
+            className='p-[10px] mr-[-10px] bg-white rounded-full items-center justify-center w-12 h-12'
+          />
+        </View>
+      ) : null}
     </View>
   )
 }

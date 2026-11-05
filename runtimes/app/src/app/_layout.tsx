@@ -8,6 +8,7 @@ import {
   AuthProvider,
   LocationSharingProvider,
   NavigationProvider,
+  PreferencesProvider,
   useAuth
 } from '@/contexts'
 import { Provider } from '@/provider'
@@ -42,7 +43,7 @@ function RootLayoutNav() {
     }
 
     // Only initialize when user is authenticated
-    if (hasAuthen) {
+    if (hasAuthen && Platform.OS !== 'web' && !__DEV__) {
       initializeNotifications()
     }
   }, [hasAuthen, userType]) // Re-initialize when user changes
@@ -71,13 +72,15 @@ function RootLayoutNav() {
 export default function RootLayout() {
   return (
     <Provider>
-      <AuthProvider>
-        <NavigationProvider>
-          <LocationSharingProvider>
-            <RootLayoutNav />
-          </LocationSharingProvider>
-        </NavigationProvider>
-      </AuthProvider>
+      <PreferencesProvider>
+        <AuthProvider>
+          <NavigationProvider>
+            <LocationSharingProvider>
+              <RootLayoutNav />
+            </LocationSharingProvider>
+          </NavigationProvider>
+        </AuthProvider>
+      </PreferencesProvider>
     </Provider>
   )
 }

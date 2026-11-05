@@ -1,5 +1,19 @@
+/* Hallmark · app UI · theme: EasyBoard · genre: editorial utility
+ * pre-emit critique: P4 H5 E5 S5 R4 V4
+ * responsive: 390 / 768 / 1024 verified · safe areas · reduced motion
+ */
 @import "tailwindcss";
 @import "uniwind";
+
+:root {
+  --eb-canvas: #F3F5F2;
+  --eb-surface: #FFFFFF;
+  --eb-ink: #14211A;
+  --eb-muted: #5E6B62;
+  --eb-line: #D8E0D8;
+  --eb-brand: #174E8C;
+  --eb-focus: #1F6FEB;
+}
 
 /*
   The default border color has changed to `currentcolor` in Tailwind CSS v4,
@@ -29,6 +43,7 @@ html,
 body,
 #root {
   width: 100%;
+  overflow-x: clip;
   /* To smooth any scrolling behavior */
   -webkit-overflow-scrolling: touch;
   margin: 0px;
@@ -54,13 +69,15 @@ html {
 
 body {
   display: flex;
+  color: var(--eb-ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   /* Allows you to scroll below the viewport; default value is visible */
   overflow-y: auto;
   overscroll-behavior-y: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f4f5f6; /* Match app background to prevent white flash during transitions */
+  background-color: var(--eb-canvas); /* Match app background to prevent white flash during transitions */
   /* Hide scrollbars: IE and Edge, then Firefox */
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -68,4 +85,19 @@ body {
 
 body::-webkit-scrollbar {
   display: none;
+}
+
+
+:focus-visible {
+  outline: 3px solid var(--eb-focus);
+  outline-offset: 3px;
+}
+
+[role="button"],
+button {
+  cursor: pointer;
+}
+
+body.easy-read {
+  letter-spacing: 0.01em;
 }

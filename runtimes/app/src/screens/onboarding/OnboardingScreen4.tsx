@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router'
+import { colors, font } from '../../theme/tokens'
 import { useEffect, useRef, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { ProgressIndicator, ScrollView, Text, View } from '../../components'
@@ -136,6 +137,7 @@ export function OnboardingScreen4() {
   const { userType: selectedUserType } = useLogin()
   const router = useRouter()
   const [isSaving, setIsSaving] = useState(false)
+  const [saveError, setSaveError] = useState('')
   const homeLocationInputRef = useRef<LocationInputRef>(null)
   const workLocationInputRef = useRef<LocationInputRef>(null)
   const schoolLocationInputRef = useRef<LocationInputRef>(null)
@@ -190,6 +192,7 @@ export function OnboardingScreen4() {
     } = formValuesRef.current
 
     if (savingCompleteRef.current || currentIsSaving) return
+    setSaveError('')
 
     if (!currentErrors.houseAddrs && currentHouseAddrs) {
       try {
@@ -299,7 +302,7 @@ export function OnboardingScreen4() {
         )
         setIsSaving(false)
         formValuesRef.current.isSaving = false
-        // TODO: Show error message to user
+        setSaveError('Could not save your places. Check your connection and try again.')
       }
     }
     // If validation fails, errors will be shown by react-hook-form
@@ -336,16 +339,14 @@ export function OnboardingScreen4() {
       totalSteps={4}
       onNext={handleNext}
       onBack={handleBack}
+      nextButtonText='Finish'
     >
       <View className='flex-1 w-full'>
         <View className='gap-6 w-full flex-1 px-6 py-4'>
           <ProgressIndicator currentStep={4} totalSteps={4} />
           <View className='gap-2'>
-            <Text className='text-2xl font-bold text-[#414852]'>
+            <Text style={{ fontFamily: font.display, fontSize: 30, lineHeight: 34, color: colors.ink }}>
               Add saved places
-            </Text>
-            <Text className='text-base text-[#677281]'>
-              Bookmark places you frequently travel to for easy access.
             </Text>
           </View>
 
@@ -481,6 +482,11 @@ export function OnboardingScreen4() {
               </View>
             </View>
           </ScrollView>
+          {saveError ? (
+            <Text accessibilityRole='alert' className='px-6 pb-2 text-sm text-[#F50008]'>
+              {saveError}
+            </Text>
+          ) : null}
         </View>
       </View>
     </OnboardingLayout>

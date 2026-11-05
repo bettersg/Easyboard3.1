@@ -29,14 +29,9 @@ export function HomePage() {
       }
     }
 
-    // If userType is already in context, use it
-    if (userType) {
-      setUserTypeFromStorage(userType)
-      setIsLoading(false)
-    } else {
-      // Otherwise load from storage
-      loadUserType()
-    }
+    // Always read storage so a changed session (for example, a dev preview)
+    // is reflected without a full app restart.
+    loadUserType()
   }, [userType])
 
   if (isLoading) {

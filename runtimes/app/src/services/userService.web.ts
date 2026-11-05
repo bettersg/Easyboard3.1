@@ -8,8 +8,10 @@ import {
   query,
   ref,
   set,
-  update
+  update,
+  type DataSnapshot
 } from 'firebase/database'
+import type { ActiveTrip } from './tripStore'
 import type {
   CaregiverUser,
   PWIDUser,
@@ -171,6 +173,27 @@ export const userService: IUserService = {
     return () => off(locationRef, 'value', listener)
   },
 
+  setPWIDActiveTrip: async (phoneNumber, trip) => {
+    try {
+      const db = getDatabaseInstance()
+      await update(ref(db, `users/${phoneNumber}`), {
+        activeTrip: trip,
+        updatedAt: Date.now()
+      })
+    } catch (error) {
+      console.error('Error updating active trip:', error)
+      throw error
+    }
+  },
+
+  subscribeToActiveTrip: (phoneNumber, callback) => {
+    const db = getDatabaseInstance()
+    const tripRef = ref(db, `users/${phoneNumber}/activeTrip`)
+    return onValue(tripRef, (snapshot: DataSnapshot) => {
+      callback(snapshot.exists() ? (snapshot.val() as ActiveTrip) : null)
+    })
+  },
+
   getPWIDsByCaregiverPhone: async (caregiverPhone: string) => {
     try {
       const db = getDatabaseInstance()
@@ -228,3 +251,5 @@ export const getFCMToken = userService.getFCMToken
 export const listenToPWIDLocation = userService.listenToPWIDLocation
 export const getPWIDsByCaregiverPhone = userService.getPWIDsByCaregiverPhone
 export const updateUserData = userService.updateUserData
+export const setPWIDActiveTrip = userService.setPWIDActiveTrip
+export const subscribeToActiveTrip = userService.subscribeToActiveTrip
