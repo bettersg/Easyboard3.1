@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router'
+import { colors, font } from '../../theme/tokens'
 import { useEffect, useRef } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { InputField, ProgressIndicator, Text, View } from '../../components'
@@ -90,12 +91,11 @@ export function OnboardingScreen3() {
         <View className='gap-6'>
           <ProgressIndicator currentStep={3} totalSteps={4} />
           <View className='gap-2'>
-            <Text className='text-2xl font-bold text-[#414852]'>
+            <Text style={{ fontFamily: font.display, fontSize: 30, lineHeight: 34, color: colors.ink }}>
               Add an emergency contact
             </Text>
-            <Text className='text-base text-[#677281]'>
-              They will be able to see your location when you&apos;re
-              travelling. You can also call them if you need help from them.
+            <Text style={{ fontSize: 15, lineHeight: 22, color: colors.muted }}>
+              They can see your trip and take your call.
             </Text>
           </View>
           <View className='gap-4'>

@@ -280,7 +280,8 @@ export function DirectionsPage() {
   }, [clearNavigation, router])
 
   const handleBack = useCallback(() => {
-    router.back()
+    if (router.canGoBack()) router.back()
+    else router.navigate('/home')
   }, [router])
 
   // Show error if no route selected

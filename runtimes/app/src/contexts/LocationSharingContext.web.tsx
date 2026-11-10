@@ -2,6 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useState } from 'react'
 import notificationService from '../services/notificationService'
+import { usePreferences } from './PreferencesContext'
 import { getUserStorage } from '../services/storageService'
 import {
   getUserData,
@@ -24,7 +25,10 @@ const LocationSharingContext = createContext<
 export const LocationSharingProvider: React.FC<{
   children: React.ReactNode
 }> = ({ children }) => {
-  const [isLocationSharing, setIsLocationSharingState] = useState(false)
+  const { preferences } = usePreferences()
+  const [isLocationSharing, setIsLocationSharingState] = useState(
+    preferences.privacyMode === 'always'
+  )
   const [pwidPhoneNumber, setPwidPhoneNumber] = useState<string | null>(null)
   const [destination, setDestinationState] = useState<{
     lat: number
@@ -98,7 +102,7 @@ export const LocationSharingProvider: React.FC<{
 
     // Start sharing
     if (!navigator.geolocation) {
-      console.error('Geolocation is not supported')
+      console.info('Geolocation is not supported in this browser')
       setIsLocationSharingState(false)
       return
     }
@@ -136,7 +140,7 @@ export const LocationSharingProvider: React.FC<{
         }
       },
       (error) => {
-        console.error('Geolocation error:', error)
+        console.info('Geolocation unavailable; location sharing paused.', error)
         setIsLocationSharingState(false)
       },
       {

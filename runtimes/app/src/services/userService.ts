@@ -19,6 +19,11 @@ export interface IUserService {
   ): () => void
   getPWIDsByCaregiverPhone(caregiverPhone: string): Promise<PWIDUser[]>
   updateUserData(phoneNumber: string, updates: Partial<UserData>): Promise<void>
+  setPWIDActiveTrip(phoneNumber: string, trip: import('./tripStore').ActiveTrip | null): Promise<void>
+  subscribeToActiveTrip(
+    phoneNumber: string,
+    callback: (trip: import('./tripStore').ActiveTrip | null) => void
+  ): () => void
 }
 
 // Platform-agnostic re-exports

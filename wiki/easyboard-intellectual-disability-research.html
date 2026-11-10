@@ -1,0 +1,2173 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Travel independence for people with intellectual disabilities | EasyBoard research</title>
+<meta name="description" content="Research findings, product proposals, UX mockups and flow diagrams for EasyBoard, a travel app for people with intellectual disabilities and their caregivers.">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #f6f3ec;
+    --surface: #fffdf8;
+    --surface-2: #efeae0;
+    --ink: #1b2430;
+    --muted: #5a6572;
+    --line: #d8d1c3;
+    --accent: #1d5bb8;
+    --accent-ink: #ffffff;
+    --accent-soft: #e7eefb;
+    --green: #17654b;
+    --green-soft: #e3f2ea;
+    --amber: #8a5300;
+    --amber-soft: #fbf0dc;
+    --red: #a1282e;
+    --red-soft: #fbe7e7;
+    --shadow: 0 10px 30px rgba(30, 35, 45, .08);
+    --radius: 18px;
+    --max: 1120px;
+    --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --phone-bg: #f4f7fb;
+    --phone-ink: #16212e;
+    --phone-muted: #5d6b7a;
+  }
+  html[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #12161c;
+    --surface: #1a2028;
+    --surface-2: #232b35;
+    --ink: #eef2f6;
+    --muted: #a9b4c0;
+    --line: #35404d;
+    --accent: #8db6ff;
+    --accent-ink: #0e1a2c;
+    --accent-soft: #1e2d45;
+    --green: #7fd3ae;
+    --green-soft: #183328;
+    --amber: #f1c27d;
+    --amber-soft: #322716;
+    --red: #ff9b9b;
+    --red-soft: #351d1f;
+    --shadow: 0 12px 34px rgba(0, 0, 0, .28);
+    --phone-bg: #0f1720;
+    --phone-ink: #edf2f7;
+    --phone-muted: #a8b4c2;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: var(--reader-font, 17px);
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+  body.easy-read {
+    font-size: calc(var(--reader-font, 17px) + 2px);
+    line-height: 1.8;
+  }
+  img, svg { max-width: 100%; }
+  a { color: var(--accent); }
+  a:hover { text-decoration-thickness: 2px; }
+  p { margin: 0 0 1em; }
+  h1, h2, h3, h4 { line-height: 1.15; margin: 0 0 .5em; text-wrap: balance; }
+  h1 { font-family: var(--serif); font-size: clamp(2.5rem, 6vw, 4.6rem); font-weight: 600; letter-spacing: -.02em; }
+  h2 { font-family: var(--serif); font-size: clamp(1.9rem, 4vw, 3rem); font-weight: 600; letter-spacing: -.015em; }
+  h3 { font-size: 1.28rem; font-weight: 700; letter-spacing: -.01em; }
+  h4 { font-size: 1.02rem; font-weight: 700; }
+  small { font-size: .82em; }
+  code, .mono { font-family: var(--mono); font-size: .88em; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+  .skip-link {
+    position: absolute; left: 16px; top: -100px; z-index: 200;
+    background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 8px;
+  }
+  .skip-link:focus { top: 12px; }
+  .wrap { width: min(var(--max), 100% - 40px); margin-inline: auto; }
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: color-mix(in srgb, var(--bg) 92%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar-inner {
+    display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    min-height: 64px; padding: 8px 0;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: -.02em; white-space: nowrap; }
+  .brand-mark {
+    width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center;
+    background: var(--accent); color: var(--accent-ink); font-family: var(--serif); font-size: 18px;
+  }
+  .brand small { color: var(--muted); font-weight: 500; letter-spacing: 0; }
+  .controls { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .control {
+    appearance: none; border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    min-height: 38px; padding: 6px 11px; border-radius: 999px; font: inherit; font-size: 13px;
+    font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .control:hover { background: var(--surface-2); }
+  .control[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .nav-strip { border-top: 1px solid var(--line); }
+  .nav-scroll { display: flex; gap: 4px; overflow-x: auto; padding: 8px 0; scrollbar-width: thin; }
+  .nav-scroll a {
+    color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 700;
+    padding: 6px 10px; border-radius: 8px; white-space: nowrap;
+  }
+  .nav-scroll a:hover, .nav-scroll a[aria-current="true"] { color: var(--ink); background: var(--surface-2); }
+  .progress { position: fixed; top: 0; left: 0; height: 3px; width: 0; background: var(--accent); z-index: 150; }
+  .hero { padding: clamp(48px, 8vw, 96px) 0 48px; border-bottom: 1px solid var(--line); }
+  .hero-grid { display: grid; grid-template-columns: 1.25fr .75fr; gap: 48px; align-items: center; }
+  .kicker {
+    display: inline-flex; align-items: center; gap: 8px; color: var(--muted);
+    font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 18px;
+  }
+  .kicker::before { content: ""; width: 28px; height: 1px; background: var(--accent); }
+  .lede { font-size: clamp(1.15rem, 2vw, 1.4rem); color: var(--muted); max-width: 42ch; }
+  .meta-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 26px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line);
+    background: var(--surface); border-radius: 999px; padding: 5px 10px; font-size: 12px; font-weight: 700; color: var(--muted);
+  }
+  .chip strong { color: var(--ink); }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .btn {
+    appearance: none; border: 1px solid transparent; border-radius: 12px; padding: 12px 18px;
+    font: inherit; font-weight: 800; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+    min-height: 46px;
+  }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); }
+  .btn-primary:hover { filter: brightness(1.06); }
+  .btn-ghost { background: transparent; color: var(--ink); border-color: var(--line); }
+  .btn-ghost:hover { background: var(--surface-2); }
+  .hero-art {
+    border: 1px solid var(--line); border-radius: 24px; background: var(--surface);
+    padding: 20px; box-shadow: var(--shadow); position: relative; overflow: hidden;
+  }
+  .hero-art svg { display: block; width: 100%; height: auto; }
+  .section { padding: clamp(48px, 7vw, 84px) 0; border-bottom: 1px solid var(--line); }
+  section[id], li[id] { scroll-margin-top: 124px; }
+  .section-head { display: grid; grid-template-columns: 1fr 2fr; gap: 32px; margin-bottom: 34px; align-items: start; }
+  .section-num { font-family: var(--mono); font-size: 12px; color: var(--muted); letter-spacing: .08em; }
+  .section-head p { color: var(--muted); max-width: 62ch; margin: 0; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 22px; box-shadow: 0 1px 0 rgba(0,0,0,.02);
+  }
+  .card h3 { margin-bottom: 8px; }
+  .card p:last-child { margin-bottom: 0; }
+  .promise { border-top: 4px solid var(--accent); }
+  .promise:nth-child(2) { border-top-color: var(--green); }
+  .promise:nth-child(3) { border-top-color: var(--amber); }
+  .promise .promise-num { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .promise blockquote { margin: 10px 0 12px; font-family: var(--serif); font-size: 1.5rem; line-height: 1.25; }
+  .callout {
+    border: 1px solid var(--line); border-left: 5px solid var(--amber); background: var(--amber-soft);
+    padding: 18px 20px; border-radius: 12px; margin: 22px 0;
+  }
+  .callout strong { color: var(--ink); }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout.red { border-left-color: var(--red); background: var(--red-soft); }
+  .callout.green { border-left-color: var(--green); background: var(--green-soft); }
+  .stat-table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+  .stat-table caption { text-align: left; color: var(--muted); font-size: .85rem; margin-bottom: 8px; }
+  .stat-table th, .stat-table td { text-align: left; padding: 12px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .stat-table th { color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; }
+  .stat-table td:first-child { font-weight: 800; }
+  .stat-num { font-family: var(--serif); font-size: 1.9rem; line-height: 1; letter-spacing: -.02em; }
+  .persona .persona-top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .avatar {
+    width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--accent-soft); color: var(--accent); font-weight: 900; font-family: var(--serif); font-size: 20px;
+    border: 1px solid var(--line); flex: none;
+  }
+  .persona dl { margin: 0; }
+  .persona dt { font-size: .72rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-top: 12px; }
+  .persona dd { margin: 3px 0 0; }
+  .tag {
+    display: inline-block; font-size: 11px; font-weight: 900; letter-spacing: .04em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 999px; background: var(--surface-2); color: var(--muted);
+  }
+  .tag.p0 { background: var(--green-soft); color: var(--green); }
+  .tag.p1 { background: var(--accent-soft); color: var(--accent); }
+  .tag.p2 { background: var(--amber-soft); color: var(--amber); }
+  .tag.risk { background: var(--red-soft); color: var(--red); }
+  .finding {
+    display: grid; grid-template-columns: 64px 1fr; gap: 22px; padding: 26px 0; border-top: 1px solid var(--line);
+  }
+  .finding:first-of-type { border-top: 0; }
+  .finding-num { font-family: var(--serif); font-size: 2.4rem; color: var(--accent); line-height: 1; }
+  .finding h3 { font-size: clamp(1.2rem, 2.2vw, 1.55rem); }
+  .finding .evidence { color: var(--muted); }
+  .finding .so-what {
+    margin-top: 10px; padding: 10px 12px; border-radius: 10px; background: var(--accent-soft);
+    font-weight: 700; color: var(--ink);
+  }
+  .finding .so-what span { color: var(--accent); text-transform: uppercase; font-size: 11px; letter-spacing: .08em; display: block; margin-bottom: 2px; }
+  .cite { font-size: .72em; vertical-align: super; text-decoration: none; font-weight: 700; padding: 0 1px; }
+  .principles { counter-reset: principle; }
+  .principle { display: grid; grid-template-columns: 40px 1fr; gap: 14px; padding: 18px 0; border-top: 1px solid var(--line); }
+  .principle:first-child { border-top: 0; }
+  .principle::before {
+    counter-increment: principle; content: counter(principle, decimal-leading-zero);
+    font-family: var(--mono); font-size: 12px; color: var(--accent); padding-top: 4px;
+  }
+  .principle h3 { font-size: 1.1rem; margin-bottom: 4px; }
+  .principle p { margin: 0; color: var(--muted); }
+  .audit-table { width: 100%; border-collapse: collapse; font-size: .93rem; }
+  .audit-table th, .audit-table td { padding: 12px 10px; border-bottom: 1px solid var(--line); vertical-align: top; text-align: left; }
+  .audit-table thead th { font-size: .75rem; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+  .audit-table tr:first-child td { border-top: 1px solid var(--line); }
+  .audit-table td:first-child { font-weight: 800; width: 16%; }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .filter {
+    appearance: none; border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    border-radius: 999px; padding: 8px 14px; font: inherit; font-size: 13px; font-weight: 800; cursor: pointer;
+  }
+  .filter[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .feature {
+    display: grid; grid-template-columns: 1.1fr .9fr; gap: 0; padding: 0; overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .feature[hidden] { display: none; }
+  .feature-main { padding: 24px; }
+  .feature-side { background: var(--surface-2); padding: 24px; border-left: 1px solid var(--line); }
+  .feature-side dl { margin: 0; }
+  .feature-side dt { font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 900; margin-top: 12px; }
+  .feature-side dd { margin: 2px 0 0; font-size: .92rem; }
+  .feature-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+  .feature h3 { margin: 0; }
+  .feature .why { color: var(--muted); font-size: .95rem; }
+  .feature ol { padding-left: 20px; margin: 10px 0 0; }
+  .feature ol li { margin-bottom: 6px; }
+  .phone-stage {
+    display: grid; grid-template-columns: 360px 1fr; gap: 34px; align-items: start;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 24px; padding: 26px;
+  }
+  .phone-wrap { position: sticky; top: 126px; }
+  .phone {
+    width: 330px; max-width: 100%; aspect-ratio: 330 / 660; border-radius: 44px;
+    background: var(--phone-bg); border: 10px solid #161b22; box-shadow: var(--shadow);
+    position: relative; overflow: hidden; color: var(--phone-ink);
+    display: flex; flex-direction: column;
+  }
+  html[data-theme="dark"] .phone { border-color: #05080c; }
+  .phone::before {
+    content: ""; position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+    width: 96px; height: 22px; border-radius: 0 0 14px 14px; background: #161b22; z-index: 5;
+  }
+  html[data-theme="dark"] .phone::before { background: #05080c; }
+  .statusbar {
+    height: 34px; flex: none; display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 18px 0; font-size: 10px; font-weight: 800; color: var(--phone-muted);
+  }
+  .phone-screen { flex: 1; overflow-y: auto; padding: 8px 16px 16px; scrollbar-width: thin; }
+  .phone-screen::-webkit-scrollbar { width: 4px; }
+  .phone-screen::-webkit-scrollbar-thumb { background: var(--line); border-radius: 4px; }
+  .screen { display: none; }
+  .screen.active { display: block; animation: fade .2s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  .phone h4 { font-family: var(--sans); font-size: 20px; line-height: 1.2; margin: 4px 0 2px; letter-spacing: -.02em; }
+  .phone p { font-size: 13px; line-height: 1.45; margin: 0 0 8px; color: var(--phone-muted); }
+  .phone .tiny { font-size: 10px; text-transform: uppercase; letter-spacing: .08em; font-weight: 900; color: var(--phone-muted); }
+  .phone .big-photo {
+    height: 150px; border-radius: 16px; overflow: hidden; margin: 10px 0 12px; position: relative;
+    background: linear-gradient(160deg, #bcd7f7, #e7f0fb 55%, #f6e5c8);
+  }
+  html[data-theme="dark"] .phone .big-photo { background: linear-gradient(160deg, #23405f, #1a2b3f 55%, #3b2f22); }
+  .phone .big-photo svg { width: 100%; height: 100%; display: block; }
+  .phone .photo-label {
+    position: absolute; left: 8px; bottom: 8px; background: rgba(10, 16, 24, .72); color: #fff;
+    font-size: 9px; font-weight: 800; padding: 3px 7px; border-radius: 6px; letter-spacing: .03em;
+  }
+  .phone .place-card {
+    border: 1px solid #cfdae8; background: #fff; border-radius: 16px; padding: 10px;
+    display: grid; grid-template-columns: 74px 1fr auto; gap: 10px; align-items: center;
+    margin-bottom: 9px; cursor: pointer; text-align: left; width: 100%; font: inherit; color: inherit;
+  }
+  html[data-theme="dark"] .phone .place-card { background: #172331; border-color: #2e4055; }
+  .phone .thumb { width: 74px; height: 58px; border-radius: 10px; overflow: hidden; background: #dce9f7; }
+  .phone .thumb svg { width: 100%; height: 100%; display: block; }
+  .phone .place-card b { font-size: 15px; display: block; }
+  .phone .place-card span { font-size: 11px; color: var(--phone-muted); display: block; margin-top: 2px; }
+  .phone .pbtn {
+    appearance: none; border: 0; border-radius: 12px; background: #1d5bb8; color: #fff;
+    font: inherit; font-size: 14px; font-weight: 800; padding: 12px; width: 100%; cursor: pointer;
+    margin-top: 8px; min-height: 44px;
+  }
+  .phone .pbtn.secondary { background: #e8eef8; color: #1d4f9c; }
+  html[data-theme="dark"] .phone .pbtn.secondary { background: #1e2d45; color: #9fc0ff; }
+  .phone .pbtn.ghost { background: transparent; color: var(--phone-muted); border: 1px solid #cfdae8; }
+  html[data-theme="dark"] .phone .pbtn.ghost { border-color: #2e4055; }
+  .phone .pbtn.help { background: #fff; color: #a1282e; border: 2px solid #e7b3b3; }
+  html[data-theme="dark"] .phone .pbtn.help { background: #26161a; border-color: #6f2f35; color: #ffb3b3; }
+  .phone .step-count { display: flex; align-items: center; gap: 4px; margin: 6px 0 10px; }
+  .phone .dot { height: 5px; flex: 1; border-radius: 999px; background: #d8e2ee; }
+  .phone .dot.done { background: #1d5bb8; }
+  .phone .dot.now { background: #1d5bb8; box-shadow: 0 0 0 3px rgba(29,91,184,.16); }
+  .phone .instruction {
+    font-size: 24px; line-height: 1.15; font-weight: 900; letter-spacing: -.02em; margin: 2px 0 6px;
+  }
+  .phone .sub { font-size: 13px; color: var(--phone-muted); }
+  .phone .audio-row { display: flex; gap: 8px; margin: 10px 0 2px; }
+  .phone .audio-btn {
+    flex: 1; border: 1px solid #cfdae8; background: #fff; color: #1d4f9c; border-radius: 999px;
+    font: inherit; font-size: 12px; font-weight: 800; padding: 8px; cursor: pointer; min-height: 38px;
+  }
+  html[data-theme="dark"] .phone .audio-btn { background: #172331; border-color: #2e4055; color: #9fc0ff; }
+  .phone .helpcard {
+    background: #fff; border: 3px solid #a1282e; border-radius: 18px; padding: 16px; margin-top: 8px;
+  }
+  html[data-theme="dark"] .phone .helpcard { background: #24171a; border-color: #8e3a40; }
+  .phone .helpcard h4 { color: #a1282e; }
+  html[data-theme="dark"] .phone .helpcard h4 { color: #ffb3b3; }
+  .phone .helpcard .huge { font-size: 20px; line-height: 1.25; font-weight: 900; }
+  .phone .helpcard .addr { font-size: 12px; color: var(--phone-muted); margin-top: 6px; }
+  .phone .bottombar {
+    flex: none; border-top: 1px solid var(--line); background: var(--phone-bg);
+    display: flex; justify-content: space-around; padding: 7px 4px 9px;
+  }
+  .phone .bottombar[hidden] { display: none !important; }
+  .phone .tabbtn {
+    appearance: none; border: 0; background: transparent; color: var(--phone-muted);
+    font: inherit; font-size: 9px; font-weight: 800; display: grid; justify-items: center; gap: 2px;
+    cursor: pointer; padding: 4px 8px; border-radius: 8px;
+  }
+  .phone .tabbtn.active { color: #1d5bb8; }
+  html[data-theme="dark"] .phone .tabbtn.active { color: #9fc0ff; }
+  .phone .tabbtn svg { width: 18px; height: 18px; }
+  .phone .status-pill {
+    display: inline-flex; align-items: center; gap: 5px; background: #e3f2ea; color: #17654b;
+    border-radius: 999px; font-size: 10px; font-weight: 900; padding: 4px 8px;
+  }
+  html[data-theme="dark"] .phone .status-pill { background: #183328; color: #7fd3ae; }
+  .phone .status-pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .phone .timeline { position: relative; margin: 10px 0 8px; padding-left: 24px; }
+  .phone .timeline::before {
+    content: ""; position: absolute; left: 7px; top: 8px; bottom: 8px; width: 2px; background: #cfdae8;
+  }
+  html[data-theme="dark"] .phone .timeline::before { background: #2e4055; }
+  .phone .titem { position: relative; padding: 0 0 14px; }
+  .phone .titem::before {
+    content: ""; position: absolute; left: -24px; top: 4px; width: 16px; height: 16px; border-radius: 50%;
+    background: #fff; border: 3px solid #1d5bb8;
+  }
+  html[data-theme="dark"] .phone .titem::before { background: #0f1720; }
+  .phone .titem b { font-size: 14px; display: block; }
+  .phone .titem span { font-size: 11px; color: var(--phone-muted); }
+  .phone .toggle-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 10px 0; border-bottom: 1px solid #e2e9f2;
+  }
+  html[data-theme="dark"] .phone .toggle-row { border-color: #2e4055; }
+  .phone .toggle-row b { font-size: 13px; display: block; }
+  .phone .toggle-row span { font-size: 10px; color: var(--phone-muted); display: block; }
+  .phone .switch {
+    width: 40px; height: 24px; border-radius: 999px; background: #1d5bb8; position: relative; flex: none;
+    border: 0; cursor: pointer;
+  }
+  .phone .switch::after {
+    content: ""; position: absolute; top: 3px; right: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff;
+  }
+  .phone .switch.off { background: #c9d4e2; }
+  .phone .switch.off::after { right: auto; left: 3px; }
+  html[data-theme="dark"] .phone .switch.off { background: #46566a; }
+  .phone .callout-small {
+    background: #fbf0dc; border: 1px solid #e7cfa5; border-radius: 10px; padding: 8px 10px;
+    font-size: 11px; line-height: 1.4; color: #5f3b00; margin-top: 10px;
+  }
+  html[data-theme="dark"] .phone .callout-small { background: #322716; border-color: #5c4a2a; color: #f1c27d; }
+  .phone.easy .instruction { font-size: 28px; }
+  .phone.easy h4 { font-size: 23px; }
+  .phone.easy p, .phone.easy .sub { font-size: 15px; line-height: 1.55; }
+  .phone.easy .place-card b { font-size: 17px; }
+  .phone.easy .place-card span { font-size: 12px; }
+  .phone.easy .tiny { font-size: 11px; }
+  .phone.easy .pbtn { font-size: 15px; min-height: 48px; }
+  .phone-toast {
+    position: absolute; left: 16px; right: 16px; bottom: 78px; z-index: 30;
+    background: #16212e; color: #fff; border-radius: 10px; padding: 10px 12px;
+    font-size: 12px; line-height: 1.4; opacity: 0; transform: translateY(6px);
+    transition: opacity .18s ease, transform .18s ease; pointer-events: none;
+  }
+  .phone-toast.show { opacity: 1; transform: none; }
+  .mockup-controls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .mock-notes { margin-top: 28px; }
+  .mock-notes .note {
+    display: grid; grid-template-columns: 28px 1fr; gap: 10px; padding: 12px 0; border-top: 1px solid var(--line);
+  }
+  .mock-notes .note:first-child { border-top: 0; }
+  .note-num {
+    width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--accent); color: var(--accent-ink); font-size: 11px; font-weight: 900;
+  }
+  .note b { display: block; font-size: .95rem; }
+  .note span { color: var(--muted); font-size: .9rem; }
+  .screen-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+  .screen-tab {
+    appearance: none; border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    border-radius: 8px; padding: 6px 10px; font: inherit; font-size: 12px; font-weight: 800; cursor: pointer;
+  }
+  .screen-tab[aria-selected="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .flow-board { background: var(--surface); border: 1px solid var(--line); border-radius: 24px; padding: 24px; }
+  .flow-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .flow-tab {
+    appearance: none; border: 1px solid var(--line); background: transparent; color: var(--ink);
+    border-radius: 999px; padding: 7px 14px; font: inherit; font-size: 13px; font-weight: 800; cursor: pointer;
+  }
+  .flow-tab[aria-selected="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .flow-panel[hidden] { display: none; }
+  .flow-row { display: flex; align-items: stretch; gap: 0; overflow-x: auto; padding: 6px 0 14px; }
+  .flow-node {
+    min-width: 150px; flex: 1; border: 1px solid var(--line); background: var(--surface-2);
+    border-radius: 14px; padding: 12px; cursor: pointer; text-align: left; font: inherit; color: inherit;
+    position: relative; margin-right: 26px;
+  }
+  .flow-node:last-child { margin-right: 0; }
+  .flow-node::after {
+    content: ""; position: absolute; right: -20px; top: 50%; width: 14px; height: 2px; background: var(--line);
+  }
+  .flow-node:last-child::after { display: none; }
+  .flow-node::before {
+    content: ""; position: absolute; right: -21px; top: calc(50% - 4px);
+    border-left: 6px solid var(--line); border-top: 5px solid transparent; border-bottom: 5px solid transparent;
+  }
+  .flow-node:last-child::before { display: none; }
+  .flow-node b { display: block; font-size: .9rem; }
+  .flow-node span { display: block; color: var(--muted); font-size: .78rem; margin-top: 2px; }
+  .flow-node:hover, .flow-node:focus-visible { border-color: var(--accent); background: var(--accent-soft); }
+  .flow-detail {
+    margin-top: 12px; border-left: 4px solid var(--accent); background: var(--accent-soft);
+    padding: 14px 16px; border-radius: 8px; min-height: 74px;
+  }
+  .flow-detail strong { display: block; margin-bottom: 2px; }
+  .flow-detail p { margin: 0; color: var(--muted); }
+  .flow-vertical { display: grid; gap: 10px; }
+  .flow-vertical .flow-node { margin-right: 0; border-left: 4px solid var(--accent); }
+  .flow-vertical .flow-node::after, .flow-vertical .flow-node::before { display: none; }
+  .copy-table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+  .copy-table th, .copy-table td { text-align: left; padding: 12px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .copy-table thead th { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+  .copy-table .new { color: var(--green); font-weight: 700; }
+  .copy-table .old { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 1px; }
+  .roadmap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .roadmap .card { position: relative; }
+  .roadmap .when { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: .06em; }
+  .roadmap ul { padding-left: 18px; margin: 8px 0 0; }
+  .roadmap li { margin-bottom: 5px; }
+  .metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .metric { border: 1px solid var(--line); border-radius: 12px; padding: 14px; background: var(--surface); }
+  .metric b { display: block; font-size: 1.05rem; }
+  .metric span { color: var(--muted); font-size: .88rem; }
+  .sources { counter-reset: source; padding: 0; list-style: none; margin: 0; }
+  .sources li { counter-increment: source; padding: 14px 0 14px 44px; border-top: 1px solid var(--line); position: relative; }
+  .sources li:first-child { border-top: 0; }
+  .sources li::before {
+    content: "[" counter(source) "]"; position: absolute; left: 0; top: 14px;
+    font-family: var(--mono); font-size: 12px; color: var(--accent); font-weight: 700;
+  }
+  .sources .src-title { font-weight: 800; display: block; }
+  .sources .src-meta { color: var(--muted); font-size: .86rem; }
+  .sources a { word-break: break-word; }
+  .footer { padding: 36px 0 60px; color: var(--muted); font-size: .88rem; }
+  .footer strong { color: var(--ink); }
+  .appendix { display: grid; gap: 16px; }
+  .kbd {
+    font-family: var(--mono); font-size: .8em; border: 1px solid var(--line); border-bottom-width: 2px;
+    background: var(--surface); border-radius: 5px; padding: 1px 5px;
+  }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+  .reading-now {
+    position: fixed; right: 20px; bottom: 20px; z-index: 90; background: var(--ink); color: var(--bg);
+    border: 0; border-radius: 999px; padding: 10px 16px; font: inherit; font-size: 13px; font-weight: 800;
+    box-shadow: var(--shadow); cursor: pointer; display: none;
+  }
+  .reading-now.show { display: inline-flex; gap: 8px; align-items: center; }
+  @media (max-width: 900px) {
+    .hero-grid, .section-head, .phone-stage, .feature, .roadmap { grid-template-columns: 1fr; }
+    .phone-wrap { position: static; display: flex; justify-content: center; }
+    .feature-side { border-left: 0; border-top: 1px solid var(--line); }
+    .grid-3, .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .section-head { gap: 10px; }
+  }
+  @media (max-width: 620px) {
+    section[id], li[id] { scroll-margin-top: 190px; }
+    .grid-2, .grid-3, .grid-4, .metrics { grid-template-columns: 1fr; }
+    .finding { grid-template-columns: 44px 1fr; gap: 14px; }
+    .finding-num { font-size: 1.8rem; }
+    .brand small { display: none; }
+    .phone { width: 100%; max-width: 340px; }
+    .topbar-inner { align-items: flex-start; }
+    .controls { gap: 4px; }
+    .control { font-size: 12px; padding: 5px 9px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+  }
+  @media print {
+    .topbar, .progress, .reading-now, .cta-row, .mockup-controls, .filters, .flow-tabs, .screen-tabs { display: none !important; }
+    body { background: #fff; color: #000; font-size: 11pt; }
+    .section, .hero { padding: 20px 0; break-inside: avoid; }
+    .card, .phone-stage, .flow-board { box-shadow: none; }
+    a { color: #000; text-decoration: underline; }
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="progress" id="progress" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <div class="brand"><span class="brand-mark" aria-hidden="true">E</span> EasyBoard <small>research</small></div>
+    <div class="controls" role="toolbar" aria-label="Reading controls">
+      <button class="control" id="easyReadBtn" type="button" aria-pressed="false" title="Larger text and more spacing">Easy read</button>
+      <button class="control" id="fontDown" type="button" aria-label="Smaller text">A−</button>
+      <button class="control" id="fontUp" type="button" aria-label="Larger text">A+</button>
+      <button class="control" id="themeBtn" type="button" aria-pressed="false" title="Switch light and dark theme">Dark</button>
+      <button class="control" id="readBtn" type="button" aria-pressed="false" title="Read this section aloud">Read aloud</button>
+    </div>
+  </div>
+  <nav class="nav-strip" aria-label="Sections">
+    <div class="wrap nav-scroll" id="navScroll">
+      <a href="#summary">Summary</a>
+      <a href="#users">Who we design for</a>
+      <a href="#findings">Findings</a>
+      <a href="#principles">Principles</a>
+      <a href="#today">Today</a>
+      <a href="#features">Features</a>
+      <a href="#mockups">Mockups</a>
+      <a href="#flows">Flows</a>
+      <a href="#build">Build</a>
+      <a href="#test">Test</a>
+      <a href="#sources">Sources</a>
+    </div>
+  </nav>
+</header>
+
+<main id="main">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="kicker">Product research · November 2026</div>
+        <h1>Travel independence for people with intellectual disabilities</h1>
+        <p class="lede">What we learned from the research, what EasyBoard should build next, and how to test it with the people it is for.</p>
+        <div class="meta-chips" aria-label="Document contents">
+          <span class="chip"><strong>10</strong> findings</span>
+          <span class="chip"><strong>9</strong> features</span>
+          <span class="chip"><strong>7</strong> phone screens</span>
+          <span class="chip"><strong>3</strong> flows</span>
+          <span class="chip"><strong>26</strong> sources</span>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#summary">Read the short version</a>
+          <a class="btn btn-ghost" href="#mockups">Try the mockup</a>
+        </div>
+      </div>
+      <div class="hero-art">
+        <svg viewBox="0 0 420 330" role="img" aria-label="A dotted route with five stops: home, bus stop, bus, walk, destination">
+          <defs>
+            <linearGradient id="heroSky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#e7eefb"/>
+              <stop offset="1" stop-color="#f6f3ec"/>
+            </linearGradient>
+          </defs>
+          <rect width="420" height="330" rx="18" fill="url(#heroSky)"/>
+          <path d="M42 270 C 110 220, 120 160, 190 150 S 300 120, 378 58" fill="none" stroke="#1d5bb8" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 10"/>
+          <circle cx="42" cy="270" r="15" fill="#fffdf8" stroke="#1d5bb8" stroke-width="3"/>
+          <path d="M36 274v-8l6-4 6 4v8" fill="none" stroke="#1d5bb8" stroke-width="2"/>
+          <circle cx="132" cy="196" r="15" fill="#fffdf8" stroke="#1d5bb8" stroke-width="3"/>
+          <path d="M126 200h12M128 200v-7h8v7M130 193v-3h4v3" fill="none" stroke="#1d5bb8" stroke-width="2"/>
+          <rect x="180" y="122" width="54" height="40" rx="8" fill="#fffdf8" stroke="#1d5bb8" stroke-width="3"/>
+          <path d="M188 150v-12h38v12M194 138v-5h8v5M206 138v-5h8v5M212 154v6M198 154v6" fill="none" stroke="#1d5bb8" stroke-width="2"/>
+          <circle cx="294" cy="106" r="15" fill="#fffdf8" stroke="#1d5bb8" stroke-width="3"/>
+          <path d="M288 110l4-8 4 5 4-7" fill="none" stroke="#1d5bb8" stroke-width="2"/>
+          <circle cx="378" cy="58" r="16" fill="#1d5bb8"/>
+          <path d="M371 58l5 5 9-10" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+          <g font-family="ui-sans-serif, sans-serif" font-size="11" fill="#5a6572">
+            <text x="20" y="302">Home</text>
+            <text x="108" y="228">Bus stop</text>
+            <text x="182" y="182">Bus 2</text>
+            <text x="272" y="138">Walk</text>
+            <text x="350" y="32">Arrive</text>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="summary">
+    <div class="wrap">
+      <div class="section-head">
+        <div><div class="section-num">01 / Summary</div><h2>The short version</h2></div>
+        <p>EasyBoard already has the right pieces: photo places, a simple route choice, one-tap calling, and location sharing. The next step is to turn those pieces into a calm travel coach. The app should decide what to show next.</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card promise">
+          <div class="promise-num">Promise 01</div>
+          <blockquote>“I always know the next step.”</blockquote>
+          <p>One instruction at a time, with a photo of the place, a spoken version, and a clear button for what to do now.</p>
+        </div>
+        <div class="card promise">
+          <div class="promise-num">Promise 02</div>
+          <blockquote>“I can get help without explaining everything.”</blockquote>
+          <p>A help screen that shows the person’s name, destination, location and caregiver’s number. One tap to call. One tap to show a stranger.</p>
+        </div>
+        <div class="card promise">
+          <div class="promise-num">Promise 03</div>
+          <blockquote>“I decide what my caregiver can see.”</blockquote>
+          <p>Sharing starts with a choice. The person can see what is shared, pause it, and know who is watching.</p>
+        </div>
+      </div>
+
+      <div class="grid-2" style="margin-top:18px">
+        <div class="card">
+          <span class="tag p0">Build first</span>
+          <h3 style="margin-top:10px">Five changes that matter most</h3>
+          <ol>
+            <li><strong>Guided Trip Mode.</strong> One step per screen, with a boarding confirmation, photo, audio, progress, and an “I’m not sure” button.</li>
+            <li><strong>Read Aloud and Easy Read.</strong> Short sentences, large text, optional images, and speech on every important screen.</li>
+            <li><strong>Help Card.</strong> A full-screen card the person can show to a driver, staff member, or stranger.</li>
+            <li><strong>Trip Story.</strong> A visual preview of the whole trip before it starts, with photos from the caregiver.</li>
+            <li><strong>Calm change alerts.</strong> Plain words when a bus is late or a route changes, plus one clear action.</li>
+          </ol>
+        </div>
+        <div class="card">
+          <span class="tag risk">Avoid</span>
+          <h3 style="margin-top:10px">What not to build</h3>
+          <ul>
+            <li><strong>Always-on location by default.</strong> It turns support into surveillance and can push people to stop using the app.</li>
+            <li><strong>Dense route cards.</strong> “Route 1, estimated distance, estimated journey time” is a planning screen, not a travelling screen.</li>
+            <li><strong>Red alarm states for normal problems.</strong> A late bus is not an emergency. Calm words and a next action work better.</li>
+            <li><strong>Text-only instructions.</strong> Reading is not the only way to understand. Pair text with photos and audio.</li>
+            <li><strong>A caregiver-only product.</strong> The person with a disability is the user. The caregiver is a supporter.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 style="margin-top:34px">The evidence in numbers</h3>
+      <table class="stat-table">
+        <caption>Singapore data unless marked. These numbers describe people with disabilities known to government, so they are a lower bound, not the full population.</caption>
+        <thead><tr><th>Number</th><th>What it means</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr><td><span class="stat-num">45,000</span></td><td>persons with disabilities aged 19 and above were known to government in December 2023.</td><td><a href="#src-1">[1]</a></td></tr>
+          <tr><td><span class="stat-num">19.2%</span></td><td>of those adults have an intellectual disability. That is about 1 in 5.</td><td><a href="#src-1">[1]</a></td></tr>
+          <tr><td><span class="stat-num">83.4%</span></td><td>used some form of public transport in the past year.</td><td><a href="#src-1">[1]</a></td></tr>
+          <tr><td><span class="stat-num">74.2%</span></td><td>of those who used public transport said they were satisfied with the system.</td><td><a href="#src-1">[1]</a></td></tr>
+          <tr><td><span class="stat-num">1 in 4</span></td><td>caregivers of persons with disabilities are 65 or older. Support has to work for older caregivers too.</td><td><a href="#src-1">[1]</a></td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout green">
+        <p><strong>The product bet.</strong> If EasyBoard makes the next step obvious and makes help easy, more people can travel without a companion. That is the outcome that matters. Measure independent trips, successful recoveries, and help that arrives.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="users">
+    <div class="wrap">
+      <div class="section-head">
+        <div><div class="section-num">02 / Users</div><h2>Who we design for</h2></div>
+        <p>People with intellectual disabilities are not one group. Reading levels, phone skills, anxiety, support needs, and family rules vary. Design for the edges and the middle gets easier. These personas are composites built from the research, not real customers.</p>
+      </div>
+
+      <div class="grid-2">
+        <article class="card persona">
+          <div class="persona-top"><div class="avatar" aria-hidden="true">R</div><div><h3 style="margin:0">Ryan, 16</h3><span class="tag">Student · mild ID</span></div></div>
+          <dl>
+            <dt>What he needs</dt><dd>To get from school to home on bus 2 without a teacher following him.</dd>
+            <dt>What gets in the way</dt><dd>He recognises some numbers but not all. He gets anxious when the bus does not come. He waits until the last second to press the bell.</dd>
+            <dt>Design clue</dt><dd>Show a photo of the stop and the bus number. Tell him how many stops are left. Give him a practice run before the solo run.</dd>
+          </dl>
+        </article>
+
+        <article class="card persona">
+          <div class="persona-top"><div class="avatar" aria-hidden="true">S</div><div><h3 style="margin:0">Siti, 29</h3><span class="tag">Works in a café · mild ID</span></div></div>
+          <dl>
+            <dt>What she needs</dt><dd>To meet friends after work without her mother watching every move.</dd>
+            <dt>What gets in the way</dt><dd>She reads short sentences. She does not want to be tracked all day. She has been spoken over by staff who assumed she could not decide.</dd>
+            <dt>Design clue</dt><dd>Let her choose what is shared and for how long. Use plain words. Make “pause sharing” as easy as “start sharing”.</dd>
+          </dl>
+        </article>
+
+        <article class="card persona">
+          <div class="persona-top"><div class="avatar" aria-hidden="true">M</div><div><h3 style="margin:0">Mei Leng, 58</h3><span class="tag">Transition coordinator</span></div></div>
+          <dl>
+            <dt>What she needs</dt><dd>To set up a route once, teach it, and know when a student is stuck.</dd>
+            <dt>What gets in the way</dt><dd>She cannot watch a live dot for 30 students. She needs exceptions, not a control room.</dd>
+            <dt>Design clue</dt><dd>Alerts for “not moving for 10 minutes”, “off route”, “arrived”, and “asked for help”. A trip card, not a map wall.</dd>
+          </dl>
+        </article>
+
+        <article class="card persona">
+          <div class="persona-top"><div class="avatar" aria-hidden="true">T</div><div><h3 style="margin:0">Mr Tan, 62</h3><span class="tag">Parent and caregiver</span></div></div>
+          <dl>
+            <dt>What he needs</dt><dd>To know his son is safe without calling him every 10 minutes.</dd>
+            <dt>What gets in the way</dt><dd>He worries about traffic, strangers, and the phone battery dying. He does not want to be a spy.</dd>
+            <dt>Design clue</dt><dd>Simple status: “On the bus”, “10 minutes away”, “Arrived”. A voice note is faster and warmer than a text.</dd>
+          </dl>
+        </article>
+      </div>
+
+      <div class="callout">
+        <p><strong>Design for different support needs.</strong> Some people will use the app alone. Some will use it with a support worker sitting beside them. Some will not read at all. The same journey should work with touch, voice, pictures, and a phone call.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="findings">
+    <div class="wrap">
+      <div class="section-head">
+        <div><div class="section-num">03 / Findings</div><h2>What the research says</h2></div>
+        <p>Ten findings, each with the evidence behind it and what it changes in the product. The pattern is consistent: the barriers are less about maps and more about uncertainty, memory, communication, control, and the small transitions that apps skip, like boarding.</p>
+      </div>
+
+      <article class="finding">
+        <div class="finding-num">01</div>
+        <div>
+          <h3>Travel is a chain of small transitions, not one route</h3>
+          <p class="evidence">A scoping review of 34 studies found barriers at every link of the travel chain: walking to the stop, waiting, boarding, riding, getting off, and walking to the destination. The barriers included long waits, missing information, unclear signage, crowding, and driver attitudes.<a class="cite" href="#src-2">[2]</a> The transport-tech review makes the same point: most studies test one context, such as a single bus route or pedestrian travel, not a full multi-modal trip.<a class="cite" href="#src-3">[3]</a></p>
+          <div class="so-what"><span>For EasyBoard</span>The unit of design is the transition, not the route line. “Walk to the stop. Wait here. Get on bus 2. Get off in 8 stops.” Each one needs its own screen and its own help.</div>
+        </div>
+      </article>
+
+      <article class="finding">
+        <div class="finding-num">02</div>
+        <div>
+          <h3>The hardest part is uncertainty, not distance</h3>
+          <p class="evidence">In a UK Department for Transport study, people with learning disabilities and other non-visible impairments said the lack of real-time information, route changes, and delays caused the most stress. Some avoided buses completely. Journey apps helped because they reduced the amount of information people had to hold in their heads.<a class="cite" href="#src-7">[7]</a></p>
+          <div class="so-what"><span>For EasyBoard</span>When something changes, do not show a new route. Show one sentence: “The bus is 6 minutes late. Wait here.” Then one action: “Tell me when it comes.”</div>
+        </div>
+      </article>
+
+      <article class="finding">
+        <div class="finding-num">03</div>
+        <div>
+          <h3>Asking for help is the hardest step</h3>
+          <p class="evidence">The same UK study found that communicating with staff or strangers caused anxiety and embarrassment. Participants avoided asking questions and used apps or called family instead. They suggested free assistance cards that tell staff what the person needs without a long explanation.<a class="cite" href="#src-7">[7]</a> The JAM Card scheme in Ireland now has more than 35,000 cards and app registrations; the card lets a person ask for “just a minute” of patience.<a class="cite" href="#src-10">[10]</a></p>
+          <div class="so-what"><span>For EasyBoard</span>A help screen is a social tool. It should be readable at arm’s length, work without speech, and say exactly what the person needs.</div>
+        </div>
+      </article>
+
+      <article class="finding">
+        <div class="finding-num">04</div>
+        <div>
+          <h3>Route knowledge is fragile, and practice builds it</h3>
+          <p class="evidence">At MINDS, a student needed 16 weeks of travel training to go from school to home alone. He could not recognise all bus numbers and wanted to board every bus with a “2”. The team used placards, repeated the route twice a week, and simulated problems such as missing a stop.<a class="cite" href="#src-8">[8]</a> The research review found that travel training improved confidence and use of public transport.<a class="cite" href="#src-2">[2]</a></p>
+          <div class="so-what"><span>For EasyBoard</span>The app should support rehearsal as well as live navigation. A practice mode with the caregiver, a “what if” quiz, and a “solo ready” checklist fits how travel skills are actually learned.</div>
+        </div>
+      </article>
+
+      <article class="finding">
+        <div class="finding-num">05</div>
+        <div>
+          <h3>Context-aware prompts work, but the evidence is small</h3>
+          <p class="evidence">A review of 13 studies found that digital tools improved independent travel. In one small study, 8 of 11 participants using a GPS device completed the bus route; in the control group, 1 of 12 got off at the correct stop. In another, 17 of 18 participants using an augmented-reality app reached and identified the destination, compared with 9 of 18 using Google Maps. A third found 93.3% wayfinding success with a PDA and QR tags; four of six participants failed without the aid.<a class="cite" href="#src-3">[3]</a> These are promising but small studies, often on one route.</p>
+          <div class="so-what"><span>For EasyBoard</span>Use GPS to trigger prompts, but do not depend on it. Let the person tap “I’m here” when GPS drifts. Always keep a caregiver call and a human fallback.</div>
+        </div>
+      </article>
+
+      <article class="finding">
+        <div class="finding-num">06</div>
+        <div>
+          <h3>Most travel apps are not designed with this group</h3>
+          <p class="evidence">In the 13-study review, only 2 studies involved people with intellectual disabilities in the design of the technology. Most focused on a single context and did not explore communication, buying tickets, crowds, or asking for help.<a class="cite" href="#src-3">[3]</a> A separate study of ride-hailing apps found that people with intellectual disabilities hit their own difficulties, and recommended family and government support.<a class="cite" href="#src-4">[4]</a></p>
+          <div class="so-what"><span>For EasyBoard</span>Co-design is part of the work. Test with people with different reading levels and support needs. Pay them for their time. Ship the version they can use on a real route.</div>
+        </div>
+      </article>
+
+      <article class="finding">
+        <div class="finding-num">07</div>
+        <div>
+          <h3>Easy Read is a system, not a font size</h3>
+          <p class="evidence">NHS England guidance says easy read should use short sentences of about 15 words, one idea per sentence, simple punctuation, active language, and images that match the text. It should be tested with the audience. Images can distract some autistic people, so easy read should be a choice, not a forced mode.<a class="cite" href="#src-6">[6]</a> The CDC guide for adults with intellectual disabilities and very low literacy is stricter: aim for 10 words or fewer per sentence, one idea per screen, literal images, and one action per screen.<a class="cite" href="#src-18">[18]</a> The evidence that easy read improves understanding is limited. A 2026 systematic review of 29 studies found that people valued easy read, but the research quality was low and the effect was unclear.<a class="cite" href="#src-21">[21]</a> The W3C cognitive accessibility guidance adds consistent layouts, clear headings, familiar controls, and help that is easy to find.<a class="cite" href="#src-5">[5]</a></p>
+          <div class="so-what"><span>For EasyBoard</span>Build an Easy Read setting that changes text, spacing, and images across the app. Keep an audio version. Test the actual screens with people with different reading levels; do not assume pictures help everyone.</div>
+        </div>
+      </article>
+
+      <article class="finding">
+        <div class="finding-num">08</div>
+        <div>
+          <h3>Safety tools can become control tools</h3>
+          <p class="evidence">Research on surveillance in care settings finds a persistent tension between safety and freedom. Professionals worry about restriction, and the ideal use depends on whether everyone affected understands what the technology is for.<a class="cite" href="#src-12">[12]</a> Adults with intellectual disabilities describe carer gatekeeping and restriction as harmful to their wellbeing. They want support to manage risk, not removal of the chance to take it.<a class="cite" href="#src-11">[11]</a></p>
+          <div class="so-what"><span>For EasyBoard</span>Make sharing consensual, visible, and time-limited. Default to “share this trip”, not “share my location forever”. Let the person pause without a fight.</div>
+        </div>
+      </article>
+
+      <article class="finding">
+        <div class="finding-num">09</div>
+        <div>
+          <h3>Digital exclusion is part of the design brief</h3>
+          <p class="evidence">People with intellectual disabilities remain more digitally excluded than the general population, and support staff sometimes restrict access because of perceived risk.<a class="cite" href="#src-11">[11]</a><a class="cite" href="#src-13">[13]</a> In an Icelandic survey of 144 people with intellectual disabilities, 25.2% said they never or almost never used phone or digital technology to contact others.<a class="cite" href="#src-20">[20]</a> A phone can run out of battery, lose signal, or run out of data. Not everyone has the latest device.</p>
+          <div class="so-what"><span>For EasyBoard</span>Cache the route. Make the help card work offline. Provide an SMS fallback and a printable card. The safety plan cannot depend on a live connection.</div>
+        </div>
+      </article>
+
+      <article class="finding">
+        <div class="finding-num">10</div>
+        <div>
+          <h3>Boarding is its own step</h3>
+          <p class="evidence">Travel-training assessments list “knows the bus number”, “identifies the bus and indicates a desire to board”, and “taps the pass” as separate skills.<a class="cite" href="#src-22">[22]</a> The same manual teaches a specific signal (hold the pass in front of your chest) and a specific cue (wait until the vehicle stops before approaching).<a class="cite" href="#src-22">[22]</a> A 15-step bus task analysis treats every step as essential; missing one step stops the trip.<a class="cite" href="#src-26">[26]</a> Boarding is a distinct phase in travel instruction.<a class="cite" href="#src-23">[23]</a> Pictures at retrieval improve prospective memory for people with intellectual disabilities, so the prompt should appear as a photo at the moment the door opens.<a class="cite" href="#src-24">[24]</a> TransLink built a virtual bus tour for people who are not comfortable boarding, which shows the demand for rehearsal.<a class="cite" href="#src-25">[25]</a></p>
+          <div class="so-what"><span>For EasyBoard</span>Make boarding its own step. Wait for the bus to stop. Show the open door. Say “Get on bus 2.” Ask “Are you on the bus?” If there is no confirmation in 45 seconds, prompt again and tell the caregiver. Never treat “I see the bus” as the end of the step.</div>
+        </div>
+      </article>
+
+      <h3 style="margin-top:34px">What already exists</h3>
+      <p>EasyBoard is not starting from zero. Several products solve part of the problem. Based on a product scan, the ones we reviewed do not combine cognitive support, live public transport, caregiver consent, and a local help card in one place. This is a scan, not a systematic review. In this table, IDD means intellectual and developmental disabilities.</p>
+      <table class="audit-table">
+        <caption class="sr-only">Existing products and what to learn from them</caption>
+        <thead><tr><th>Tool</th><th>What it does</th><th>Evidence</th><th>What EasyBoard should take</th></tr></thead>
+        <tbody>
+          <tr><td><a href="https://www.wayfindr.net/open-standard/getting-started">Wayfindr</a></td><td>An open standard and audio guidance for indoor and network wayfinding, built mainly for blind and low-vision travellers.</td><td>Open standard; no IDD outcome study found.</td><td>Audio-first instructions and a consistent grammar for steps.</td></tr>
+          <tr><td><a href="https://www.njtransit.com/navilens">NaviLens</a></td><td>Reads tagged signs aloud and gives transit information at a distance.</td><td>Transit-agency deployments; no IDD outcome study found.</td><td>Audio labels for stops and platforms, where tags exist.</td></tr>
+          <tr><td><a href="https://www.goodmaps.com/">GoodMaps</a></td><td>Indoor positioning with camera, audio, haptic, and augmented reality (AR) cues.</td><td>Vendor says it is designed for neurodiverse visitors; no IDD-specific outcome study found.</td><td>Join indoor routes to outdoor transit across a whole trip.</td></tr>
+          <tr><td><a href="https://maphabit.com/pages/how-it-works">MapHabit</a></td><td>Personalised visual routines with photos, audio, video, and a care-team chat.</td><td>Feasibility study with 22 older adults with cognitive impairment; not an IDD travel trial.</td><td>Caregiver-authored photos and voice notes attached to each step.</td></tr>
+          <tr><td><a href="https://www.translink.ca/news/2020/september/new%20interactive%20tour%20teaches%20transit%20boarding">TransLink virtual bus tour</a></td><td>A 360° bus tour and short videos to practise boarding, fare cards, and asking for help.</td><td>Built with AutismBC for people who are not comfortable boarding; no outcome study found.</td><td>Let people rehearse the bus, the door, and the card tap before the trip.</td></tr>
+          <tr><td><a href="https://www.tiimoapp.com/faq">Tiimo</a> · <a href="https://apps.apple.com/us/app/choiceworks/id486210964">Choiceworks</a></td><td>Visual planners and schedules for neurodivergent users and caregivers.</td><td>Vendor claims; no travel outcome study found.</td><td>An ordered, visual checklist with clear current and next steps.</td></tr>
+          <tr><td><a href="https://doi.org/10.1155/2015/520572">AssisT-OUT</a> · <a href="https://personales.upv.es/thinkmind/HEALTHINFO/HEALTHINFO_2021/healthinfo_2021_1_30_80018.html">ADAPEI Transport</a></td><td>Research prototypes that break a walk into atomic steps with street-level photos and voice prompts.</td><td>Small field studies; ADAPEI participants preferred pictures to turn arrows and were confused when steps advanced too close together.</td><td>Atomic steps, photos at decision points, and manual advance when GPS is uncertain.</td></tr>
+          <tr><td><a href="https://support.google.com/maps/answer/9332056?hl=en">Google Maps Live View</a> · <a href="https://citymapper.com/news/2577/find-the-best-accessible-journey-with-step-free-routes">Citymapper</a> · <a href="https://help.transitapp.com/article/549-how-to-use-go">Transit</a></td><td>Mainstream route planning, step-free filters, live alerts, and trip sharing.</td><td>General rider tools; one small study taught bus navigation with Google Maps, but not Live View.</td><td>Real-time data and step-free options, wrapped in cognitive support.</td></tr>
+          <tr><td><a href="https://www.jamcard.org/faqs">JAM Card</a></td><td>A free card and app that asks for “just a minute” and signals a hidden disability.</td><td>Vendor and transport-agency adoption; no independent efficacy study found.</td><td>A user-controlled help card that works without speech.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="grid-2" style="margin-top:18px">
+        <div class="card">
+          <h3>Patterns to copy</h3>
+          <ul>
+            <li>Personal photos and recorded voice, not generic icons.</li>
+            <li>One step at a time, with the current and next step visible.</li>
+            <li>Let people rehearse boarding: the door, the card tap, and the seat.</li>
+            <li>Manual advance when GPS is uncertain or steps are close.</li>
+            <li>An explicit, user-initiated route to a human.</li>
+            <li>Trip sharing that the person can see and stop.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Patterns to avoid</h3>
+          <ul>
+            <li>Turn arrows as the only cue. They are abstract and easy to misread.</li>
+            <li>Automatic step changes based only on GPS. Close steps cause confusion.</li>
+            <li>Camera AR as the only way to navigate. Device, country, and coverage limits exclude people.</li>
+            <li>Always-on sharing as the default. It turns support into surveillance.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout">
+        <p><strong>One more local finding.</strong> Singapore already has schemes that do part of this job: the Helping Hand identifiers (including “Please alert me when I am approaching my stop”), MINDS travel training, the Travel Makers volunteering programme, and Heart Zones. The SBS Transit Travel Buddy is currently focused on wheelchair users; it may extend to other disabilities. EasyBoard should link to these schemes and copy their language, not invent a parallel system.<a class="cite" href="#src-1">[1]</a><a class="cite" href="#src-9">[9]</a><a class="cite" href="#src-8">[8]</a><a class="cite" href="#src-17">[17]</a></p>
+      </div>
+    </div>
+  </section>
+  <section class="section" id="principles">
+    <div class="wrap">
+      <div class="section-head">
+        <div><div class="section-num">04 / Principles</div><h2>Eight rules for the product</h2></div>
+        <p>These rules turn the research into decisions. When a design debate gets stuck, pick the option that follows the rule. The rules are written for the whole team.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="principles">
+          <div class="principle"><div><h3>One screen, one decision</h3><p>Every screen asks for one thing. If a screen has two primary buttons, it has two screens inside it. Split it.</p></div></div>
+          <div class="principle"><div><h3>Show the next step, not the whole map</h3><p>A map is a planning tool. A step is a travelling tool. Show the map when the person asks “where am I?”, not by default.</p></div></div>
+          <div class="principle"><div><h3>Calm words, calm colours</h3><p>Red is for danger. A late bus is not danger. Use plain sentences, one action, and a colour that does not shout.</p></div></div>
+          <div class="principle"><div><h3>Help is a normal action</h3><p>Put “I need help” on the main screen. Do not hide it behind a menu or a long press. Asking for help is part of travelling, not a failure.</p></div></div>
+        </div>
+        <div class="principles">
+          <div class="principle"><div><h3>The person is the user</h3><p>The caregiver sets things up and gets alerts. The person with a disability chooses where to go, starts the trip, and decides what to share.</p></div></div>
+          <div class="principle"><div><h3>Privacy is visible</h3><p>Show a clear “Sharing with Mei Leng” badge while sharing is on. Make pause as easy as start. Explain what is shared in one sentence.</p></div></div>
+          <div class="principle"><div><h3>Works when the network doesn’t</h3><p>Cache the route, the help card, and the caregiver number. Offer SMS and a phone call. A safety feature has to work on a weak connection.</p></div></div>
+          <div class="principle"><div><h3>Test with people with intellectual disabilities, and pay them</h3><p>Include people who read little, people who use AAC (communication aids), and people who travel alone. Run the test on a real route.</p></div></div>
+        </div>
+      </div>
+
+      <div class="callout green">
+        <p><strong>A useful test for any new screen.</strong> Cover the screen and ask the person: “What can you do here?” If they cannot answer in one sentence, the screen is not finished.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="today">
+    <div class="wrap">
+      <div class="section-head">
+        <div><div class="section-num">05 / Today</div><h2>What EasyBoard does now</h2></div>
+        <p>An audit of the current app, based on the code in <span class="mono">runtimes/app</span>. The foundation is good. The gaps are mostly about how information is presented, not about missing maps.</p>
+      </div>
+
+      <div class="grid-2" style="margin-bottom:22px">
+        <div class="card">
+          <h3>What already works</h3>
+          <ul>
+            <li><strong>Photo cards for saved places.</strong> A picture of home, work, or school is easier than an address.</li>
+            <li><strong>A short home screen.</strong> The person picks a place and goes. That is the right shape.</li>
+            <li><strong>One-tap caregiver call.</strong> No searching for a number under pressure.</li>
+            <li><strong>Auto-stop location sharing.</strong> Sharing ends when the person is within 20 metres of the destination.</li>
+            <li><strong>Caregiver dashboard.</strong> A caregiver can see who is online, call, and locate.</li>
+            <li><strong>System text scaling is on by default.</strong> React Native text grows with the phone setting, and text-only buttons have a 48 px minimum height. The risk is fixed-height layout, not the setting.</li>
+            <li><strong>One codebase.</strong> iOS, Android, and web share the same screens, so fixes reach everyone.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>What the audit found</h3>
+          <ul>
+            <li><strong>No accessibility labels.</strong> A screen reader has little to announce beyond the raw text.</li>
+            <li><strong>All-caps buttons.</strong> “START NAVIGATION” and “CALL CAREGIVER” are harder to read than sentence case.</li>
+            <li><strong>Route cards are for planners.</strong> “Route 1”, “Estimated distance”, and “Estimated journey time” do not help someone standing at a bus stop.</li>
+            <li><strong>Steps are text-only.</strong> The directions screen asks the person to read and tap “Next Step”. There is no boarding confirmation, so seeing the bus can look like the end of the step.</li>
+            <li><strong>Help means one phone call.</strong> There is no card to show a stranger and no SMS fallback.</li>
+            <li><strong>Sharing has no consent screen.</strong> The toggle exists, but the person is not told who sees what, for how long.</li>
+            <li><strong>Sharing may not stop cleanly.</strong> The background location task is not stopped on every cleanup path, and the arrival auto-stop is not wired to the route destination. The notification text still contains “xxx”.</li>
+            <li><strong>Large text can clip.</strong> Text scaling is on by default, but fixed heights and one-line truncation break the layout at large sizes.</li>
+          </ul>
+        </div>
+      </div>
+
+      <table class="audit-table">
+        <caption class="sr-only">Current app audit by area</caption>
+        <thead><tr><th>Area</th><th>What exists</th><th>What gets in the way</th><th>Change</th></tr></thead>
+        <tbody>
+          <tr><td>Home</td><td>“Where do you want to go?”, photo cards, “Other location”, call caregiver, share location, logout.</td><td>“Other location” opens a map with a pin. That needs map reading and fine motor control. “Logout” is jargon.</td><td>Add “Recent trips” and “Ask someone to help me choose”. Rename “Logout” to “Sign out” and move it away from the main actions.</td></tr>
+          <tr><td>Route choice</td><td>Route cards with transport pills, distance, and time. Emoji for walk, bus, train.</td><td>The person must compare abstract numbers. There is no “easiest” or “the way we practiced” label. Emoji may not match the local vehicle.</td><td>Lead with one recommended route: “Bus 2, 8 stops, about 20 min”. Put other routes behind “Show me other ways”. Use a photo of the bus or train, and <span class="mono">@expo/vector-icons</span> (already installed) for the mode.</td></tr>
+          <tr><td>Directions</td><td>“Step 3 of 6”, instruction text, progress dots, “START NAVIGATION”, “Next Step”, “ARRIVED”.</td><td>Reading load is high. No audio. No landmark photo. The person must decide when to tap Next. There is no boarding step, so seeing the bus is treated as the end of the step. A missed stop has no recovery path.</td><td>Guided Trip Mode: one instruction, one photo, audio, a separate boarding screen with “I am on the bus”, and “I’m not sure” on every step.</td></tr>
+          <tr><td>Help</td><td>“CALL CAREGIVER”.</td><td>If the person cannot speak, or the caregiver does not answer, there is no next option.</td><td>Help Card with name, destination, location, caregiver number, “Show this to someone”, SMS, and emergency call.</td></tr>
+          <tr><td>Location sharing</td><td>Toggle, live updates, auto-stop at 20 metres, push notifications to caregiver.</td><td>No explanation of who sees what. No pause. No time limit. The background task may keep running after stop, arrival auto-stop is not wired to the route destination, and the notification says “xxx”.</td><td>Fix the stop path and arrival trigger first. Then add the Privacy Center: three presets, a visible sharing badge, pause, and trip-only sharing by default.</td></tr>
+          <tr><td>Caregiver</td><td>Dashboard with online/offline, call, locate. Location tracking page with a map.</td><td>No trip status, no ETA, no “stuck” alert, no arrival confirmation. The caregiver has to watch a dot.</td><td>Caregiver Co-pilot: trip cards, stage, ETA, alerts for help or no movement, voice notes. Map on tap, not by default.</td></tr>
+          <tr><td>Language</td><td>Mostly plain English, but some abstract phrases.</td><td>“Bookmark places you frequently travel to for easy access” is a sentence to decode. “No route data available” is technical.</td><td>Use the copy deck in the Build section. One idea per sentence. About 15 words.</td></tr>
+          <tr><td>Accessibility</td><td>Large buttons in some places, good colour contrast, simple layout, system text scaling.</td><td>No accessibility labels, no live regions for errors, fixed-height areas clip large text, motion without a reduced-motion check.</td><td>Add labels, roles, hints, live regions, 48 px targets, flexible heights, and a reduced-motion setting. Test with VoiceOver and TalkBack.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <p><strong>The honest summary.</strong> EasyBoard is a good map app with a caregiver call button. It is not yet a travel coach. The gap is the layer between “here is the route” and “here is what you do now”.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="features">
+    <div class="wrap">
+      <div class="section-head">
+        <div><div class="section-num">06 / Features</div><h2>What to build</h2></div>
+        <p>Nine features, in three priority groups. P0 is the next release. P1 follows when P0 is stable with real users. Each feature names the problem, the behaviour, the risk, and the signal that it worked.</p>
+      </div>
+
+      <div class="filters" role="group" aria-label="Filter features by priority">
+        <button class="filter" type="button" data-filter="all" aria-pressed="true">All 9</button>
+        <button class="filter" type="button" data-filter="p0" aria-pressed="false">P0 · Next</button>
+        <button class="filter" type="button" data-filter="p1" aria-pressed="false">P1 · Later</button>
+      </div>
+
+      <article class="card feature" data-priority="p0" id="f-guided">
+        <div class="feature-main">
+          <div class="feature-top"><span class="tag p0">P0</span><h3>Guided Trip Mode</h3></div>
+          <p class="why">The current directions screen is a list of text steps. It assumes the person can read, remember where they are in the list, and decide when to move on. That is the exact set of skills the research says is hard.</p>
+          <p><strong>What it does.</strong> Turns a route into a sequence of single-purpose cards. Each card has one instruction, a photo of the place, a spoken version, and one clear action. The app advances when the phone reaches a place (a geofence), on a tap, or after a caregiver confirms. Bus arrival is a tap or a live vehicle feed, never a geofence alone. Boarding is its own step. The app asks for a boarding confirmation.</p>
+          <ol>
+            <li><strong>Before the trip:</strong> show the Trip Story and a short readiness check (fare card, phone battery, headphones).</li>
+            <li><strong>At each step:</strong> one sentence, one photo, one audio button, and “I did it”.</li>
+            <li><strong>When the bus arrives:</strong> wait for it to stop. Show the photo of the open door. Say “Get on bus 2.” Ask “Are you on the bus?” A confirmation moves the trip forward. No confirmation after 45 seconds triggers a gentle prompt and a caregiver alert.</li>
+            <li><strong>If the person is unsure:</strong> “I’m not sure” opens three options: show where I am, call my caregiver, or show my help card.</li>
+            <li><strong>If a step is missed:</strong> do not recalculate the whole route. Say “Stay on the bus. We will call you.” and alert the caregiver.</li>
+            <li><strong>At arrival:</strong> “You are here” with the destination photo, and a caregiver notification.</li>
+          </ol>
+          <p class="mono" style="margin-top:12px">“Walk to the bus stop. It is 3 minutes away.” · “Wait for bus 2. It will come in 4 minutes.” · “The bus has stopped. The door is open. Get on bus 2.” · “Hold your card in front of your chest so the driver sees you.” · “Get off in 8 stops. I will count with you.”</p>
+        </div>
+        <div class="feature-side">
+          <dl>
+            <dt>Effort</dt><dd>Large. New trip model, step player, geofences, offline cache.</dd>
+            <dt>Evidence</dt><dd>Context-aware prompts and step-by-step guidance improved independent travel in small studies.<a class="cite" href="#src-3">[3]</a> Travel-training assessments treat “identifies the bus and indicates a desire to board” as a separate skill, and photos at retrieval support prospective memory.<a class="cite" href="#src-22">[22]</a><a class="cite" href="#src-24">[24]</a></dd>
+            <dt>Risk</dt><dd>GPS drift triggers the wrong step. The person may also tap “I am on the bus” before boarding. Mitigation: manual advance, a 45-second boarding check, a photo of the open door, and a caregiver voice note.</dd>
+            <dt>Success signal</dt><dd>More trips completed without a caregiver call. More bus arrivals followed by boarding within 60 seconds. Shorter recovery time after a missed stop.</dd>
+          </dl>
+        </div>
+      </article>
+
+      <article class="card feature" data-priority="p0" id="f-easyread">
+        <div class="feature-main">
+          <div class="feature-top"><span class="tag p0">P0</span><h3>Easy Read and Read Aloud</h3></div>
+          <p class="why">Easy read changes how a screen reads. It needs short sentences, one idea per screen, and images that match the words. The NHS guidance asks for about 15 words per sentence and testing with the audience.<a class="cite" href="#src-6">[6]</a> The CDC guide is stricter for people with very low literacy: 10 words or fewer, one idea per screen, and literal images.<a class="cite" href="#src-18">[18]</a> The evidence is mixed, so test it with the people who will use it.<a class="cite" href="#src-21">[21]</a></p>
+          <p><strong>What it does.</strong> A global setting that changes copy, spacing, and images across the app. Every important screen gets a speaker button. The setting is per person, not per device, so it follows the account.</p>
+          <ol>
+            <li><strong>Text:</strong> sentence case, active voice, one action per sentence, no jargon or acronyms.</li>
+            <li><strong>Layout:</strong> larger type, more line spacing, shorter line length, one column.</li>
+            <li><strong>Images:</strong> optional. Some people find pictures helpful; some autistic people find them distracting. Let the person choose.</li>
+            <li><strong>Audio:</strong> native text-to-speech for every instruction, error, and button label. Respect the phone’s language and speaking rate.</li>
+            <li><strong>Fallback:</strong> if speech is unavailable, show the text and offer a caregiver voice note.</li>
+          </ol>
+        </div>
+        <div class="feature-side">
+          <dl>
+            <dt>Effort</dt><dd>Medium. Copy deck, TTS service, design tokens, QA on both platforms.</dd>
+            <dt>Evidence</dt><dd>NHS England easy read guidance; W3C COGA design patterns for clear purpose, familiar controls, and help.<a class="cite" href="#src-6">[6]</a><a class="cite" href="#src-5">[5]</a></dd>
+            <dt>Risk</dt><dd>Text-to-speech mispronounces names and places. Mitigation: caregiver can record a name; show the written name too.</dd>
+            <dt>Success signal</dt><dd>Task success on the top five journeys. Fewer “what does this mean?” questions in testing.</dd>
+          </dl>
+        </div>
+      </article>
+
+      <article class="card feature" data-priority="p0" id="f-helpcard">
+        <div class="feature-main">
+          <div class="feature-top"><span class="tag p0">P0</span><h3>Help Card</h3></div>
+          <p class="why">People avoid asking strangers or staff for help because it is embarrassing and hard to explain. A card does the explaining for them. The UK research recommended free assistance cards; the JAM Card shows the model works at scale.<a class="cite" href="#src-7">[7]</a><a class="cite" href="#src-10">[10]</a></p>
+          <p><strong>What it does.</strong> A full-screen card with the person’s first name, photo (optional), destination, current area, caregiver name and number, and a plain sentence: “I need help getting to Work. Please call Mei Leng.” The person can show it, read it, or have it read aloud. A second card is for the driver: “I am going to Work. Please tell me when to get off.”</p>
+          <ol>
+            <li><strong>Open:</strong> one tap from the home screen and from every step.</li>
+            <li><strong>Show:</strong> large text, high contrast, screen stays awake for 60 seconds.</li>
+            <li><strong>Call:</strong> a single button to the caregiver. If there is no answer, offer the second contact.</li>
+            <li><strong>Send:</strong> SMS with the card text and a map link; works when data is weak.</li>
+            <li><strong>Emergency:</strong> a separate, clearly labelled button for 999, not mixed with the caregiver call.</li>
+          </ol>
+        </div>
+        <div class="feature-side">
+          <dl>
+            <dt>Effort</dt><dd>Small to medium. Mostly UI, SMS deep link, offline cache.</dd>
+            <dt>Evidence</dt><dd>UK DfT assistance-card recommendation; JAM Card adoption; local Helping Hand identifiers.<a class="cite" href="#src-7">[7]</a><a class="cite" href="#src-10">[10]</a><a class="cite" href="#src-1">[1]</a></dd>
+            <dt>Risk</dt><dd>Oversharing personal details to strangers. Mitigation: first name only, no home address, caregiver can turn off the photo.</dd>
+            <dt>Success signal</dt><dd>Help card opened on real trips. Successful handovers to staff or caregivers. People say they would use it again.</dd>
+          </dl>
+        </div>
+      </article>
+
+      <article class="card feature" data-priority="p0" id="f-story">
+        <div class="feature-main">
+          <div class="feature-top"><span class="tag p0">P0</span><h3>Trip Story</h3></div>
+          <p class="why">A route line is an abstract drawing. A story is a sequence of places the person can recognise. The MINDS travel training example shows the power of photos, placards, and repetition.<a class="cite" href="#src-8">[8]</a></p>
+          <p><strong>What it does.</strong> Before the trip, shows a visual timeline: walk to the stop, wait for bus 2, get on bus 2, tap the card, sit near the driver, ride 8 stops, get off near the blue library, walk 2 minutes, arrive. Each item has a photo and an optional caregiver voice note.</p>
+          <ol>
+            <li><strong>Create:</strong> the caregiver adds or confirms up to 8 steps and a photo for each.</li>
+            <li><strong>Preview:</strong> the person can swipe through the story before starting.</li>
+            <li><strong>Practice:</strong> “Practice this trip” runs the same story with quiz questions, including “the bus stops, what do you do?”</li>
+            <li><strong>Start:</strong> the story becomes the Guided Trip Mode. The first step is already open.</li>
+          </ol>
+          <div class="callout-small" style="margin-top:12px">Boarding is a step. The story shows the open door, the card tap, and the seat. The live trip asks for confirmation. A generic map pin is not a landmark.</div>
+        </div>
+        <div class="feature-side">
+          <dl>
+            <dt>Effort</dt><dd>Medium. Media upload, step editor, offline storage.</dd>
+            <dt>Evidence</dt><dd>Photo and landmark prompts improved navigation in small studies; travel training improved confidence.<a class="cite" href="#src-3">[3]</a><a class="cite" href="#src-2">[2]</a> A meta-analysis of visual activity schedules found a large effect on independent skills (Tau-U 0.96).<a class="cite" href="#src-19">[19]</a> Virtual bus tours are used to rehearse boarding, and pictures at retrieval support prospective memory.<a class="cite" href="#src-25">[25]</a><a class="cite" href="#src-24">[24]</a></dd>
+            <dt>Risk</dt><dd>Old photos confuse the person. Mitigation: “photo updated” date; caregiver review before each term.</dd>
+            <dt>Success signal</dt><dd>More people start a trip after viewing the story. Fewer wrong-stop incidents. Fewer boarding delays.</dd>
+          </dl>
+        </div>
+      </article>
+
+      <article class="card feature" data-priority="p0" id="f-alerts">
+        <div class="feature-main">
+          <div class="feature-top"><span class="tag p0">P0</span><h3>Calm change alerts</h3></div>
+          <p class="why">Uncertainty is the main source of anxiety. A late bus, a platform change, or a missed stop can end the trip. The UK research found that real-time information and clear alternatives reduced stress.<a class="cite" href="#src-7">[7]</a></p>
+          <p><strong>What it does.</strong> Watches the trip for delays, route changes, and deviations. When something changes, it shows one calm sentence and one action. It does not redraw the map or show a red warning.</p>
+          <ol>
+            <li><strong>Delay:</strong> “The bus is 6 minutes late. Wait here. I will tell you when it comes.”</li>
+            <li><strong>Missed stop:</strong> “You passed your stop. Stay on the bus. We will call you.” The caregiver gets the same message.</li>
+            <li><strong>Off route:</strong> “You are near the MRT station. Are you okay?” with “Yes” and “I need help”.</li>
+            <li><strong>No movement:</strong> after 10 minutes, ask the person first. Only alert the caregiver if there is no answer or the person asks.</li>
+          </ol>
+        </div>
+        <div class="feature-side">
+          <dl>
+            <dt>Effort</dt><dd>Medium. Location rules, message templates, escalation logic.</dd>
+            <dt>Evidence</dt><dd>UK DfT real-time information findings; W3C COGA error prevention and clear next steps.<a class="cite" href="#src-7">[7]</a><a class="cite" href="#src-5">[5]</a></dd>
+            <dt>Risk</dt><dd>False alarms annoy caregivers and frighten the person. Mitigation: confidence thresholds, “I’m okay” button, caregiver confirms before calling.</dd>
+            <dt>Success signal</dt><dd>Fewer panic calls. Faster recovery. Caregivers say alerts are useful, not noisy.</dd>
+          </dl>
+        </div>
+      </article>
+
+      <article class="card feature" data-priority="p1" id="f-copilot">
+        <div class="feature-main">
+          <div class="feature-top"><span class="tag p1">P1</span><h3>Caregiver Co-pilot</h3></div>
+          <p class="why">A live dot does not tell a caregiver what is happening. Caregivers need to know “is he on the bus?”, “is he stuck?”, “when will he arrive?”. Watching a dot all day does not scale to a classroom or a family with two jobs.<a class="cite" href="#src-1">[1]</a></p>
+          <p><strong>What it does.</strong> Replaces the dashboard with trip cards. Each card shows the current stage, ETA, last update, and one action. The map is one tap away.</p>
+          <ol>
+            <li><strong>Trip card:</strong> “Ryan is on bus 2. 12 minutes to Work.”</li>
+            <li><strong>Alerts:</strong> started, arrived, asked for help, off route, no movement 10 minutes, bus arrived but not boarded after 45 seconds.</li>
+            <li><strong>Voice note:</strong> “Press the green button when you see the blue gate.”</li>
+            <li><strong>“I’m worried” button:</strong> escalates to a call, not a silent alert.</li>
+          </ol>
+        </div>
+        <div class="feature-side">
+          <dl>
+            <dt>Effort</dt><dd>Medium. Depends on the trip model from Guided Trip Mode.</dd>
+            <dt>Evidence</dt><dd>Caregiver burden and the need for exceptions, not continuous monitoring.<a class="cite" href="#src-1">[1]</a><a class="cite" href="#src-12">[12]</a></dd>
+            <dt>Risk</dt><dd>Becomes surveillance by another name. Mitigation: trip-only sharing, visible consent, no history by default.</dd>
+            <dt>Success signal</dt><dd>Fewer “where are you?” calls. Caregivers respond to alerts within 2 minutes.</dd>
+          </dl>
+        </div>
+      </article>
+
+      <article class="card feature" data-priority="p1" id="f-practice">
+        <div class="feature-main">
+          <div class="feature-top"><span class="tag p1">P1</span><h3>Practice Mode</h3></div>
+          <p class="why">Travel training works through repetition, modelling, and safe mistakes. MINDS used 16 weeks of accompanied trips and simulated problems such as missing a stop. An app can support that routine between sessions.<a class="cite" href="#src-8">[8]</a></p>
+          <p><strong>What it does.</strong> A rehearsal flow for a saved route. The person and caregiver walk through the story, answer “what do you do next?” questions, and mark the trip as “ready to try alone”.</p>
+          <ol>
+            <li><strong>Rehearse:</strong> the story plays with photos and audio, without live location.</li>
+            <li><strong>Quiz:</strong> “The bus does not come. What do you do?” with three picture answers.</li>
+            <li><strong>Simulate:</strong> “You missed your stop. Stay on the bus. Call Mei Leng.”</li>
+            <li><strong>Sign-off:</strong> the caregiver marks the route as practised. The home screen labels it “The way we practised”.</li>
+          </ol>
+        </div>
+        <div class="feature-side">
+          <dl>
+            <dt>Effort</dt><dd>Medium. Reuses Trip Story and quiz content.</dd>
+            <dt>Evidence</dt><dd>Travel training improved self-efficacy; video and photo prompts improved route learning.<a class="cite" href="#src-2">[2]</a><a class="cite" href="#src-3">[3]</a></dd>
+            <dt>Risk</dt><dd>Quiz success is mistaken for real-world readiness. Mitigation: caregiver sign-off and a real accompanied trip.</dd>
+            <dt>Success signal</dt><dd>More first solo trips after practice. Fewer help requests on practised routes.</dd>
+          </dl>
+        </div>
+      </article>
+
+      <article class="card feature" data-priority="p1" id="f-voice">
+        <div class="feature-main">
+          <div class="feature-top"><span class="tag p1">P1</span><h3>Voice notes and landmark photos</h3></div>
+          <p class="why">A caregiver’s voice is familiar and can carry meaning that text cannot. “Turn left at the blue gate” is easier than “continue for 120 metres”. Personal landmarks also solve the last-100-metres problem that maps handle badly.</p>
+          <p><strong>What it does.</strong> Lets the caregiver attach a short voice note and a photo to any step. The person hears the note at the right moment, with a replay button.</p>
+          <ol>
+            <li><strong>Record:</strong> up to 15 seconds per step, with a transcript.</li>
+            <li><strong>Attach:</strong> photo, voice note, and a short label.</li>
+            <li><strong>Play:</strong> automatically at the step, or on tap. Never autoplay in public without headphones.</li>
+            <li><strong>Update:</strong> caregiver can replace a note when the route changes.</li>
+          </ol>
+        </div>
+        <div class="feature-side">
+          <dl>
+            <dt>Effort</dt><dd>Medium. Audio recording, storage, playback, transcript.</dd>
+            <dt>Evidence</dt><dd>Visual and auditory prompts are the most common design elements in the transport-tech review.<a class="cite" href="#src-3">[3]</a></dd>
+            <dt>Risk</dt><dd>Audio privacy in public; unclear speech; language mismatch. Mitigation: headphones prompt, transcript, re-record.</dd>
+            <dt>Success signal</dt><dd>Voice notes played on real steps. Fewer wrong turns near the destination.</dd>
+          </dl>
+        </div>
+      </article>
+
+      <article class="card feature" data-priority="p1" id="f-privacy">
+        <div class="feature-main">
+          <div class="feature-top"><span class="tag p1">P1</span><h3>Privacy Center</h3></div>
+          <p class="why">Location sharing is useful only if the person trusts it. Research on surveillance in care finds a tension between safety and autonomy, and adults with intellectual disabilities describe restriction as harmful.<a class="cite" href="#src-12">[12]</a><a class="cite" href="#src-11">[11]</a></p>
+          <p><strong>What it does.</strong> One screen that answers three questions: What does my caregiver see? When? Who else can see it? It uses three presets and one pause button. For people who cannot consent, the caregiver and a trusted person record the decision and who agreed.</p>
+          <ol>
+            <li><strong>Trip only:</strong> share while a trip is active. Stop at arrival. This is the default.</li>
+            <li><strong>Location always:</strong> share until I turn it off. Clear badge on the home screen.</li>
+            <li><strong>History:</strong> off by default. The caregiver sees the current trip, not everywhere the person has been.</li>
+            <li><strong>Pause:</strong> one tap. The caregiver sees “Sharing paused by Ryan”, not a blank map.</li>
+          </ol>
+        </div>
+        <div class="feature-side">
+          <dl>
+            <dt>Effort</dt><dd>Small to medium. Mostly UI and data rules.</dd>
+            <dt>Evidence</dt><dd>Surveillance ethics; supported decision-making; visible consent.<a class="cite" href="#src-12">[12]</a><a class="cite" href="#src-11">[11]</a><a class="cite" href="#src-16">[16]</a></dd>
+            <dt>Risk</dt><dd>Too many choices. Mitigation: three presets, one sentence each, caregiver cannot change without the person seeing it.</dd>
+            <dt>Success signal</dt><dd>People can explain what is shared. Pause is used without conflict. Fewer people turn sharing off entirely.</dd>
+          </dl>
+        </div>
+      </article>
+
+      <div class="callout green">
+        <p><strong>Sequencing matters.</strong> Guided Trip Mode and the Help Card need the trip model and offline cache. Easy Read and Read Aloud touch every screen, so do them early and reuse the copy deck. Privacy Center is small but it protects trust, so do not leave it for the end.</p>
+      </div>
+    </div>
+  </section>
+  <section class="section" id="mockups">
+    <div class="wrap">
+      <div class="section-head">
+        <div><div class="section-num">07 / Mockups</div><h2>What it could feel like</h2></div>
+        <p>Seven screens for the traveller and the caregiver. Click the tabs, tap the buttons, try the help card, and use “Hear this” to listen. The mockup is illustrative. It is not the final visual design.</p>
+      </div>
+
+      <div class="phone-stage">
+        <div class="phone-wrap">
+          <div>
+            <div class="screen-tabs" role="tablist" aria-label="Mockup screens">
+              <button class="screen-tab" type="button" role="tab" aria-selected="true" data-screen-btn="home">Home</button>
+              <button class="screen-tab" type="button" role="tab" aria-selected="false" data-screen-btn="story">Trip story</button>
+              <button class="screen-tab" type="button" role="tab" aria-selected="false" data-screen-btn="step">Wait</button>
+              <button class="screen-tab" type="button" role="tab" aria-selected="false" data-screen-btn="board">Board</button>
+              <button class="screen-tab" type="button" role="tab" aria-selected="false" data-screen-btn="help">Help card</button>
+              <button class="screen-tab" type="button" role="tab" aria-selected="false" data-screen-btn="caregiver">Caregiver</button>
+              <button class="screen-tab" type="button" role="tab" aria-selected="false" data-screen-btn="privacy">Privacy</button>
+            </div>
+
+            <div class="phone" id="phoneDemo" data-role="pwid">
+              <div class="statusbar"><span>9:41</span><span aria-hidden="true">●●● ▮</span></div>
+              <div class="phone-screen" id="phoneScreen">
+
+                <!-- HOME -->
+                <section class="screen active" data-screen="home" aria-label="Traveller home screen">
+                  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+                    <span class="tiny">Tuesday, 4 Nov</span>
+                    <span class="status-pill">Sharing: trip only</span>
+                  </div>
+                  <h4>Hello, Ryan</h4>
+                  <p>Where are you going?</p>
+
+                  <button class="place-card" type="button" data-goto="story">
+                    <span class="thumb" aria-hidden="true">
+                      <svg viewBox="0 0 80 60"><rect width="80" height="60" fill="#cfe3fa"/><rect x="8" y="30" width="64" height="26" fill="#e9dcc7"/><rect x="14" y="14" width="52" height="18" rx="2" fill="#fffdf8"/><path d="M18 32h44M18 38h30" stroke="#9aa9bb" stroke-width="2"/><circle cx="24" cy="48" r="4" fill="#1d5bb8"/><circle cx="56" cy="48" r="4" fill="#1d5bb8"/><path d="M30 48h20" stroke="#1d5bb8" stroke-width="3"/></svg>
+                    </span>
+                    <span><b>Work</b><span>Blue Library · 25 min</span></span>
+                    <span aria-hidden="true">›</span>
+                  </button>
+
+                  <button class="place-card" type="button" data-goto="story">
+                    <span class="thumb" aria-hidden="true">
+                      <svg viewBox="0 0 80 60"><rect width="80" height="60" fill="#f3e8d4"/><rect x="10" y="22" width="60" height="30" fill="#fffdf8"/><path d="M6 24l34-16 34 16" fill="#d9c7a8"/><rect x="34" y="34" width="12" height="18" fill="#1d5bb8"/><rect x="18" y="30" width="10" height="8" fill="#cfe3fa"/><rect x="52" y="30" width="10" height="8" fill="#cfe3fa"/></svg>
+                    </span>
+                    <span><b>Home</b><span>12 min</span></span>
+                    <span aria-hidden="true">›</span>
+                  </button>
+
+                  <button class="place-card" type="button" data-goto="story">
+                    <span class="thumb" aria-hidden="true" style="display:grid;place-items:center;background:#e8eef8;color:#1d5bb8;font-size:26px;font-weight:900">+</span>
+                    <span><b>Other place</b><span>Ask someone to help me choose</span></span>
+                    <span aria-hidden="true">›</span>
+                  </button>
+
+                  <button class="pbtn help" type="button" data-goto="help">I need help</button>
+                  <button class="pbtn secondary" type="button" data-goto="privacy">What Mei Leng can see</button>
+                  <p style="margin-top:10px;font-size:10px">Last trip: Home to Work · arrived 8:42 am</p>
+                </section>
+
+                <!-- STORY -->
+                <section class="screen" data-screen="story" aria-label="Trip story screen">
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <button class="pbtn ghost" type="button" data-goto="home" style="width:36px;padding:6px;margin:0" aria-label="Back">←</button>
+                    <div><span class="tiny">Your trip</span><h4 style="margin:0">Home to Work</h4></div>
+                  </div>
+                  <p>8 steps · about 25 minutes</p>
+
+                  <div class="big-photo">
+                    <svg viewBox="0 0 300 150" aria-hidden="true"><rect width="300" height="150" fill="#d9e8f7"/><rect x="0" y="104" width="300" height="46" fill="#c9c3b6"/><rect x="26" y="52" width="10" height="70" fill="#4b5563"/><rect x="14" y="44" width="34" height="18" rx="4" fill="#1d5bb8"/><text x="22" y="57" fill="#fff" font-size="9" font-family="sans-serif">BUS 2</text><rect x="120" y="40" width="130" height="56" rx="8" fill="#fffdf8"/><path d="M132 96V78h106v18M144 78V64h28v14M184 78V64h28v14" stroke="#1d5bb8" stroke-width="4" fill="none"/><circle cx="142" cy="102" r="10" fill="#1d2430"/><circle cx="222" cy="102" r="10" fill="#1d2430"/><rect x="0" y="120" width="300" height="6" fill="#a8a196"/></svg>
+                    <span class="photo-label">Photo: the actual bus stop</span>
+                  </div>
+
+                  <div class="timeline">
+                    <div class="titem"><b>Walk to the bus stop</b><span>3 minutes · leave now</span></div>
+                    <div class="titem"><b>Wait for bus 2</b><span>Stand near the blue sign</span></div>
+                    <div class="titem"><b>Get on bus 2</b><span>Wait for the door to open</span></div>
+                    <div class="titem"><b>Tap your card</b><span>The reader is near the door</span></div>
+                    <div class="titem"><b>Sit near the driver</b><span>The driver can see you</span></div>
+                    <div class="titem"><b>Ride 8 stops</b><span>About 15 minutes</span></div>
+                    <div class="titem"><b>Get off at Blue Library</b><span>Press the bell after 7 stops</span></div>
+                    <div class="titem"><b>Walk 2 minutes to Work</b><span>The blue gate is on your left</span></div>
+                  </div>
+
+                  <button class="pbtn" type="button" data-goto="step">Start trip</button>
+                  <button class="pbtn secondary" type="button" data-demo-toast="Practice mode would replay this story.">Practice this trip</button>
+                </section>
+
+                <!-- STEP -->
+                <section class="screen" data-screen="step" aria-label="Guided trip step screen">
+                  <div style="display:flex;justify-content:space-between;align-items:center">
+                    <span class="tiny">Step 3 of 8</span>
+                    <button class="pbtn ghost" type="button" data-goto="home" style="width:36px;padding:6px;margin:0" aria-label="Close trip">✕</button>
+                  </div>
+                  <div class="step-count" aria-hidden="true">
+                    <span class="dot done"></span><span class="dot done"></span><span class="dot now"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                  </div>
+
+                  <div class="big-photo">
+                    <svg viewBox="0 0 300 150" aria-hidden="true"><rect width="300" height="150" fill="#d9e8f7"/><rect x="0" y="112" width="300" height="38" fill="#b9b2a6"/><rect x="34" y="34" width="12" height="84" fill="#3b4654"/><rect x="20" y="26" width="42" height="22" rx="5" fill="#1d5bb8"/><text x="27" y="41" fill="#fff" font-size="10" font-family="sans-serif">BUS 2</text><rect x="150" y="58" width="118" height="50" rx="8" fill="#fffdf8"/><path d="M160 108V88h98v20M172 88V72h26v16M210 88V72h26v16" stroke="#1d5bb8" stroke-width="4" fill="none"/><circle cx="172" cy="112" r="9" fill="#1d2430"/><circle cx="248" cy="112" r="9" fill="#1d2430"/><rect x="92" y="18" width="72" height="26" rx="13" fill="#fffdf8" stroke="#1d5bb8" stroke-width="2"/><text x="105" y="35" fill="#1d5bb8" font-size="10" font-weight="700" font-family="sans-serif">4 min</text></svg>
+                    <span class="photo-label">Photo: your bus stop</span>
+                  </div>
+
+                  <div class="instruction">Wait for bus 2</div>
+                  <p class="sub">Stand near the blue sign. When the bus stops, the door will open.</p>
+
+                  <div class="audio-row">
+                    <button class="audio-btn" type="button" data-speak="Wait for bus 2. Stand near the blue sign. When the bus stops, the door will open.">🔊 Hear this</button>
+                    <button class="audio-btn" type="button" data-speak="Mei Leng says: wait near the blue sign. When bus 2 stops, get on.">▶ Mei Leng</button>
+                  </div>
+
+                  <button class="pbtn" type="button" data-goto="board">The bus has stopped</button>
+                  <button class="pbtn secondary" type="button" data-goto="help">I'm not sure</button>
+                  <p style="margin-top:8px;font-size:10px">Tap when the bus has stopped. Then get on.</p>
+                </section>
+
+                <!-- BOARD -->
+                <section class="screen" data-screen="board" aria-label="Board the bus screen">
+                  <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div style="display:flex;align-items:center;gap:8px">
+                      <button class="pbtn ghost" type="button" data-goto="step" style="width:36px;padding:6px;margin:0" aria-label="Back to waiting">←</button>
+                      <span class="tiny">Step 4 of 8</span>
+                    </div>
+                    <button class="pbtn ghost" type="button" data-goto="home" style="width:36px;padding:6px;margin:0" aria-label="Close trip">✕</button>
+                  </div>
+                  <div class="step-count" aria-hidden="true">
+                    <span class="dot done"></span><span class="dot done"></span><span class="dot done"></span><span class="dot now"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+                  </div>
+
+                  <div class="big-photo" style="height:120px">
+                    <svg viewBox="0 0 300 150" aria-hidden="true"><rect width="300" height="150" fill="#d9e8f7"/><rect y="116" width="300" height="34" fill="#b9b2a6"/><rect x="36" y="20" width="228" height="100" rx="14" fill="#fffdf8" stroke="#1d5bb8" stroke-width="3"/><rect x="50" y="34" width="66" height="34" rx="4" fill="#cfe3fa"/><rect x="50" y="76" width="66" height="30" rx="4" fill="#cfe3fa"/><rect x="132" y="34" width="118" height="72" rx="6" fill="#1d5bb8"/><rect x="142" y="42" width="98" height="18" rx="3" fill="#fffdf8"/><text x="154" y="55" fill="#1d5bb8" font-size="12" font-weight="700" font-family="sans-serif">BUS 2</text><rect x="160" y="68" width="62" height="38" rx="4" fill="#0f1720"/><path d="M162 70l-10 10v14l10 10M220 70l10 10v14l-10 10" fill="none" stroke="#fffdf8" stroke-width="3"/><path d="M84 98h66" stroke="#17654b" stroke-width="5" stroke-linecap="round"/><path d="M142 88l12 10-12 10" fill="none" stroke="#17654b" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="72" cy="120" r="9" fill="#1d2430"/><circle cx="208" cy="120" r="9" fill="#1d2430"/></svg>
+                    <span class="photo-label">Photo: the open door</span>
+                  </div>
+
+                  <div class="instruction">Get on bus 2</div>
+                  <p class="sub">The bus has stopped. The door is open. Check the number: <b>2</b>.</p>
+
+                  <div class="audio-row">
+                    <button class="audio-btn" type="button" data-speak="The bus has stopped. The door is open. Get on bus 2.">🔊 Hear this</button>
+                    <button class="audio-btn" type="button" data-speak="Mei Leng says: get on bus 2. Hold your card in front of your chest so the driver sees you.">▶ Mei Leng</button>
+                  </div>
+
+                  <button class="pbtn" type="button" data-demo-toast="Next: tap your card. Then sit near the driver.">I am on the bus</button>
+                  <button class="pbtn secondary" type="button" data-demo-toast="Ask the driver: “Does this bus go to Blue Library?”">Is this my bus?</button>
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                    <button class="pbtn secondary" type="button" data-goto="help" style="margin-top:8px">I need help</button>
+                    <button class="pbtn ghost" type="button" data-demo-toast="Wait for the next bus 2. It will come in 8 minutes." style="margin-top:8px">Next bus</button>
+                  </div>
+                </section>
+
+                <!-- HELP -->
+                <section class="screen" data-screen="help" aria-label="Help card screen">
+                  <div style="display:flex;justify-content:space-between;align-items:center">
+                    <h4 style="margin:0">I need help</h4>
+                    <button class="pbtn ghost" type="button" data-goto="back" style="width:36px;padding:6px;margin:0" aria-label="Close help">✕</button>
+                  </div>
+                  <p>Show this card to someone. They can call Mei Leng.</p>
+
+                  <div class="helpcard">
+                    <div class="tiny">HELP CARD</div>
+                    <div class="huge">My name is Ryan.<br>I am going to Work.</div>
+                    <div class="addr">I am at the bus stop near Blue Library, Bishan.</div>
+                    <div class="addr" style="margin-top:10px;font-size:14px;color:var(--phone-ink);font-weight:800">Please call my caregiver, Mei Leng.</div>
+                    <div style="font-size:26px;font-weight:900;color:#a1282e;margin-top:4px">9123 4567</div>
+                  </div>
+
+                  <button class="pbtn" type="button" data-call="9123 4567">Call Mei Leng</button>
+                  <button class="pbtn secondary" type="button" data-fullscreen-help>Show this to someone</button>
+                  <button class="pbtn secondary" type="button" data-demo-toast="Location sent to Mei Leng. SMS fallback ready.">Send my location</button>
+                  <p style="margin-top:10px;font-size:10px">This card works without internet. Emergency: <b>999</b></p>
+                </section>
+
+                <!-- CAREGIVER -->
+                <section class="screen" data-screen="caregiver" aria-label="Caregiver trip card">
+                  <div style="display:flex;justify-content:space-between;align-items:center">
+                    <div><span class="tiny">Caregiver</span><h4 style="margin:0">Ryan</h4></div>
+                    <span class="status-pill" style="background:#fbf0dc;color:#8a5300">Waiting to board</span>
+                  </div>
+                  <p>Tuesday, 4 Nov · 9:12 am</p>
+
+                  <div class="place-card" style="grid-template-columns:1fr auto;cursor:default">
+                    <div><b style="font-size:16px">Bus 2 is here</b><span>Door open · 45 seconds ago</span></div>
+                    <div style="text-align:right"><b style="font-size:18px">9:37</b><span>arrival</span></div>
+                  </div>
+
+                  <div class="timeline" style="margin-top:8px">
+                    <div class="titem"><b>Walked to the bus stop</b><span>9:02 am</span></div>
+                    <div class="titem"><b>Bus 2 arrived</b><span>9:11 am</span></div>
+                    <div class="titem"><b>Waiting to board</b><span>No confirmation yet</span></div>
+                  </div>
+
+                  <div class="callout-small" style="margin-top:0">
+                    <b>Ryan has not boarded yet.</b><br>
+                    Bus 2 is at the stop. The door is open. He may need a prompt.
+                  </div>
+
+                  <button class="pbtn" type="button" data-call="Ryan">Call Ryan</button>
+                  <button class="pbtn secondary" type="button" data-demo-toast="Voice note sent: “Get on bus 2. The door is open.”">Send voice note</button>
+                  <p style="margin-top:8px;font-size:10px">Location shared for this trip only.</p>
+                </section>
+
+                <!-- PRIVACY -->
+                <section class="screen" data-screen="privacy" aria-label="Privacy settings">
+                  <div style="display:flex;justify-content:space-between;align-items:center">
+                    <h4 style="margin:0">What Mei Leng can see</h4>
+                    <button class="pbtn ghost" type="button" data-goto="home" style="width:36px;padding:6px;margin:0" aria-label="Close privacy">✕</button>
+                  </div>
+                  <p>You choose. You can change this anytime.</p>
+
+                  <div class="toggle-row">
+                    <div><b>My trip</b><span>Only while I travel</span></div>
+                    <button class="switch" type="button" role="switch" aria-checked="true" aria-label="Share my trip"></button>
+                  </div>
+                  <div class="toggle-row">
+                    <div><b>My location all the time</b><span>Not needed for most trips</span></div>
+                    <button class="switch off" type="button" role="switch" aria-checked="false" aria-label="Share my location all the time"></button>
+                  </div>
+                  <div class="toggle-row">
+                    <div><b>My trip history</b><span>Mei Leng cannot see past trips</span></div>
+                    <button class="switch off" type="button" role="switch" aria-checked="false" aria-label="Share my trip history"></button>
+                  </div>
+                  <div class="toggle-row" style="border-bottom:0">
+                    <div><b>Mei Leng can call me</b><span>Always allowed</span></div>
+                    <button class="switch" type="button" role="switch" aria-checked="true" aria-label="Allow caregiver calls"></button>
+                  </div>
+
+                  <button class="pbtn secondary" type="button" data-demo-toast="Sharing paused. Mei Leng can see that you paused.">Pause sharing</button>
+                  <p style="margin-top:10px;font-size:10px">Mei Leng cannot change this without you. <a href="#flows" style="color:#1d4f9c">See how it works.</a></p>
+                </section>
+
+              </div>
+              <div class="bottombar pwid-tabs">
+                <button class="tabbtn active" type="button" data-goto="home" aria-label="Home">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>
+                  Home
+                </button>
+                <button class="tabbtn" type="button" data-goto="story" aria-label="My trips">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+                  Trips
+                </button>
+                <button class="tabbtn" type="button" data-goto="help" aria-label="Help">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.6 2.2c-.7.4-1.1 1-1.1 1.8"/><circle cx="12" cy="17" r="1" fill="currentColor" stroke="none"/></svg>
+                  Help
+                </button>
+                <button class="tabbtn" type="button" data-goto="privacy" aria-label="Me and privacy">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c1.5-4 4-6 7-6s5.5 2 7 6"/></svg>
+                  Me
+                </button>
+              </div>
+              <div class="bottombar cg-tabs" hidden>
+                <button class="tabbtn active" type="button" data-goto="caregiver">Dashboard</button>
+                <button class="tabbtn" type="button" data-demo-toast="2 alerts today: one help request, one arrival.">Alerts</button>
+                <button class="tabbtn" type="button" data-goto="privacy">Settings</button>
+              </div>
+
+              <div class="help-overlay" id="helpOverlay" role="dialog" aria-modal="true" aria-label="Help card for Ryan" hidden style="position:absolute;inset:0;background:#fffdf8;z-index:20;padding:28px 18px;display:none;flex-direction:column;justify-content:center;text-align:center">
+                <div style="font-size:11px;font-weight:900;letter-spacing:.1em;color:#a1282e">PLEASE HELP ME</div>
+                <div style="font-size:34px;line-height:1.1;font-weight:900;margin:10px 0">My name is Ryan.</div>
+                <div style="font-size:24px;line-height:1.2;font-weight:800;margin:6px 0 14px">I am going to Work.</div>
+                <div style="font-size:16px;line-height:1.4;margin-bottom:18px">I am at the bus stop near Blue Library.</div>
+                <div style="font-size:15px;margin-bottom:4px">Please call my caregiver:</div>
+                <div style="font-size:30px;font-weight:900">Mei Leng<br>9123 4567</div>
+                <button class="pbtn" type="button" style="margin-top:20px" data-close-help>Close</button>
+              </div>
+            </div>
+
+            <div class="mockup-controls">
+              <button class="control" type="button" id="phoneEasyBtn" aria-pressed="false">Easy read in mockup</button>
+              <button class="control" type="button" id="phoneHelpBtn">Open help card</button>
+            </div>
+            <p style="font-size:12px;color:var(--muted);margin-top:10px">Tip: use <span class="kbd">Tab</span> to move through the phone. The buttons work.</p>
+          </div>
+        </div>
+
+        <div class="mock-notes">
+          <h3 style="margin-top:0">Why each screen looks like this</h3>
+
+          <div class="note"><div class="note-num">1</div><div><b>Home: two places, one help button.</b><span>The current home is close to this. The change is the status pill (“Sharing: trip only”) and “Ask someone to help me choose” for people who cannot read a map. The help button is a primary action.</span></div></div>
+          <div class="note"><div class="note-num">2</div><div><b>Trip story: the route as a sequence of places.</b><span>Photos of the actual stop and gate do more than a route line. Five to eight steps is enough. The story includes the open door, the card tap, and the seat, so boarding is rehearsed. The caregiver can record a voice note for any step. “Practice this trip” links rehearsal to the live trip.</span></div></div>
+          <div class="note"><div class="note-num">3</div><div><b>Wait: one instruction, one action.</b><span>“Wait for bus 2” is the whole screen. The audio button reads it. The copy teaches the cue: when the bus stops, the door will open. “The bus has stopped” moves to the boarding screen. “I’m not sure” is always visible, so uncertainty does not become a freeze.</span></div></div>
+          <div class="note"><div class="note-num">4</div><div><b>Board: the step after seeing the bus.</b><span>The screen names the action, shows the open door, and asks for confirmation. “I am on the bus” is the signal the app needs. If it does not come, the caregiver sees a boarding alert. “Is this my bus?” gives the person a script for the driver. “Next bus” gives the next step, so a missed bus is not a dead end.</span></div></div>
+          <div class="note"><div class="note-num">5</div><div><b>Help card: usable by a stranger.</b><span>The card leads with the person, then the destination, then the caregiver’s number. “Show this to someone” makes the text huge. It works offline. Emergency 999 is separate and clearly labelled.</span></div></div>
+          <div class="note"><div class="note-num">6</div><div><b>Caregiver: a boarding alert, not just a dot.</b><span>The caregiver sees “Bus 2 is here. Door open. No confirmation yet.” The voice note is a prompt, not a takeover. Location is shared for this trip only, and the card says so.</span></div></div>
+          <div class="note"><div class="note-num">7</div><div><b>Privacy: three choices, one pause.</b><span>The person sees exactly what the caregiver sees. “Trip only” is the default. History is off. The caregiver cannot change it silently. Pause is a normal action.</span></div></div>
+        </div>
+      </div>
+
+      <div class="callout">
+        <p><strong>What is deliberately missing.</strong> No live map on the traveller home screen. No countdown timer that creates pressure. No red warning for a late bus. No caregiver controls on the person’s phone. Those are the easy features to add and the fastest way to make the app feel like supervision.</p>
+      </div>
+    </div>
+  </section>
+  <section class="section" id="flows">
+    <div class="wrap">
+      <div class="section-head">
+        <div><div class="section-num">08 / Flows</div><h2>How the pieces fit</h2></div>
+        <p>Three flows do most of the work: a trip, a cry for help, and consent. Click any step to see what happens and what the app must do. The diagrams are simplified; the edge cases are in the notes.</p>
+      </div>
+
+      <div class="flow-board">
+        <div class="flow-tabs" role="tablist" aria-label="Flows">
+          <button class="flow-tab" type="button" role="tab" aria-selected="true" data-flow-tab="trip">Trip flow</button>
+          <button class="flow-tab" type="button" role="tab" aria-selected="false" data-flow-tab="help">Help flow</button>
+          <button class="flow-tab" type="button" role="tab" aria-selected="false" data-flow-tab="consent">Consent flow</button>
+        </div>
+
+        <div class="flow-panel" data-flow-panel="trip">
+          <div class="flow-row" role="group" aria-label="Trip flow steps">
+            <button class="flow-node" type="button" data-detail-title="1. Choose a place" data-detail="The person picks a photo card: Work, Home, School, or a recent trip. If they cannot choose, “Ask someone to help me choose” starts a caregiver call. No map is shown here."><b>Choose a place</b><span>Photo card, not an address</span></button>
+            <button class="flow-node" type="button" data-detail-title="2. See the story" data-detail="The app shows 5 to 8 steps with photos. The person can swipe through, hear each step, or start. The caregiver can add a voice note. This is the rehearsal layer."><b>See the story</b><span>5 to 8 photo steps</span></button>
+            <button class="flow-node" type="button" data-detail-title="3. Ready check" data-detail="Three checks: fare card, phone battery above 20%, and headphones or sound on. If a check fails, the app offers a fix or a caregiver call. The person can still start the trip."><b>Ready check</b><span>Fare, battery, sound</span></button>
+            <button class="flow-node" type="button" data-detail-title="4. Board the bus" data-detail="When the bus stops and the door opens, show “Get on bus 2.” Ask “Are you on the bus?” A confirmation moves the trip forward. No confirmation after 45 seconds triggers a gentle prompt and a caregiver alert. The app never treats “I see the bus” as boarding."><b>Board the bus</b><span>Door open, get on, confirm</span></button>
+            <button class="flow-node" type="button" data-detail-title="5. Ride and get off" data-detail="Count the stops, show landmarks, prompt the bell, and prepare to exit. Keep the help button visible. If the person misses the stop, say “Stay on the bus. We will call you.”"><b>Ride and get off</b><span>Count stops, ring the bell</span></button>
+            <button class="flow-node" type="button" data-detail-title="6. Handle a change" data-detail="Delay, missed stop, or off-route triggers one calm sentence and one action. The caregiver is alerted only when the person asks, does not answer, or the app is confident something is wrong."><b>Handle a change</b><span>Calm alert, one action</span></button>
+            <button class="flow-node" type="button" data-detail-title="7. Arrive" data-detail="The app shows the destination photo: “You are here.” Sharing stops automatically if it is trip-only. The caregiver gets an arrival notification. The person can rate the trip with three faces."><b>Arrive</b><span>Photo, stop sharing, notify</span></button>
+          </div>
+          <p style="font-size:.8rem;color:var(--muted);margin:0 0 10px">Scroll sideways to see all seven steps.</p>
+          <div class="flow-detail" id="flowDetail" aria-live="polite">
+            <strong>Click a step</strong>
+            <p>Each step has one job. The app should never show two primary actions on the same screen.</p>
+          </div>
+        </div>
+
+        <div class="flow-panel" data-flow-panel="help" hidden>
+          <div class="flow-vertical" role="group" aria-label="Help flow steps">
+            <button class="flow-node" type="button" data-detail-title="1. Ask for help" data-detail="The entry point is always visible: on the home screen and on every step. It does not require reading a menu. The button says “I need help”, not “Support”."><b>1. Ask for help</b><span>One tap, always visible</span></button>
+            <button class="flow-node" type="button" data-detail-title="2. Ask one safety question" data-detail="“Are you safe right now?” with two large buttons: “Yes” and “No”. If No, the app goes straight to a call and shares location. It does not ask the person to explain."><b>2. Are you safe?</b><span>Yes / No, no typing</span></button>
+            <button class="flow-node" type="button" data-detail-title="3. Choose a way to get help" data-detail="Three options: call the caregiver, show the help card to someone nearby, or send location by SMS. The options are picture-led. The person can use one, then another."><b>3. Choose how</b><span>Call, show card, send location</span></button>
+            <button class="flow-node" type="button" data-detail-title="4. Caregiver answers?" data-detail="If the caregiver answers, the app shows “Mei Leng is on the phone” and keeps the card open. If there is no answer in 30 seconds, the app offers the second contact and a staff member or stranger card."><b>4. Caregiver answers?</b><span>30-second timeout</span></button>
+            <button class="flow-node" type="button" data-detail-title="5. Escalate" data-detail="Second contact, then a nearby staff member, then emergency services. The app never dials 999 automatically. It shows a big 999 button and a script: “I need help. I am at [place].”"><b>5. Escalate</b><span>Second contact, staff, 999</span></button>
+            <button class="flow-node" type="button" data-detail-title="6. Close the loop" data-detail="When the person is safe, the caregiver marks the alert resolved. The person sees “Mei Leng knows where you are.” The event is logged for review, not for surveillance."><b>6. Close the loop</b><span>Confirm help arrived</span></button>
+          </div>
+          <div class="flow-detail" aria-live="polite">
+            <strong>Click a step</strong>
+            <p>The help flow must work with one hand, no speech, and no data.</p>
+          </div>
+        </div>
+
+        <div class="flow-panel" data-flow-panel="consent" hidden>
+          <div class="flow-row" role="group" aria-label="Consent flow steps">
+            <button class="flow-node" type="button" data-detail-title="1. Who helps you?" data-detail="On first setup, the person names their caregiver and chooses how that person can help: call only, see my trips, or see my location all the time. The caregiver is present for this step if possible."><b>Who helps you?</b><span>Name and role</span></button>
+            <button class="flow-node" type="button" data-detail-title="2. Choose a preset" data-detail="Three presets, one sentence each. “Trip only” is the default. The person can change it later without asking the caregiver. The choice is saved to the account, not the device."><b>Choose a preset</b><span>Trip only by default</span></button>
+            <button class="flow-node" type="button" data-detail-title="3. See what they see" data-detail="A preview of the caregiver’s screen, in the person’s hand. “This is what Mei Leng sees.” If the person is surprised, the preset is wrong."><b>See what they see</b><span>Preview the caregiver view</span></button>
+            <button class="flow-node" type="button" data-detail-title="4. Start a trip" data-detail="A visible badge appears: “Sharing with Mei Leng · this trip.” The badge is tappable and opens the Privacy Center. The person can pause at any time."><b>Start a trip</b><span>Visible sharing badge</span></button>
+            <button class="flow-node" type="button" data-detail-title="5. Arrive and stop" data-detail="Sharing stops at arrival. The caregiver sees “Arrived at 9:37 am.” The app does not keep a history unless the person chose history."><b>Arrive and stop</b><span>Sharing ends</span></button>
+            <button class="flow-node" type="button" data-detail-title="6. Review anytime" data-detail="The Privacy Center is one tap from home. It shows who can see what, why, and how to pause. The caregiver cannot change the setting silently; they can request a change, and the person approves or declines."><b>Review anytime</b><span>Pause or change</span></button>
+          </div>
+          <div class="flow-detail" aria-live="polite">
+            <strong>Click a step</strong>
+            <p>Consent is a screen the person can understand, not a terms page.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-top:22px">
+        <div class="card"><h3>Trip flow rules</h3><ul><li>Never show more than one primary action.</li><li>Keep the help button visible on every step.</li><li>Cache the route before the trip starts.</li><li>Let the person advance manually.</li><li>Boarding is a step. Do not assume seeing the bus means getting on.</li></ul></div>
+        <div class="card"><h3>Help flow rules</h3><ul><li>Ask “Are you safe?” before “What happened?”.</li><li>Use a 30-second timeout, not a silent failure.</li><li>Never auto-dial emergency services.</li><li>Keep the help card readable at arm’s length.</li></ul></div>
+        <div class="card"><h3>Consent flow rules</h3><ul><li>Trip-only sharing is the default.</li><li>Show the caregiver’s view to the person.</li><li>Pause is a normal action, not an exception.</li><li>No silent changes by the caregiver.</li></ul></div>
+      </div>
+    </div>
+  </section>
+  <section class="section" id="build">
+    <div class="wrap">
+      <div class="section-head">
+        <div><div class="section-num">09 / Build</div><h2>How to make it real</h2></div>
+        <p>This is the practical layer: what to add to the app, what to change in the copy, and the acceptance criteria that stop accessibility from becoming a one-off cleanup.</p>
+      </div>
+
+      <h3>Technical additions</h3>
+      <div class="callout green">
+        <p><strong>Library rule.</strong> Use <span class="mono">npx expo install</span> for Expo packages so versions match SDK 58. Do not hand-roll speech, audio, storage, SMS, geofencing, service workers, or the trip state machine. Native is the primary target. Some modules are native-only (<span class="mono">expo-secure-store</span>, <span class="mono">expo-file-system</span>). On web, use the documented browser fallback or hide the feature. Do not pretend a native-only module works on web.</p>
+      </div>
+      <pre class="mono" style="background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:14px;overflow:auto;font-size:.82rem;line-height:1.65">cd runtimes/app
+npx expo install expo-speech expo-audio expo-file-system \
+  expo-network expo-keep-awake expo-haptics \
+  @react-native-async-storage/async-storage
+yarn add xstate @xstate/react @tanstack/react-query zod
+yarn add -D workbox-build</pre>
+      <p style="font-size:.85rem;color:var(--muted);margin-top:8px">Run <span class="mono">npx expo install --check</span> after adding packages. Do not pin versions by hand.</p>
+      <p style="font-size:.85rem;color:var(--muted);margin-top:8px">Already installed and reused: <span class="mono">expo-image</span>, <span class="mono">expo-secure-store</span>, <span class="mono">expo-linking</span>, <span class="mono">expo-location</span>, <span class="mono">expo-task-manager</span>, <span class="mono">expo-notifications</span>, <span class="mono">react-native-reanimated</span>, <span class="mono">@expo/vector-icons</span>, <span class="mono">react-native-phone-call</span>, and <span class="mono">zustand</span>. Do not add duplicates.</p>
+
+      <div class="callout green">
+        <p><strong>Firebase stays the backend.</strong> Firebase Auth, Realtime Database, Storage, Cloud Functions, and Cloud Messaging remain the backend and the source of truth for shared state. The libraries below are client-side helpers. XState models the local trip lifecycle and writes status to the Realtime Database; it does not replace the database. TanStack Query is only for external REST APIs such as LTA DataMall, not for Firebase subscriptions. AsyncStorage is an offline cache, not a backend. <span class="mono">expo-secure-store</span> holds local secrets, not the account.</p>
+      </div>
+
+      <table class="audit-table">
+        <caption class="sr-only">Technical additions for the proposed features, with the library to use</caption>
+        <thead><tr><th>Need</th><th>Use this library</th><th>Notes and what not to hand-roll</th></tr></thead>
+        <tbody>
+          <tr><td>Read aloud</td><td><span class="mono">expo-speech</span> on native and web. It wraps the platform voices and the Web Speech API.</td><td>Wrap it in <span class="mono">src/services/speechService.ts</span>. Set language from the account. Let the caregiver record names that text-to-speech mispronounces. Do not generate audio files or add a cloud text-to-speech service for v1. Always show the text too.</td></tr>
+          <tr><td>Caregiver voice notes</td><td><span class="mono">expo-audio</span> for recording and playback on native and web. On native, record to the document directory with <span class="mono">directory: 'document'</span> or move the file with <span class="mono">expo-file-system</span>. Upload to Firebase Storage.</td><td>Do not use <span class="mono">expo-av</span>; it is deprecated. Do not write native audio code. Add the <span class="mono">expo-audio</span> config plugin with a plain-language microphone permission, and ask only when recording. Add a transcript and a 15-second limit. Never autoplay in public without headphones. Delete the audio when the route is deleted. On web, hide recording if you do not want to persist blobs.</td></tr>
+          <tr><td>Offline trip</td><td><span class="mono">@react-native-async-storage/async-storage</span> for trip JSON and help card text on native and web. <span class="mono">expo-image</span> for disk-cached step photos on native; the browser cache covers web. <span class="mono">expo-secure-store</span> on native for the caregiver number. <span class="mono">expo-network</span> for the offline badge.</td><td>Replace web-only <span class="mono">sessionStorage</span>. Do not hand-roll file storage or encryption. Native supports the offline help card; web needs a connection for the caregiver number, so do not put it in localStorage. Show a “Saved for offline” badge and test in airplane mode on both platforms.</td></tr>
+          <tr><td>Web offline</td><td><span class="mono">workbox-build</span> to generate the service worker from the exported web build.</td><td>Do not hand-write cache logic. Precache the app shell and trip JSON; use runtime caching for photos.</td></tr>
+          <tr><td>Step triggers</td><td><span class="mono">expo-location</span> geofences with <span class="mono">expo-task-manager</span>.</td><td>Do not poll location with <span class="mono">setInterval</span>. iOS limits monitored regions; eight steps fits. Fall back to a timer and a manual “I’m here” button. Always allow manual advance.</td></tr>
+          <tr><td>Live bus arrival (optional)</td><td>LTA DataMall Bus Arrival API through a Cloud Function. Fetch and poll with <span class="mono">@tanstack/react-query</span>; validate responses with <span class="mono">zod</span>.</td><td>Do not write custom polling loops or trust unvalidated JSON. If live data is unavailable, keep the manual “The bus has stopped” button.</td></tr>
+          <tr><td>SMS fallback</td><td><span class="mono">expo-linking</span> with an <span class="mono">sms:</span> URL on native. Use the existing <span class="mono">react-native-phone-call</span> or <span class="mono">expo-linking</span> <span class="mono">tel:</span> for calls.</td><td>The SMS composer opens with a prefilled message; the person taps send. Show “Message ready” and a call button. On web, show a call button instead. For automatic SMS, use Twilio through a Cloud Function with the person’s consent. Do not build an SMS gateway.</td></tr>
+          <tr><td>Screen stays awake</td><td><span class="mono">expo-keep-awake</span>.</td><td>No custom timers. Keep it to the help card, not the whole trip.</td></tr>
+          <tr><td>Haptics</td><td><span class="mono">expo-haptics</span>.</td><td>No custom native vibration modules. Keep it optional and short.</td></tr>
+          <tr><td>Reduced motion</td><td><span class="mono">useReducedMotion</span> from <span class="mono">react-native-reanimated</span>, plus the platform <span class="mono">AccessibilityInfo</span>.</td><td>Already installed. Do not write custom motion detection.</td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="margin-top:34px">Supporting libraries</h3>
+      <table class="audit-table">
+        <caption class="sr-only">Supporting libraries for state, data, language, and accessibility checks</caption>
+        <thead><tr><th>Need</th><th>Use this</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Trip state</td><td><span class="mono">xstate</span> + <span class="mono">@xstate/react</span></td><td>Makes invalid transitions impossible, such as boarding before arrival or arrival before boarding. Keep Zustand (already installed) for auth and UI state.</td></tr>
+          <tr><td>Live data and caching</td><td><span class="mono">@tanstack/react-query</span> + <span class="mono">zod</span></td><td>Handles polling, retries, caching, and response validation. Wire Query’s <span class="mono">onlineManager</span> to <span class="mono">expo-network</span> so offline state is accurate. Do not write a custom fetch loop.</td></tr>
+          <tr><td>Language</td><td><span class="mono">expo-localization</span> + <span class="mono">i18next</span> + <span class="mono">react-i18next</span></td><td>Only if shipping more than English. Do not hand-roll a translation map.</td></tr>
+          <tr><td>Accessibility checks</td><td><span class="mono">oxlint</span> (already used) plus manual VoiceOver and TalkBack tests. If the team moves to ESLint, add <span class="mono">eslint-plugin-react-native-a11y</span>.</td><td>Do not rely on a lint rule alone. Oxlint is the repo’s current linter; do not add a second linter just for accessibility.</td></tr>
+          <tr><td>Transport icons</td><td><span class="mono">@expo/vector-icons</span> (already installed) or existing SVGs</td><td>Do not use emoji as the only transport label. Pair the icon with text.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout red">
+        <p><strong>Fix these before adding features.</strong> These are trust bugs.</p>
+        <ol>
+          <li><strong>Stop the background location task on every OFF path.</strong> In <span class="mono">LocationSharingContext.native.tsx</span>, cleanup removes the location subscription but does not stop the registered background task. The callback can keep writing <span class="mono">isSharing: true</span>. Await the stop call and check the server flag is false.</li>
+          <li><strong>Wire the real destination into location sharing.</strong> The route pages set the navigation destination, not the location-sharing destination, so the 20-metre arrival stop may never fire. Pass the trip destination into the sharing context.</li>
+          <li><strong>Replace the “xxx” notification text.</strong> Use “Sharing your location with Mei Leng for this trip.” A placeholder in a safety notification destroys trust.</li>
+        </ol>
+      </div>
+
+      <h3 style="margin-top:34px">Five code changes to ship this week</h3>
+      <div class="grid-2">
+        <div class="card">
+          <ol>
+            <li><strong>Label the controls.</strong> Add <span class="mono">accessibilityRole</span>, <span class="mono">accessibilityLabel</span>, and <span class="mono">accessibilityHint</span> to <span class="mono">Button</span>, <span class="mono">SavedPlaceCard</span>, <span class="mono">TransitOptionCard</span>, and the icon-only back and close buttons. Start with “Call caregiver”, “Share location”, and each saved place. Run the existing <span class="mono">oxlint</span> check in CI; add ESLint only if the team standardizes on it.</li>
+            <li><strong>Stop shouting.</strong> Change all-caps labels to sentence case. “CALL CAREGIVER” becomes “Call caregiver”. “START NAVIGATION” becomes “Start trip”.</li>
+            <li><strong>Announce errors.</strong> Use <span class="mono">accessibilityLiveRegion</span> on Android, <span class="mono">AccessibilityInfo.announceForAccessibility</span> on iOS, and <span class="mono">aria-live</span> on web for form errors and route errors. A screen reader should hear “We cannot find a way. Call Mei Leng.” without moving focus.</li>
+          </ol>
+        </div>
+        <div class="card">
+          <ol start="4">
+            <li><strong>Let text breathe.</strong> Text scaling is already on. Remove fixed heights around text, avoid one-line truncation on the destination, set a sensible <span class="mono">maxFontSizeMultiplier</span>, and test at 200%. The fixed <span class="mono">h-[500px]</span> scroll area on the home screen will clip at large sizes.</li>
+            <li><strong>Respect motion.</strong> Use <span class="mono">useReducedMotion</span> from <span class="mono">react-native-reanimated</span> to skip slide and fade animations. Keep the state change; remove the movement.</li>
+          </ol>
+          <div class="callout-small" style="margin-top:12px">These are small, low-risk changes. They also make the bigger features easier to test with assistive technology.</div>
+        </div>
+      </div>
+
+      <h3 style="margin-top:34px">Copy deck: say it plainly</h3>
+      <table class="copy-table">
+        <caption class="sr-only">Current copy and plain-language replacements</caption>
+        <thead><tr><th>Where</th><th>Now</th><th>Use instead</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Home</td><td class="old">Where do you want to go?</td><td class="new">Where are you going?</td><td>Shorter. “Want” can sound like a wish, not a trip.</td></tr>
+          <tr><td>Home</td><td class="old">Tap a location to get directions</td><td class="new">Tap a place to see the way.</td><td>“Location” and “directions” are map words. “Place” and “way” are everyday words.</td></tr>
+          <tr><td>Home</td><td class="old">Other location</td><td class="new">Another place</td><td>One idea, fewer syllables.</td></tr>
+          <tr><td>Onboarding</td><td class="old">Bookmark places you frequently travel to for easy access.</td><td class="new">Save the places you go often.</td><td>“Bookmark”, “frequently”, and “easy access” are three ideas in one sentence.</td></tr>
+          <tr><td>Route choice</td><td class="old">Choose your preferred route</td><td class="new">Pick a way to go.</td><td>“Preferred” asks the person to compare options. “Pick” is an action.</td></tr>
+          <tr><td>Route card</td><td class="old">Estimated journey time: 25 min</td><td class="new">About 25 minutes</td><td>“Estimated” is a caveat. “About” does the same job.</td></tr>
+          <tr><td>Directions</td><td class="old">START NAVIGATION</td><td class="new">Start trip</td><td>Sentence case. “Navigation” is a system word.</td></tr>
+          <tr><td>Directions</td><td class="old">Next Step →</td><td class="new">Next</td><td>The arrow and “step” are extra. “Next” is enough.</td></tr>
+          <tr><td>Directions</td><td class="old">I see the bus</td><td class="new">The bus has stopped. Get on bus 2.</td><td>Name the boarding step, then ask for confirmation.</td></tr>
+          <tr><td>Directions</td><td class="old">🎉 ARRIVED</td><td class="new">You are here.</td><td>Confetti is a surprise. “You are here” is information.</td></tr>
+          <tr><td>Error</td><td class="old">No route data available</td><td class="new">We cannot find a way. Call Mei Leng.</td><td>Say what happened and what to do next.</td></tr>
+          <tr><td>Account</td><td class="old">Logout</td><td class="new">Sign out</td><td>“Logout” is jargon. Keep it away from the main actions.</td></tr>
+          <tr><td>Caregiver</td><td class="old">Online / Offline</td><td class="new">Sharing / Not sharing</td><td>“Online” sounds like a chat status. “Sharing” says what it means.</td></tr>
+          <tr><td>Caregiver</td><td class="old">Dashboard</td><td class="new">People</td><td>“Dashboard” is an office word. The caregiver is looking after people.</td></tr>
+          <tr><td>Caregiver</td><td class="old">Locate</td><td class="new">See where they are</td><td>“Locate” sounds like tracking. The plain phrase is warmer and clearer.</td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="margin-top:34px">Notification copy</h3>
+      <div class="grid-2">
+        <div class="card">
+          <h4>To the caregiver</h4>
+          <ul>
+            <li><strong>Start:</strong> “Ryan started a trip to Work. Sharing for this trip.”</li>
+            <li><strong>Boarding:</strong> “Bus 2 is at the stop. Ryan has not boarded yet. The door is open.”</li>
+            <li><strong>Help:</strong> “Ryan asked for help near Blue Library. Call him now.”</li>
+            <li><strong>Arrival:</strong> “Ryan arrived at Work at 9:37 am.”</li>
+            <li><strong>Pause:</strong> “Ryan paused sharing. He is at Blue Library.”</li>
+            <li><strong>Missed stop:</strong> “Ryan may have missed his stop. He is still on bus 2. Call him.”</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h4>To the person</h4>
+          <ul>
+            <li><strong>Delay:</strong> “The bus is 6 minutes late. Wait here.”</li>
+            <li><strong>Boarding:</strong> “The bus has stopped. The door is open. Get on bus 2.”</li>
+            <li><strong>Missed bus:</strong> “The bus did not stop. Wait for the next bus 2. It will come in 8 minutes.”</li>
+            <li><strong>Off route:</strong> “You are near the MRT station. Are you okay?”</li>
+            <li><strong>Caregiver call:</strong> “Mei Leng is calling. You can answer or send a message.”</li>
+            <li><strong>Arrival:</strong> “You are here. Mei Leng knows.”</li>
+            <li><strong>Battery:</strong> “Your phone battery is low. Save your help card now.”</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 style="margin-top:34px">Accessibility acceptance criteria</h3>
+      <table class="audit-table">
+        <caption class="sr-only">Acceptance criteria for accessibility</caption>
+        <thead><tr><th>Area</th><th>Criterion</th><th>How to check</th></tr></thead>
+        <tbody>
+          <tr><td>Text</td><td>4.5:1 contrast for body text; 3:1 for large text. Text can grow to 200% without clipping or losing content.</td><td>Contrast checker; device font settings; 200% browser zoom.</td></tr>
+          <tr><td>Targets</td><td>All controls are at least 48 × 48 px, with 8 px between targets.</td><td>Measure on the smallest supported phone.</td></tr>
+          <tr><td>Screen reader</td><td>Every control has a name, role, and state. Every error is announced. The reading order matches the visual order.</td><td>VoiceOver on iOS, TalkBack on Android, NVDA on web.</td></tr>
+          <tr><td>Language</td><td>On-screen instructions use 10 words or fewer. Easy Read text averages 15 words or fewer. One action or idea per screen. No all caps.<a class="cite" href="#src-18">[18]</a><a class="cite" href="#src-6">[6]</a></td><td>Copy review with a person with an intellectual disability; count words in the longest five sentences.</td></tr>
+          <tr><td>Time</td><td>No countdown forces a decision. Any timeout can be extended. The help card stays open until closed.</td><td>Turn on the screen reader, wait, and check that nothing disappears.</td></tr>
+          <tr><td>Errors</td><td>Errors say what happened and what to do next. Destructive actions ask for confirmation.</td><td>Test with airplane mode, denied permission, and no route.</td></tr>
+          <tr><td>Motion</td><td>Reduced motion removes slides, fades, and map animation. State changes remain visible.</td><td>Turn on Reduce Motion in the OS; walk the trip flow.</td></tr>
+          <tr><td>Offline</td><td>On native, the trip, help card, and caregiver number work with no data. On web, the app says what is cached and what needs a connection.</td><td>Airplane mode test on the actual route, on native and web.</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:12px;color:var(--muted);font-size:.9rem">Base standard: WCAG 2.2 AA, plus the W3C COGA design patterns for clear purpose, familiar controls, clear steps, and help.<a class="cite" href="#src-15">[15]</a><a class="cite" href="#src-5">[5]</a></p>
+
+      <h3 style="margin-top:34px">Data model additions</h3>
+      <table class="audit-table">
+        <caption class="sr-only">Data model additions</caption>
+        <thead><tr><th>Entity</th><th>Fields</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Trip</td><td><span class="mono">id, pwidId, originPlaceId, destinationPlaceId, steps[], status, startedAt, boardingConfirmedAt, boardingPromptedAt, arrivedAt, sharingMode</span></td><td>One trip has many steps and one sharing rule. Boarding confirmation is a trip event; the caregiver alert depends on the time after the bus arrives.</td></tr>
+          <tr><td>TripStep</td><td><span class="mono">id, order, type (walk, wait, board, ride, alight, walk), instruction, photoKey, voiceNoteKey, latlng, radius, trigger</span></td><td>The step is the unit of instruction, media, and geofence. Keep it small and cacheable. “Board” needs a manual confirmation, not a geofence alone.</td></tr>
+          <tr><td>SupportCard</td><td><span class="mono">pwidId, displayName, photoKey, destinationLabel, caregiverName, caregiverPhone, secondContact, showPhoto, active</span></td><td>The card must render offline. Store the display fields locally as well as on the server.</td></tr>
+          <tr><td>ConsentSettings</td><td><span class="mono">pwidId, sharingMode, historyEnabled, viewers[], pauseUntil, updatedAt</span></td><td>Consent is a first-class record, not a boolean hidden in the UI.</td></tr>
+          <tr><td>Alert</td><td><span class="mono">id, tripId, type, severity, createdAt, resolvedAt, resolution</span></td><td>Alerts need a close-the-loop state, or caregivers learn to ignore them.</td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="margin-top:34px">Singapore links to use in copy and referrals</h3>
+      <p>These links sit under the Enabling Masterplan 2030 goal of inclusive transport.<a class="cite" href="#src-14">[14]</a></p>
+      <table class="audit-table">
+        <caption class="sr-only">Singapore schemes and how EasyBoard should refer to them</caption>
+        <thead><tr><th>Scheme</th><th>What it offers</th><th>How EasyBoard should use it</th></tr></thead>
+        <tbody>
+          <tr><td>Helping Hand cards</td><td>Free cards from Passenger Service Centres or SimplyGo Ticket Offices. Includes “Please alert me when I am approaching my stop” and a card where the person writes the help they need.</td><td>Explain the cards in the help section and use the same wording. Do not claim an API or a digital card.</td></tr>
+          <tr><td>PWD Concession Card</td><td>For eligible Singapore Citizens and PRs under 60, including people with intellectual disability. Free to apply; up to 55% off adult fares; $55 monthly pass option.</td><td>Show eligibility and a link in the trip readiness check. Do not imply EasyBoard can read the card or fare balance.</td></tr>
+          <tr><td>Community Mobility Level 1</td><td>An eight-hour course on pedestrian safety, public transport modes, and boarding. Listed at $320, or $16 after subsidy; confirm the current fee with Bizlink.</td><td>Refer people who want structured training. Do not book or take payment for it.</td></tr>
+          <tr><td>Travel Makers</td><td>A volunteering programme that paired youth with MINDS students for up to eight weekly commute sessions. Reported as a 2023 initiative.</td><td>Describe it as a partner programme, not an open service. Check availability before listing a sign-up link.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <p><strong>Privacy note.</strong> Use <span class="mono">expo-secure-store</span> for the caregiver number on native. On web, fetch it after auth and keep it in memory; do not put it in localStorage. Keep the cached help card minimal. Do not hand-roll encryption. Show only the first name by default, and let the person hide the photo. The caregiver number is sensitive too; do not put it in a public link.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="test">
+    <div class="wrap">
+      <div class="section-head">
+        <div><div class="section-num">10 / Test</div><h2>How to prove it helps</h2></div>
+        <p>Do not test whether people “like” the app. Test whether they can finish a trip, recover from a problem, and ask for help. Run the test on real routes with real phones.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Who to include</h3>
+          <ul>
+            <li><strong>6 to 8 people with intellectual disabilities.</strong> Mix reading levels, phone confidence, and support needs. Include at least two people who do not read.</li>
+            <li><strong>3 caregivers.</strong> Include one older caregiver and one support worker who manages several people.</li>
+            <li><strong>2 transport staff or volunteers.</strong> They are the people a help card is shown to.</li>
+            <li><strong>1 speech and language therapist or AAC (communication aid) specialist.</strong> Review the copy and the audio.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>How to run it</h3>
+          <ul>
+            <li><strong>Co-design first.</strong> Use paper cards and a phone with a clickable prototype. Ask people to show you how they would use it, not whether they like the colour.</li>
+            <li><strong>Task test second.</strong> Two real routes: a direct trip and one with a change. Include a bus that stops but the person does not move, a bus that is not theirs, a bus that does not stop, and a missed stop.</li>
+            <li><strong>Help test third.</strong> Role-play a stranger or staff member. Can the person show the card and get the right help without speaking?</li>
+            <li><strong>Caregiver test last.</strong> Give them the trip card and three alerts. Measure how fast they understand what to do.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 style="margin-top:30px">What to measure</h3>
+      <div class="metrics">
+        <div class="metric"><b>Trip completion</b><span>Percentage of trips finished without a caregiver call. Target: +20% over the current app in the same route test.</span></div>
+        <div class="metric"><b>Boarding</b><span>Percentage of bus arrivals where the person boards within 60 seconds without a caregiver prompt. Target: 8 of 10.</span></div>
+        <div class="metric"><b>Right bus</b><span>Percentage of boardings on the correct route, after checking the number. Target: 9 of 10.</span></div>
+        <div class="metric"><b>Recovery time</b><span>Time from a missed stop or delay to a safe next action. Target: under 2 minutes with the app.</span></div>
+        <div class="metric"><b>Help success</b><span>Percentage of help-card uses where a stranger or staff member understands what to do. Target: 8 of 10.</span></div>
+        <div class="metric"><b>Confidence</b><span>Three-face scale before and after the trip. Target: at least one point higher for first-time users.</span></div>
+        <div class="metric"><b>Caregiver trust</b><span>Caregivers can say where the person is and what happens next without opening the map. Target: 9 of 10.</span></div>
+        <div class="metric"><b>Privacy understanding</b><span>People can explain what is shared and with whom. Target: 8 of 10 can answer in one sentence.</span></div>
+      </div>
+
+      <h3 style="margin-top:30px">Risks and mitigations</h3>
+      <table class="audit-table">
+        <caption class="sr-only">Product risks and mitigations</caption>
+        <thead><tr><th>Risk</th><th>What could happen</th><th>Mitigation</th></tr></thead>
+        <tbody>
+          <tr><td>Sharing does not stop</td><td>The app says sharing is off, but background updates continue. That is a privacy breach.</td><td>Stop the background task on every path, verify the server flag, and add an integration test that waits after stop and checks for new writes.</td></tr>
+          <tr><td>GPS drift</td><td>The wrong step appears, or an alert fires when nothing is wrong.</td><td>Manual advance, geofence radius tuning, “I’m okay” check, and a caregiver confirmation before a call.</td></tr>
+          <tr><td>Person does not board</td><td>The bus stops, but the person stays at the stop or does not move to the door.</td><td>Boarding screen with the open door, a 45-second confirmation check, a caregiver voice note, and a “bus did not stop” path.</td></tr>
+          <tr><td>Wrong bus</td><td>The person boards a bus with the same number but the wrong destination, or a different route.</td><td>Show the bus number and destination, a “is this my bus?” driver script, and a caregiver check for the first three trips.</td></tr>
+          <tr><td>Surveillance</td><td>The person feels watched and stops using the app, or a caregiver uses it to control them.</td><td>Trip-only default, visible badge, pause, history off, no silent changes, and a review with the person.</td></tr>
+          <tr><td>Digital divide</td><td>People without data, a recent phone, or a charger are excluded.</td><td>Offline trip, SMS fallback, printable card, low-data mode, and a caregiver phone call.</td></tr>
+          <tr><td>Alert fatigue</td><td>Caregivers ignore alerts because there are too many.</td><td>Only alert on exceptions the person cannot resolve. Group alerts. Measure response time, not alert volume.</td></tr>
+          <tr><td>Old photos</td><td>The person follows a landmark that has moved or changed.</td><td>Show the photo date. Ask the caregiver to review routes each term. Let the person flag “this photo is old”.</td></tr>
+          <tr><td>Over-reliance</td><td>The person can follow the app but cannot recover when it fails.</td><td>Practice mode, “what if” quiz, and a paper backup card. The app should teach the route.</td></tr>
+          <tr><td>Audio privacy</td><td>The phone reads personal details aloud in public.</td><td>Headphone prompt, volume warning, and a “read silently” option. The help card is the only screen designed to be shown.</td></tr>
+          <tr><td>Data breach</td><td>Location, photos, or caregiver numbers leak.</td><td>Encrypt at rest, limit retention, role-based access, and a clear deletion path.</td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="margin-top:30px">Roadmap</h3>
+      <div class="roadmap">
+        <div class="card">
+          <div class="when">WEEKS 1–2</div>
+          <h3>Phase 0 · Learn</h3>
+          <ul>
+            <li>Recruit 8 participants and 3 caregivers.</li>
+            <li>Run co-design on paper and prototype.</li>
+            <li>Pick two real routes for the field test.</li>
+            <li>Write the easy-read copy deck.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="when">WEEKS 3–10</div>
+          <h3>Phase 1 · P0</h3>
+          <ul>
+            <li>Guided Trip Mode and offline cache.</li>
+            <li>Easy Read and Read Aloud.</li>
+            <li>Help Card and SMS fallback.</li>
+            <li>Trip Story and calm change alerts.</li>
+            <li>Field test with 6 people.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="when">WEEKS 11–22</div>
+          <h3>Phase 2 · P1</h3>
+          <ul>
+            <li>Caregiver Co-pilot.</li>
+            <li>Practice Mode and voice notes.</li>
+            <li>Privacy Center.</li>
+            <li>Partner referral: MINDS, Travel Makers, Heart Zones. Travel Buddy for wheelchair users only.<a class="cite" href="#src-17">[17]</a><a class="cite" href="#src-9">[9]</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 style="margin-top:30px">Open questions</h3>
+      <div class="grid-2">
+        <div class="card">
+          <ol>
+            <li>Is the phone personal or shared with a caregiver or support worker?</li>
+            <li>Who pays for data, and what happens when the data runs out?</li>
+            <li>Can a caregiver create a trip without the person’s involvement?</li>
+            <li>What is the legal basis for location sharing under Singapore’s PDPA (data protection law), and how is consent recorded?</li>
+          </ol>
+        </div>
+        <div class="card">
+          <ol start="5">
+            <li>Which two routes do we test first, and who owns the photos?</li>
+            <li>Do we support feature phones and SMS-only users in the first release?</li>
+            <li>How do we pay participants without making the session feel like a transaction?</li>
+            <li>What does “arrived safely” mean when the destination is a large building?</li>
+            <li>When the person cannot consent, who decides, and how is that recorded?</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="callout green">
+        <p><strong>Definition of done.</strong> A person who has never used EasyBoard can board the right bus, travel a practised route, handle one delay, and ask for help, without reading more than one short sentence at a time. If that is true, the product works.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="sources">
+    <div class="wrap">
+      <div class="section-head">
+        <div><div class="section-num">11 / Sources</div><h2>Where this comes from</h2></div>
+        <p>Primary sources, official guidance, and peer-reviewed reviews. Vendor pages are used only for product facts, not for evidence of effectiveness.</p>
+      </div>
+
+      <ol class="sources">
+        <li id="src-1"><span class="src-title">Ministry of Social and Family Development, Singapore. Disability Trends Report 2024.</span><span class="src-meta">December 2024, updated March 2025. Statistics on disability types, transport use, caregiver age, and Helping Hand schemes.</span><a href="https://www.msf.gov.sg/api/media/e7f31e1f-6465-4ecc-a605-89ffcc624bd2.pdf">msf.gov.sg</a></li>
+        <li id="src-2"><span class="src-title">Mwaka, C. R., Best, K. L., Cunningham, C., Gagnon, M., &amp; Routhier, F. Barriers and facilitators of public transport use among people with disabilities: a scoping review.</span><span class="src-meta">Frontiers in Rehabilitation Sciences, 4, 1336514. 8 January 2024. 34 studies.</span><a href="https://www.frontiersin.org/journals/rehabilitation-sciences/articles/10.3389/fresc.2023.1336514/full">frontiersin.org</a></li>
+        <li id="src-3"><span class="src-title">Safari, M. C., Wass, S., Haugland, S., &amp; Thygesen, E. Intellectual Disability, Digital Technologies, and Independent Transportation: A Scoping Review.</span><span class="src-meta">Proceedings of the 56th Hawaii International Conference on System Sciences, 2023. 13 studies.</span><a href="https://scholarspace.manoa.hawaii.edu/server/api/core/bitstreams/6d0431c9-380a-4341-bc7b-634f0fa0323f/content">hawaii.edu</a></li>
+        <li id="src-4"><span class="src-title">Alanazi, A. Smartphone apps for transportation by people with intellectual disabilities: are they really helpful in improving their mobility?</span><span class="src-meta">Disability and Rehabilitation: Assistive Technology, 17(1), 1–7. 2022.</span><a href="https://pubmed.ncbi.nlm.nih.gov/32927999/">pubmed.ncbi.nlm.nih.gov</a></li>
+        <li id="src-5"><span class="src-title">W3C. Making Content Usable for People with Cognitive and Learning Disabilities.</span><span class="src-meta">W3C Working Group Note, 29 April 2021. Design objectives and patterns.</span><a href="https://www.w3.org/TR/coga-usable/">w3.org</a></li>
+        <li id="src-6"><span class="src-title">NHS England. Guide to making information accessible for people with a learning disability.</span><span class="src-meta">June 2018. Easy read guidance: short sentences, one idea, images, testing.</span><a href="https://www.england.nhs.uk/wp-content/uploads/2018/06/LearningDisabilityAccessCommsGuidance.pdf">england.nhs.uk</a></li>
+        <li id="src-7"><span class="src-title">Department for Transport (UK). People with non-visible impairments’ attitudes and experiences of transport: qualitative research.</span><span class="src-meta">Published 26 September 2024; research conducted October 2019 by Ipsos MORI. 20 interviews.</span><a href="https://www.gov.uk/government/publications/people-with-non-visible-impairments-attitudes-to-and-experiences-of-transport/people-with-non-visible-impairments-attitudes-and-experiences-of-transport-qualitative-research">gov.uk</a></li>
+        <li id="src-8"><span class="src-title">MINDS. All Aboard the Ride to Travel Independence!</span><span class="src-meta">Story about 16 weeks of travel training at MINDS Towner Gardens School, including simulated missed stops.</span><a href="https://www.minds.org.sg/our-stories/our-stories-all-aboard-travel-independence/">minds.org.sg</a></li>
+        <li id="src-9"><span class="src-title">SBS Transit. Passengers with disabilities can travel with confidence with the help of a Travel Buddy.</span><span class="src-meta">Free travel buddy service; up to three sessions on the same route. Currently focused on wheelchair users; the operator says it may extend to other disabilities.</span><a href="https://www.sbstransit.com.sg/news/passengers-with-disabilities-can-travel-with-confidence-on-public-transport-with-the-help-of-a-travel-buddy">sbstransit.com.sg</a></li>
+        <li id="src-10"><span class="src-title">Transport for Ireland. NTA launches 2026 JAM Campaign.</span><span class="src-meta">More than 35,000 JAM Cards and app registrations; a card that asks for patience.</span><a href="https://www.transportforireland.ie/news/nta-launches-2026-jam-campaign-marking-seven-years-of-accessibility-and-inclusion-across-the-tfi-network">transportforireland.ie</a></li>
+        <li id="src-11"><span class="src-title">Chadwick, D. D. “You want to know that you’re safe”: Experiences of risk, restriction and resilience online among people with an intellectual disability.</span><span class="src-meta">Cyberpsychology: Journal of Psychosocial Research on Cyberspace, 16(3), 2022.</span><a href="https://cyberpsychology.eu/article/view/14543">cyberpsychology.eu</a></li>
+        <li id="src-12"><span class="src-title">Niemeijer, A., Frederiks, B., Depla, M., Eefsting, J., &amp; Hertogh, C. The place of surveillance technology in residential care for people with intellectual disabilities.</span><span class="src-meta">Journal of Intellectual Disability Research, 57(3), 201–215. 2013.</span><a href="https://pubmed.ncbi.nlm.nih.gov/23379860/">pubmed.ncbi.nlm.nih.gov</a></li>
+        <li id="src-13"><span class="src-title">Glencross, S., Mason, J., Katsikitis, M., &amp; Greenwood, K. M. Internet Use by People with Intellectual Disability: Exploring Digital Inequality. A Systematic Review.</span><span class="src-meta">Cyberpsychology, Behavior, and Social Networking. 2021.</span><a href="https://pubmed.ncbi.nlm.nih.gov/33761269/">pubmed.ncbi.nlm.nih.gov</a></li>
+        <li id="src-14"><span class="src-title">Ministry of Social and Family Development, Singapore. Enabling Masterplan 2030.</span><span class="src-meta">National disability roadmap; access, independent living, and inclusive transport goals.</span><a href="https://www.msf.gov.sg/docs/default-source/enabling-masterplan/emp2030-report-(final2).pdf">msf.gov.sg</a></li>
+        <li id="src-15"><span class="src-title">W3C. Web Content Accessibility Guidelines (WCAG) 2.2.</span><span class="src-meta">W3C Recommendation, 5 October 2023.</span><a href="https://www.w3.org/TR/WCAG22/">w3.org</a></li>
+        <li id="src-16"><span class="src-title">Guidelines for the Creation of Accessible Consent Materials and Procedures: Lessons from Research with Autistic People and People with Intellectual Disability.</span><span class="src-meta">PMC article on accessible consent: reduce barriers, offer communication options, support decisions.</span><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12448064">pmc.ncbi.nlm.nih.gov</a></li>
+        <li id="src-17"><span class="src-title">The Straits Times. Youth become travel buddies for students with intellectual disabilities in new volunteering initiative.</span><span class="src-meta">Travel Makers Programme, referenced by MINDS.</span><a href="https://www.straitstimes.com/singapore/youth-become-travel-buddies-for-students-with-intellectual-disabilities-in-new-volunteering-initiative">straitstimes.com</a></li>
+        <li id="src-18"><span class="src-title">Centers for Disease Control and Prevention (CDC). How to Develop Products for Adults with Intellectual and Developmental Disabilities and Extreme Low Literacy: A Product Development Tool.</span><span class="src-meta">April 2025. One idea per screen, 10 words or fewer per sentence, literal images, and user testing.</span><a href="https://www.cdc.gov/ccindex/pdf/350129-D_MAN_RTI_CCIModule_508.pdf">cdc.gov</a></li>
+        <li id="src-19"><span class="src-title">van Dijk, W., &amp; Gage, N. A. The effectiveness of visual activity schedules for individuals with intellectual disabilities: A meta-analysis.</span><span class="src-meta">Journal of Intellectual &amp; Developmental Disability, 2019. 13 single-case studies; pooled Tau-U 0.96.</span><a href="https://doi.org/10.3109/13668250.2018.1431761">doi.org</a></li>
+        <li id="src-20"><span class="src-title">Björnsdóttir, K., Snæfríðar- og Gunnarsdóttir, H., &amp; Gunnarsdóttir, E. D. The Digital Exclusion of People with Intellectual Disabilities During the COVID-19 Pandemic.</span><span class="src-meta">Scandinavian Journal of Disability Research, 2024. Survey of 144 people with intellectual disabilities; 25.2% never or almost never used phone or digital technology to contact others.</span><a href="https://doi.org/10.16993/sjdr.1131">doi.org</a></li>
+        <li id="src-21"><span class="src-title">Wilson, H., Irvine, K., Alexander, R. T., &amp; Mengoni, S. E. Easy Read Health Information for People With Intellectual Disabilities: A Systematic Review of the Evidence.</span><span class="src-meta">Journal of Applied Research in Intellectual Disabilities, 2026. 29 studies; people valued Easy Read, but evidence of effectiveness was limited.</span><a href="https://doi.org/10.1111/jar.70195">doi.org</a></li>
+        <li id="src-22"><span class="src-title">Ottawa-Carleton District School Board &amp; OC Transpo. Travel Training Manual.</span><span class="src-meta">2022. Bus assessment separates “knows bus number”, “identifies the bus and indicates a desire to board”, and “taps the pass”; teaches holding the pass at the chest and waiting for the bus to stop.</span><a href="https://www.ocdsb.ca/download/488588">ocdsb.ca</a></li>
+        <li id="src-23"><span class="src-title">National Aging and Disability Transportation Center / Project ACTION! Travel Instruction – Familiarization, Orientation and Travel Training, Module 4.</span><span class="src-meta">Training module. Lists “Boarding, Riding and Deboarding” as a distinct phase of travel training and task analysis.</span><a href="https://www.nadtc.org/wp-content/uploads/Module-4-NADTC-link-version.pdf">nadtc.org</a></li>
+        <li id="src-24"><span class="src-title">Levén, A., Lyxell, B., Andersson, J., &amp; Danielsson, H. Pictures as cues or as support to verbal cues at encoding and execution of prospective memories in individuals with intellectual disability.</span><span class="src-meta">Scandinavian Journal of Disability Research, 16(2), 141–158. 2014. Pictures at retrieval improved prospective memory for people with intellectual disability.</span><a href="https://doi.org/10.1080/15017419.2013.781954">doi.org</a></li>
+        <li id="src-25"><span class="src-title">TransLink. New interactive tour teaches transit boarding.</span><span class="src-meta">11 September 2020. A 360° bus tour and short videos, built with AutismBC, for people who are not comfortable boarding transit.</span><a href="https://www.translink.ca/news/2020/september/new%20interactive%20tour%20teaches%20transit%20boarding">translink.ca</a></li>
+        <li id="src-26"><span class="src-title">Price, R., Marsh, A. J., &amp; Fisher, M. H. Teaching Young Adults with Intellectual and Developmental Disabilities Community-Based Navigation Skills to Take Public Transportation.</span><span class="src-meta">Behavior Analysis in Practice, 11(1), 46–50. 2018. A 15-step bus task analysis taught through total-task chaining; missing one step prevents independent travel.</span><a href="https://doi.org/10.1007/s40617-017-0202-z">doi.org</a></li>
+      </ol>
+
+      <p style="margin-top:24px;color:var(--muted);font-size:.9rem">Citation note: the Singapore statistics describe persons with disabilities known to government. They are not a full population estimate. The transport-technology studies are small and often test one route; treat effect sizes as signals, not proof.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <p><strong>EasyBoard research</strong> · November 2026</p>
+    <p>This is a product research document, not a finished specification. The mockups are illustrative. The sources are linked so the claims can be checked.</p>
+    <p>Next step: pick two real routes, recruit eight people with different support needs, and test the help card with a real stranger.</p>
+  </div>
+</footer>
+
+<button class="reading-now" id="backTop" type="button">↑ Top</button>
+
+<script>
+(function () {
+  'use strict';
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+  const store = {
+    get(key, fallback) {
+      try { const v = localStorage.getItem('eb-' + key); return v === null ? fallback : v; }
+      catch (e) { return fallback; }
+    },
+    set(key, value) {
+      try { localStorage.setItem('eb-' + key, value); } catch (e) {}
+    }
+  };
+  const reduceMotion = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Theme
+  const themeBtn = $('#themeBtn');
+  function setTheme(theme) {
+    document.documentElement.dataset.theme = theme;
+    themeBtn.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+    themeBtn.textContent = theme === 'dark' ? 'Light' : 'Dark';
+    store.set('theme', theme);
+  }
+  setTheme(store.get('theme', 'light'));
+  themeBtn.addEventListener('click', () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
+
+  // Reader font size
+  let readerFont = Number(store.get('font', '17')) || 17;
+  function setFont(value) {
+    readerFont = Math.min(22, Math.max(15, value));
+    document.documentElement.style.setProperty('--reader-font', readerFont + 'px');
+    store.set('font', String(readerFont));
+  }
+  setFont(readerFont);
+  $('#fontUp').addEventListener('click', () => setFont(readerFont + 1));
+  $('#fontDown').addEventListener('click', () => setFont(readerFont - 1));
+
+  // Easy Read
+  const easyBtn = $('#easyReadBtn');
+  function setEasy(on) {
+    document.body.classList.toggle('easy-read', on);
+    easyBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    easyBtn.textContent = on ? 'Easy read: on' : 'Easy read';
+    store.set('easy', on ? '1' : '0');
+  }
+  setEasy(store.get('easy', '0') === '1');
+  easyBtn.addEventListener('click', () => setEasy(!document.body.classList.contains('easy-read')));
+
+  // Scroll progress
+  const progress = $('#progress');
+  function updateProgress() {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    progress.style.width = (max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0) + '%';
+  }
+  window.addEventListener('scroll', updateProgress, { passive: true });
+  window.addEventListener('resize', updateProgress);
+  updateProgress();
+
+  // Active nav link
+  const navLinks = $$('#navScroll a');
+  const sections = navLinks.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  if ('IntersectionObserver' in window) {
+    const navObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        navLinks.forEach(a => a.removeAttribute('aria-current'));
+        const link = navLinks.find(a => a.getAttribute('href') === '#' + entry.target.id);
+        if (link) link.setAttribute('aria-current', 'true');
+      });
+    }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+    sections.forEach(section => navObserver.observe(section));
+  }
+
+  // Back to top
+  const backTop = $('#backTop');
+  window.addEventListener('scroll', () => {
+    backTop.classList.toggle('show', window.scrollY > 800);
+  }, { passive: true });
+  backTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: reduceMotion() ? 'auto' : 'smooth' });
+  });
+
+  // Read aloud
+  const readBtn = $('#readBtn');
+  const canSpeak = 'speechSynthesis' in window;
+  let reading = false;
+  function stopReading() {
+    if (canSpeak) window.speechSynthesis.cancel();
+    reading = false;
+    readBtn.setAttribute('aria-pressed', 'false');
+    readBtn.textContent = 'Read aloud';
+  }
+  function sectionText() {
+    const marker = window.scrollY + window.innerHeight * 0.3;
+    let best = sections[0];
+    let bestDistance = Infinity;
+    sections.forEach(section => {
+      const top = section.getBoundingClientRect().top + window.scrollY;
+      const distance = Math.abs(top - marker);
+      if (distance < bestDistance) { bestDistance = distance; best = section; }
+    });
+    return best ? best.innerText.replace(/\s+/g, ' ').trim() : '';
+  }
+  readBtn.addEventListener('click', () => {
+    if (reading) { stopReading(); return; }
+    if (!canSpeak) { window.alert('Speech is not available in this browser.'); return; }
+    const text = sectionText();
+    if (!text) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-SG';
+    utterance.rate = 0.92;
+    utterance.onend = stopReading;
+    utterance.onerror = stopReading;
+    reading = true;
+    readBtn.setAttribute('aria-pressed', 'true');
+    readBtn.textContent = 'Stop reading';
+    window.speechSynthesis.speak(utterance);
+  });
+  window.addEventListener('beforeunload', stopReading);
+
+  // Phone mockup
+  const phone = $('#phoneDemo');
+  const phoneScreen = $('#phoneScreen');
+  const screenButtons = $$('[data-screen-btn]');
+  const pwidTabs = $('.pwid-tabs');
+  const cgTabs = $('.cg-tabs');
+  let currentScreen = 'home';
+  let previousScreen = 'home';
+  const tripScreens = ['story', 'step', 'board'];
+
+  function showScreen(name, moveFocus) {
+    if (name !== currentScreen) previousScreen = currentScreen;
+    currentScreen = name;
+    $$('.screen', phone).forEach(screen => screen.classList.toggle('active', screen.dataset.screen === name));
+    screenButtons.forEach(button => button.setAttribute('aria-selected', button.dataset.screenBtn === name ? 'true' : 'false'));
+    const caregiver = name === 'caregiver';
+    phone.dataset.role = caregiver ? 'cg' : 'pwid';
+    pwidTabs.hidden = caregiver;
+    cgTabs.hidden = !caregiver;
+    $$('.tabbtn', phone).forEach(button => {
+      const target = button.dataset.goto;
+      const active = target === name || (target === 'story' && tripScreens.includes(name));
+      button.classList.toggle('active', active);
+    });
+    if (phoneScreen) phoneScreen.scrollTop = 0;
+    if (moveFocus) {
+      const active = $('.screen.active', phone);
+      if (active) { active.setAttribute('tabindex', '-1'); active.focus({ preventScroll: true }); }
+    }
+  }
+  screenButtons.forEach(button => button.addEventListener('click', () => showScreen(button.dataset.screenBtn)));
+  $$('[data-goto]', phone).forEach(button => button.addEventListener('click', () => {
+    const target = button.dataset.goto;
+    const back = previousScreen && previousScreen !== 'help' ? previousScreen : 'home';
+    showScreen(target === 'back' ? back : target);
+  }));
+
+  // Easy read inside the mockup
+  const phoneEasyBtn = $('#phoneEasyBtn');
+  phoneEasyBtn.addEventListener('click', () => {
+    const on = phone.classList.toggle('easy');
+    phoneEasyBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    phoneEasyBtn.textContent = on ? 'Easy read: on' : 'Easy read in mockup';
+  });
+
+  // Toast
+  let toastTimer;
+  function toast(message) {
+    let element = $('.phone-toast', phone);
+    if (!element) {
+      element = document.createElement('div');
+      element.className = 'phone-toast';
+      element.setAttribute('role', 'status');
+      element.setAttribute('aria-live', 'polite');
+      phone.appendChild(element);
+    }
+    element.textContent = message;
+    element.classList.add('show');
+    window.clearTimeout(toastTimer);
+    toastTimer = window.setTimeout(() => element.classList.remove('show'), 2800);
+  }
+  $$('[data-demo-toast]', phone).forEach(button => button.addEventListener('click', () => toast(button.dataset.demoToast)));
+
+  // Help overlay
+  const overlay = $('#helpOverlay');
+  let helpTrigger = null;
+  function openHelp(trigger) {
+    helpTrigger = trigger || document.activeElement;
+    overlay.hidden = false;
+    overlay.style.display = 'flex';
+    const close = $('[data-close-help]', overlay);
+    if (close) close.focus();
+  }
+  function closeHelp() {
+    overlay.hidden = true;
+    overlay.style.display = 'none';
+    if (helpTrigger && typeof helpTrigger.focus === 'function') helpTrigger.focus();
+  }
+  $('#phoneHelpBtn').addEventListener('click', event => openHelp(event.currentTarget));
+  $$('[data-fullscreen-help]', phone).forEach(button => button.addEventListener('click', () => openHelp(button)));
+  $$('[data-close-help]', overlay).forEach(button => button.addEventListener('click', closeHelp));
+  window.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && overlay.style.display === 'flex') closeHelp();
+  });
+
+  // Privacy switches
+  $$('.switch', phone).forEach(control => control.addEventListener('click', () => {
+    const on = !control.classList.toggle('off');
+    control.setAttribute('aria-checked', on ? 'true' : 'false');
+  }));
+
+  // Audio buttons
+  $$('[data-speak]', phone).forEach(button => {
+    const label = button.textContent;
+    button.addEventListener('click', () => {
+      if (!canSpeak) { toast('Speech is not available in this browser.'); return; }
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(button.dataset.speak);
+      utterance.lang = 'en-SG';
+      utterance.rate = 0.92;
+      button.textContent = 'Stop';
+      utterance.onend = () => { button.textContent = label; };
+      utterance.onerror = () => { button.textContent = label; };
+      window.speechSynthesis.speak(utterance);
+    });
+  });
+
+  // Demo calls
+  $$('[data-call]', phone).forEach(button => button.addEventListener('click', () => {
+    toast('In the real app this opens the phone dialer: ' + button.dataset.call);
+  }));
+
+  // Feature filters
+  const featureCards = $$('.feature');
+  $$('[data-filter]').forEach(button => button.addEventListener('click', () => {
+    const filter = button.dataset.filter;
+    $$('[data-filter]').forEach(other => other.setAttribute('aria-pressed', other === button ? 'true' : 'false'));
+    featureCards.forEach(card => {
+      card.hidden = !(filter === 'all' || card.dataset.priority === filter);
+    });
+  }));
+
+  // Flow tabs
+  $$('[data-flow-tab]').forEach(tab => tab.addEventListener('click', () => {
+    const name = tab.dataset.flowTab;
+    $$('[data-flow-tab]').forEach(other => other.setAttribute('aria-selected', other === tab ? 'true' : 'false'));
+    $$('[data-flow-panel]').forEach(panel => panel.hidden = panel.dataset.flowPanel !== name);
+  }));
+
+  // Flow details
+  $$('.flow-node').forEach(node => node.addEventListener('click', () => {
+    const panel = node.closest('.flow-panel');
+    const detail = $('.flow-detail', panel);
+    if (!detail) return;
+    const title = node.dataset.detailTitle || (node.querySelector('b') || {}).textContent || 'Step';
+    const text = node.dataset.detail || '';
+    detail.innerHTML = '<strong></strong><p></p>';
+    detail.querySelector('strong').textContent = title;
+    detail.querySelector('p').textContent = text;
+  }));
+
+  // Arrow-key navigation between screen tabs
+  $('.screen-tabs').addEventListener('keydown', event => {
+    if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+    const tabs = $$('[data-screen-btn]');
+    const index = tabs.indexOf(document.activeElement);
+    if (index < 0) return;
+    event.preventDefault();
+    const next = tabs[(index + (event.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+    next.focus();
+    next.click();
+  });
+
+  // Start state
+  showScreen('home');
+  updateProgress();
+})();
+</script>
+</body>
+</html>

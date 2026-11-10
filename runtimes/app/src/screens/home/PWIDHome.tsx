@@ -1,407 +1,287 @@
+'use client'
+
 import { useRouter } from 'expo-router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Modal, RefreshControl } from 'react-native'
-import { useSafeArea } from 'react-native-safe-area-context'
-import { BackButton, Button, ScrollView, Text, View } from '../../components'
-import GoogleMapView from '../../components/mapView/GoogleMapView'
-import { SavedPlaceCard } from '../../components/SavedPlaceCard'
-import { useAuth } from '../../contexts'
-import { useLocationSharing } from '../../contexts/LocationSharingContext'
-import { useCallCaregiver } from '../../hooks/useCallCaregiver'
+import { useWindowDimensions, View } from 'react-native'
+import { Text } from '../../components'
 import {
-  completeLogout,
-  getPhotoDownloadUrl,
-  getUserStorage,
-  setUserStorage,
-  type UserStorage
-} from '../../services/storageService'
+  ActionButton,
+  AppFrame,
+  PlaceCard
+} from '../../components/ui'
+import { usePreferences } from '../../contexts/PreferencesContext'
+import { useLocationSharing } from '../../contexts/LocationSharingContext'
+import { getUserStorage, type UserStorage } from '../../services/storageService'
+import {
+  getActiveTrip,
+  stageLabel,
+  subscribeToTrip,
+  type ActiveTrip
+} from '../../services/tripStore'
 import { getUserData } from '../../services/userService'
-import type { MarkerData } from '../../stores/onboardingStore'
-import type { PWIDUser, SavedPlace } from '../../types'
+import { colors, font, radius, shadow, space } from '../../theme/tokens'
+import type { Journey, PWIDUser } from '../../types'
+
+interface CaregiverSummary {
+  name?: string
+  phone?: string
+}
 
 export function PWIDHome() {
-  const [userData, setUserData] = useState<UserStorage | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [refreshing, setRefreshing] = useState(false)
-  const [loggingOut, setLoggingOut] = useState(false)
-  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false)
-  const [searchLocation, setSearchLocation] = useState<MarkerData | null>(null)
-  const [resolvedPhotoUrls, setResolvedPhotoUrls] = useState<{
-    house?: string
-    work?: string
-    school?: string
-  }>({})
-
-  const { top, bottom } = useSafeArea()
   const router = useRouter()
-  const { setAuthentication } = useAuth()
-  const { isLocationSharing, setIsLocationSharing } = useLocationSharing()
-  const callCaregiver = useCallCaregiver()
+  const { width } = useWindowDimensions()
+  const { scale, bodyLine } = usePreferences()
+  const { isLocationSharing } = useLocationSharing()
 
-  // Helper to resolve photo keys to URLs
-  const resolvePhoto = useCallback(
-    async (photoKeyOrArray: string | string[] | null | undefined) => {
-      if (!photoKeyOrArray) return undefined
-      const photoKey = Array.isArray(photoKeyOrArray)
-        ? photoKeyOrArray[0]
-        : photoKeyOrArray
-      if (!photoKey) return undefined
+  const [userData, setUserData] = useState<UserStorage | null>(null)
+  const [caregiver, setCaregiver] = useState<CaregiverSummary>({})
+  const [journeys, setJourneys] = useState<Journey[]>([])
+  const [activeTrip, setActiveTrip] = useState<ActiveTrip | null>(getActiveTrip)
+  const [loading, setLoading] = useState(true)
+
+  const isWide = width >= 980
+
+  useEffect(() => {
+    const load = async () => {
       try {
-        return await getPhotoDownloadUrl(photoKey)
-      } catch (e) {
-        console.error('Error resolving photo URL:', e)
-        return undefined
-      }
-    },
-    []
-  )
+        const stored = await getUserStorage()
+        setUserData(stored)
+        const storedPwid = stored as unknown as PWIDUser | null
 
-  const loadPhotos = useCallback(
-    async (pwid: Partial<PWIDUser>) => {
-      if (!pwid.savedPlaces) return
-
-      const housePlace = pwid.savedPlaces.find((p) => p.locationName === 'Home')
-      const schoolPlace = pwid.savedPlaces.find(
-        (p) => p.locationName === 'School'
-      )
-      const workPlace = pwid.savedPlaces.find(
-        (p) => p.locationName !== 'Home' && p.locationName !== 'School'
-      )
-
-      const [houseUrl, workUrl, schoolUrl] = await Promise.all([
-        resolvePhoto(housePlace?.locationImageKey),
-        resolvePhoto(workPlace?.locationImageKey),
-        resolvePhoto(schoolPlace?.locationImageKey)
-      ])
-
-      setResolvedPhotoUrls({
-        house: houseUrl,
-        work: workUrl,
-        school: schoolUrl
-      })
-    },
-    [resolvePhoto]
-  )
-
-  // Extract loadSavedLocations as a separate function for reuse
-  const loadSavedLocations = useCallback(
-    async (forceRefresh = false) => {
-      try {
-        const cachedUser = await getUserStorage()
-
-        // First, load from storage for instant display
-        if (cachedUser) {
-          setUserData(cachedUser)
-          if (cachedUser.userType === 'PWID') {
-            loadPhotos(cachedUser as unknown as PWIDUser)
-          }
+        if (storedPwid?.phoneNumber) {
+          const ownData = await getUserData(storedPwid.phoneNumber)
+          setJourneys((ownData as PWIDUser | null)?.journeys ?? [])
         }
 
-        if (!cachedUser?.phoneNumber) {
-          console.error('No user phone number found')
-          return
-        }
-
-        // Then, fetch latest data from Firebase if needed or forced
-        if (forceRefresh || !cachedUser) {
-          console.log(
-            'Fetching latest data from Firebase',
-            cachedUser.phoneNumber
-          )
-          const freshData = await getUserData(cachedUser.phoneNumber)
-
-          if (freshData) {
-            const updatedStorage: UserStorage = {
-              ...freshData,
-              loggedAt: cachedUser?.loggedAt || Date.now()
-            }
-            setUserData(updatedStorage)
-            await setUserStorage(updatedStorage)
-
-            if (freshData.userType === 'PWID') {
-              loadPhotos(freshData as PWIDUser)
-            }
+        if (storedPwid?.caregiverPhone) {
+          setCaregiver({ phone: storedPwid.caregiverPhone })
+          const caregiverData = await getUserData(storedPwid.caregiverPhone)
+          if (caregiverData?.name) {
+            setCaregiver({ name: caregiverData.name, phone: storedPwid.caregiverPhone })
           }
         }
       } catch (error) {
-        console.error('Error loading saved locations:', error)
+        console.error('Error loading home data:', error)
+      } finally {
+        setLoading(false)
       }
-    },
-    [loadPhotos]
-  )
-
-  // Initial load
-  useEffect(() => {
-    const initialLoad = async () => {
-      await loadSavedLocations(false)
-      setLoading(false)
     }
-    initialLoad()
-  }, [loadSavedLocations])
 
-  // Pull to refresh handler
-  const onRefresh = useCallback(async () => {
-    setRefreshing(true)
-    await loadSavedLocations(true)
-    setRefreshing(false)
-  }, [loadSavedLocations])
+    load()
+  }, [])
 
-  const handleLogout = async () => {
-    try {
-      setLoggingOut(true)
-      await completeLogout()
-      setAuthentication(false, undefined)
-      router.navigate('/')
-    } catch (error) {
-      console.error('Error during logout:', error)
-      setLoggingOut(false)
-    }
-  }
+  useEffect(() => subscribeToTrip(setActiveTrip), [])
 
-  // Extract saved places using useMemo
   const savedPlaces = useMemo(() => {
-    if (userData?.userType !== 'PWID') return {}
-
+    if (userData?.userType !== 'PWID') return []
     const pwid = userData as unknown as PWIDUser
-    if (!pwid.savedPlaces) return {}
-
-    const findPlace = (name: string) =>
-      pwid.savedPlaces?.find((p) => p.locationName === name)
-    const findWorkPlace = () =>
-      pwid.savedPlaces?.find(
-        (p) => p.locationName !== 'Home' && p.locationName !== 'School'
+    const places = (pwid.savedPlaces ?? []).map(place => ({
+      ...place,
+      icon:
+        place.locationName === 'Home'
+          ? ('home-outline' as const)
+          : place.locationName === 'School'
+            ? ('school-outline' as const)
+            : ('briefcase-outline' as const)
+    }))
+    const journeyPlaces = journeys
+      .filter(
+        journey =>
+          !places.some(
+            place =>
+              place.locationName.trim().toLowerCase() ===
+              journey.destinationName.trim().toLowerCase()
+          )
       )
+      .map(journey => ({
+        locationName: journey.destinationName,
+        address: undefined,
+        icon: 'bus-outline' as const
+      }))
+    return [...places, ...journeyPlaces]
+  }, [journeys, userData])
 
-    const mapToMarker = (place?: SavedPlace): MarkerData | null => {
-      if (!place) return null
-      return {
-        description: place.address.description,
-        latlng: {
-          latitude: place.address.latlng.latitude,
-          longitude: place.address.latlng.longitude
-        }
-      }
-    }
+  const storedPwid = userData as unknown as PWIDUser | null
+  const firstName = storedPwid?.name?.trim().split(/\s+/)[0] || ''
+  const caregiverName = caregiver.name?.trim() || 'your caregiver'
+  const caregiverPhone = caregiver.phone || storedPwid?.caregiverPhone || ''
 
-    const home = findPlace('Home')
-    const school = findPlace('School')
-    const work = findWorkPlace()
-
-    return {
-      home: mapToMarker(home),
-      school: mapToMarker(school),
-      work: mapToMarker(work),
-      workName: work?.locationName || 'Work'
-    }
-  }, [userData])
-
-  // Navigate to transit options
-  const navigateToTransitOptions = useCallback(
-    (destination: MarkerData, destinationName: string) => {
-      if (!destination?.latlng) return
-
-      const params = new URLSearchParams({
-        lat: destination.latlng.latitude.toString(),
-        lng: destination.latlng.longitude.toString(),
-        name: destinationName,
-        description: destination.description || ''
-      })
-
-      if (destination.photoUri) {
-        params.set('photoUri', destination.photoUri)
-      }
-
-      router.navigate(`/transit-options?${params.toString()}`)
+  const navigateToTrip = useCallback(
+    (destinationName: string) => {
+      const params = new URLSearchParams({ destinationName, practice: '0' })
+      router.navigate(`/trip?${params.toString()}`)
     },
     [router]
   )
 
+  const openHelpCard = useCallback(() => {
+    const params = new URLSearchParams({
+      destination: activeTrip?.destination || savedPlaces[0]?.locationName || 'Home',
+      location: activeTrip
+        ? activeTrip.stage === 'waiting'
+          ? 'the bus stop'
+          : 'the way to your destination'
+        : '',
+      caregiverName,
+      caregiverPhone
+    })
+    router.navigate(`/help-card?${params.toString()}`)
+  }, [activeTrip, caregiverName, caregiverPhone, router, savedPlaces])
+
   if (loading) {
     return (
-      <View className='flex-1 items-center justify-center'>
-        <Text className='text-base text-[#677281]'>Loading...</Text>
-      </View>
+      <AppFrame>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', minHeight: 440 }}>
+          <Text style={{ color: colors.muted, fontSize: scale(16) }}>Loading EasyBoard…</Text>
+        </View>
+      </AppFrame>
     )
   }
 
+  const twoColumn = isWide && Boolean(activeTrip)
+
   return (
-    <>
+    <AppFrame statusLabel={isLocationSharing ? 'Sharing this trip' : 'Sharing off'}>
       <View
-        className='justify-start items-center px-6 w-screen flex-1'
-        style={{ paddingTop: top + 16 }}
+        style={{
+          flexDirection: twoColumn ? 'row' : 'column',
+          gap: space.lg,
+          alignItems: 'stretch'
+        }}
       >
-        <View className='gap-6 w-full'>
-          <View className='flex-row items-center justify-between'>
-            <Text className='text-2xl font-bold text-[#414852]'>
+        <View
+          style={{
+            flex: twoColumn ? 1.55 : undefined,
+            gap: space.lg,
+            minWidth: 0,
+            width: twoColumn ? undefined : '100%',
+            maxWidth: twoColumn ? undefined : 720,
+            marginHorizontal: 'auto'
+          }}
+        >
+          <View style={{ gap: 8 }}>
+            <Text
+              style={{
+                fontFamily: font.display,
+                fontSize: scale(isWide ? 48 : 36),
+                lineHeight: scale(isWide ? 52 : 40),
+                fontWeight: '400',
+                letterSpacing: -0.6,
+                color: colors.ink
+              }}
+            >
+              {firstName ? `Hello, ${firstName}.` : 'Hello.'}
+            </Text>
+            <Text
+              style={{
+                maxWidth: 560,
+                fontSize: scale(18),
+                lineHeight: bodyLine(18),
+                color: colors.muted
+              }}
+            >
               Where do you want to go?
             </Text>
           </View>
 
-          <View className='gap-2'>
-            <Text className='text-lg font-semibold text-[#414852]'>
-              Saved Places
-            </Text>
-            <Text className='text-base text-[#677281]'>
-              Tap a location to get directions
-            </Text>
-          </View>
-
-          <ScrollView
-            contentContainerClassName='gap-4 pb-12 web:pb-36 pt-4'
-            className='h-[500px]'
-            alwaysBounceVertical={true}
-            showsVerticalScrollIndicator={false}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-          >
-            {savedPlaces.home && (
-              <View className='gap-2'>
-                <SavedPlaceCard
-                  title='Home'
-                  required={true}
-                  onPress={() =>
-                    navigateToTransitOptions(savedPlaces.home!, 'Home')
-                  }
-                  location={savedPlaces.home}
-                  imageUri={resolvedPhotoUrls.house}
-                />
+          <View style={{ gap: 12 }}>
+            {savedPlaces.length > 0 ? (
+              <View style={{ gap: 10 }}>
+                {savedPlaces.map(place => (
+                  <PlaceCard
+                    key={`${place.locationName}-${place.address?.description}`}
+                    title={place.locationName}
+                    address={place.address?.description}
+                    icon={place.icon}
+                    onPress={() => navigateToTrip(place.locationName)}
+                  />
+                ))}
               </View>
-            )}
-
-            {savedPlaces.work && (
-              <View className='gap-2'>
-                <SavedPlaceCard
-                  title={savedPlaces.workName}
-                  onPress={() =>
-                    navigateToTransitOptions(
-                      savedPlaces.work!,
-                      savedPlaces.workName
-                    )
-                  }
-                  location={savedPlaces.work}
-                  imageUri={resolvedPhotoUrls.work}
-                />
-              </View>
-            )}
-
-            {savedPlaces.school && (
-              <View className='gap-2'>
-                <SavedPlaceCard
-                  title='School'
-                  onPress={() =>
-                    navigateToTransitOptions(savedPlaces.school!, 'School')
-                  }
-                  location={savedPlaces.school}
-                  imageUri={resolvedPhotoUrls.school}
-                />
-              </View>
-            )}
-
-            <Button
-              onPress={() => setIsSearchModalOpen(true)}
-              variant='outline'
-              className='px-3 py-2 h-auto w-full bg-[#FCFCFD]'
-              text='Other location'
-            />
-
-            {!savedPlaces.home && !savedPlaces.work && !savedPlaces.school && (
-              <View className='flex-1 items-center justify-center py-12'>
-                <Text className='text-base text-[#677281]'>
-                  No saved locations yet.
+            ) : (
+              <View
+                style={{
+                  backgroundColor: colors.surface,
+                  borderRadius: radius.lg,
+                  borderWidth: 1,
+                  borderColor: colors.line,
+                  padding: 20,
+                  gap: 8
+                }}
+              >
+                <Text style={{ fontSize: scale(17), fontWeight: '700', color: colors.ink }}>
+                  No places saved yet
+                </Text>
+                <Text style={{ fontSize: scale(15), lineHeight: bodyLine(15), color: colors.muted }}>
+                  Ask your caregiver to add Home, School, or Work.
                 </Text>
               </View>
             )}
-          </ScrollView>
+          </View>
+
+          <ActionButton
+            label='I need help'
+            icon='help-circle-outline'
+            variant={savedPlaces.length > 0 ? 'secondary' : 'primary'}
+            onPress={openHelpCard}
+            fullWidth
+            accessibilityHint='Opens your help card'
+          />
         </View>
 
-        <View
-          className='absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-6 py-4'
-          style={{ paddingBottom: bottom + 16 }}
-        >
-          <View className='gap-3'>
-            <Button
-              text='CALL CAREGIVER'
-              onPress={callCaregiver}
-              variant='primary'
-              className='rounded-full'
-            />
-            <Button
-              text={isLocationSharing ? 'STOP SHARING' : 'SHARE LOCATION'}
-              onPress={() => setIsLocationSharing(!isLocationSharing)}
-              variant={isLocationSharing ? 'secondary' : 'outline'}
-              className='rounded-full'
-            />
-            <Button
-              text={loggingOut ? 'Logging out...' : 'Logout'}
-              onPress={handleLogout}
-              disabled={loggingOut}
-              variant='text'
-              textClassName='text-red-500'
-            />
+        {activeTrip ? (
+          <View style={{ flex: isWide ? 1 : undefined, gap: 14, minWidth: 0 }}>
+            <RailCard>
+              <Text style={eyebrowStyle(scale)}>Today</Text>
+              <View style={{ gap: 10 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.brand }} />
+                  <Text style={{ fontSize: scale(13), fontWeight: '700', color: colors.brand }}>
+                    {stageLabel(activeTrip.stage)}
+                  </Text>
+                </View>
+                <Text style={{ fontSize: scale(21), fontWeight: '800', lineHeight: scale(26), color: colors.ink }}>
+                  {activeTrip.destination}
+                </Text>
+                <Text style={{ fontSize: scale(14), lineHeight: bodyLine(14), color: colors.muted }}>
+                  Updated {new Date(activeTrip.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </Text>
+                <ActionButton
+                  label='Open trip'
+                  icon='arrow-forward'
+                  variant='secondary'
+                  onPress={() => navigateToTrip(activeTrip.destination)}
+                />
+              </View>
+            </RailCard>
           </View>
-        </View>
+        ) : null}
       </View>
-
-      <Modal
-        presentationStyle='pageSheet'
-        statusBarTranslucent
-        animationType='slide'
-        visible={isSearchModalOpen}
-        onRequestClose={() => setIsSearchModalOpen(false)}
-        onDismiss={() => setIsSearchModalOpen(false)}
-      >
-        <View className='flex-1 bg-white'>
-          <View className='flex-row items-center justify-start px-6 py-4 gap-4'>
-            <BackButton
-              onPress={() => setIsSearchModalOpen(false)}
-              textClassName='text-[40px] mb-1'
-            />
-            <Text className='text-2xl font-bold text-[#414852]'>
-              Search destination
-            </Text>
-          </View>
-
-          <View className='flex-1'>
-            <GoogleMapView
-              isModal
-              onLocationMarkerDrop={(location) => setSearchLocation(location)}
-              value={searchLocation}
-              initialCenter={{
-                latitude: 1.3521,
-                longitude: 103.8198
-              }}
-            />
-          </View>
-
-          <View
-            className='px-6 py-4 bg-white border-t border-gray-200'
-            style={{ paddingBottom: bottom + 12 }}
-          >
-            {searchLocation && (
-              <View className='mb-3'>
-                <Text className='text-sm text-gray-600' numberOfLines={2}>
-                  {searchLocation.description}
-                </Text>
-              </View>
-            )}
-            <Button
-              text='Get Directions'
-              onPress={() => {
-                setIsSearchModalOpen(false)
-                if (searchLocation) {
-                  const shortName =
-                    searchLocation.description.split(',')[0] || 'Destination'
-                  navigateToTransitOptions(searchLocation, shortName)
-                  setSearchLocation(null)
-                }
-              }}
-              disabled={!searchLocation}
-              variant='primary'
-            />
-          </View>
-        </View>
-      </Modal>
-    </>
+    </AppFrame>
   )
 }
+
+function RailCard({ children }: { children: React.ReactNode }) {
+  return (
+    <View
+      style={{
+        backgroundColor: colors.surface,
+        borderWidth: 1,
+        borderColor: colors.line,
+        borderRadius: radius.lg,
+        padding: 18,
+        gap: 10,
+        boxShadow: shadow.card
+      }}
+    >
+      {children}
+    </View>
+  )
+}
+
+const eyebrowStyle = (scale: (n: number) => number) => ({
+  fontSize: scale(12),
+  fontWeight: '800' as const,
+  letterSpacing: 0.7,
+  textTransform: 'uppercase' as const,
+  color: colors.muted
+})

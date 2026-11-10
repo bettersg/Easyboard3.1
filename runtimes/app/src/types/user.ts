@@ -1,3 +1,5 @@
+import type { ActiveTrip } from '../services/tripStore'
+
 // Shared user types
 
 export type UserType = 'PWID' | 'CAREGIVER'
@@ -36,9 +38,27 @@ interface BaseUser {
   updatedAt: number
 }
 
+export interface JourneyStep {
+  id: string
+  title: string
+  detail: string
+  photoUrl?: string
+}
+
+export interface Journey {
+  id: string
+  destinationName: string
+  originName: string
+  busNumber: string
+  steps: JourneyStep[]
+  updatedAt: number
+}
+
 export type PWIDUser = BaseUser & {
   caregiverPhone?: string
   savedPlaces?: SavedPlace[]
+  journeys?: Journey[]
+  activeTrip?: ActiveTrip | null
   location?: UserLocation // Real-time location
 }
 

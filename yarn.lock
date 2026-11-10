@@ -6663,6 +6663,7 @@ __metadata:
     expo-notifications: "npm:~58.0.11"
     expo-router: "npm:~58.0.12"
     expo-secure-store: "npm:~58.0.2"
+    expo-speech: "npm:~58.0.3"
     expo-splash-screen: "npm:~58.0.4"
     expo-status-bar: "npm:~58.0.3"
     expo-task-manager: "npm:~58.0.11"
@@ -9153,6 +9154,15 @@ __metadata:
   version: 58.0.2
   resolution: "expo-server@npm:58.0.2"
   checksum: 10c0/eea54f6b46a4cbf8a510ce9f96fac94f3c488a3b4d26f90f3e19251d03cd36ce991109387d51d093df86cfc0cac243dcbb95067e2062788eb0a4a236d93c3837
+  languageName: node
+  linkType: hard
+
+"expo-speech@npm:~58.0.3":
+  version: 58.0.3
+  resolution: "expo-speech@npm:58.0.3"
+  peerDependencies:
+    expo: "*"
+  checksum: 10c0/552c3a34a96210cd0405ee278f8065500203ae87881e5b43500a9251ca2d58b6956e14e37e922872b6480669eff7a0a1ad8ff5aca500eea912cd7ae6d71bcf4d
   languageName: node
   linkType: hard
 

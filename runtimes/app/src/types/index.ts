@@ -21,6 +21,8 @@ export type {
 export type {
   Address,
   CaregiverUser,
+  Journey,
+  JourneyStep,
   LatLng,
   PWIDUser,
   SavedPlace,
@@ -39,4 +41,6 @@ export interface GoogleMapViewProps {
   initialCenter: LatLong
   isTracking?: boolean
   isModal?: boolean
+  /** Fixed height for an embedded map. Omit for the full-screen map. */
+  height?: number
 }

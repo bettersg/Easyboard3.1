@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useState
 } from 'react'
-import { Alert, Platform } from 'react-native'
+import { Platform } from 'react-native'
 import { useAuth } from '../contexts'
 import { getUserData } from '../services/userService'
 import type { UserType } from '../types'
@@ -91,9 +91,8 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
 
   const sendOTP = useCallback(async () => {
     if (!isValidPhoneNumber) {
-      const errorMsg = 'Please enter a valid 8-digit phone number'
+      const errorMsg = 'Enter a valid 8-digit phone number.'
       setError(errorMsg)
-      Alert.alert('Error', errorMsg)
       return
     }
 
@@ -125,7 +124,6 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
           : 'Failed to send OTP. Please try again.'
       setError(errorMsg)
       console.error('Error sending OTP:', err)
-      Alert.alert('Error', errorMsg)
     } finally {
       setIsSendingOTP(false)
     }
@@ -134,20 +132,10 @@ export function LoginProvider({ children }: { children: React.ReactNode }) {
   const verifyOTP = useCallback(
     async (otp: string): Promise<boolean> => {
       if (otp.length !== 6) {
-        const errorMsg = 'Please enter a valid 6-digit OTP'
+        const errorMsg = 'Enter the 6-digit code.'
         setError(errorMsg)
-        Alert.alert('Error', errorMsg)
         return false
       }
-
-      // For existing users (login), userType should already be set from getUserData
-      // For new users (registration), userType will be null - they'll select it in onboarding
-      // if (!userType && !isRegistration) {
-      //   const errorMsg = 'User type is required. Please try logging in again.'
-      //   setError(errorMsg)
-      //   Alert.alert('Error', errorMsg)
-      //   return false
-      // }
 
       setIsVerifyingOTP(true)
       setError(null)

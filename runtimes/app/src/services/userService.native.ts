@@ -8,9 +8,11 @@ import {
   query,
   ref,
   set,
-  update
+  update,
+  type DataSnapshot
 } from '@react-native-firebase/database'
 import { getDeviceName } from 'react-native-device-info'
+import type { ActiveTrip } from './tripStore'
 import type {
   CaregiverUser,
   PWIDUser,
@@ -162,6 +164,27 @@ export const userService: IUserService = {
     return onValue(locationRef, (snapshot) => callback(snapshot.val()))
   },
 
+  setPWIDActiveTrip: async (phoneNumber, trip) => {
+    try {
+      const db = getDatabase()
+      await update(ref(db, `users/${phoneNumber}`), {
+        activeTrip: trip,
+        updatedAt: Date.now()
+      })
+    } catch (error) {
+      console.error('Error updating active trip:', error)
+      throw error
+    }
+  },
+
+  subscribeToActiveTrip: (phoneNumber, callback) => {
+    const db = getDatabase()
+    const tripRef = ref(db, `users/${phoneNumber}/activeTrip`)
+    return onValue(tripRef, (snapshot: DataSnapshot) => {
+      callback(snapshot.exists() ? (snapshot.val() as ActiveTrip) : null)
+    })
+  },
+
   getPWIDsByCaregiverPhone: async (caregiverPhone: string) => {
     const snapshot = await get(
       query(
@@ -211,3 +234,5 @@ export const getFCMToken = userService.getFCMToken
 export const listenToPWIDLocation = userService.listenToPWIDLocation
 export const getPWIDsByCaregiverPhone = userService.getPWIDsByCaregiverPhone
 export const updateUserData = userService.updateUserData
+export const setPWIDActiveTrip = userService.setPWIDActiveTrip
+export const subscribeToActiveTrip = userService.subscribeToActiveTrip
